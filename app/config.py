@@ -1,6 +1,5 @@
 import os
 
-
 class Config(object):
     DOCUMENT_DOWNLOAD_API_HOST_NAME = os.environ.get('DOCUMENT_DOWNLOAD_API_HOST_NAME')
 
