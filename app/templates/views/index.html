@@ -1,0 +1,14 @@
+{% extends "document_download_template.html" %}
+
+{% block fullwidth_content %}
+  <h1 class="heading-large">Download your document</h1>
+  <p>You have been sent a document by {{ service_name or '[SERVICE_NAME]'}}</p>
+  <p>
+    <a href="{{url_for('main.download_document_download', service_id=service_id, document_id=document_id, key=key)}}" class="button">Continue</a>
+  </p>
+  <p>
+    If you are unsure if this is a genuine communication,
+    <a href="http://google.co.uk"> contact [SERVICE NAME]</a>
+    for verification.
+  </p>
+{% endblock %}
