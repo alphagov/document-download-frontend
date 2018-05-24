@@ -1,11 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import os
 import sys
 
 import json
 import yaml
+
+import jinja2
+from jinja2.runtime import StrictUndefined
 
 
 def merge_dicts(a, b):
@@ -24,15 +26,19 @@ def merge_dicts(a, b):
     return result
 
 
+def template_string(string, variables, templates_path=None):
+    jinja_env = jinja2.Environment(
+        trim_blocks=True,
+        undefined=StrictUndefined,
+    )
+
+    template = jinja_env.from_string(string)
+    return template.render(variables)
+
+
 def load_manifest(manifest_file):
     with open(manifest_file) as f:
-        manifest = yaml.load(f)
-
-    if 'inherit' in manifest:
-        inherit_file = os.path.join(os.path.dirname(manifest_file), manifest.pop('inherit'))
-        manifest = merge_dicts(load_manifest(inherit_file), manifest)
-
-    return manifest
+        return f.read()
 
 
 def load_variables(vars_files):
@@ -42,22 +48,19 @@ def load_variables(vars_files):
             variables = merge_dicts(variables, yaml.load(f))
 
     return {
-        k.upper(): json.dumps(v) if isinstance(v, (dict, list)) else v
+        k: json.dumps(v) if isinstance(v, (dict, list)) else v
         for k, v in variables.items()
     }
 
 
 def paas_manifest(manifest_file, *vars_files):
+    """Generate a PaaS manifest file from a Jinja2 template"""
+
     manifest = load_manifest(manifest_file)
     variables = load_variables(vars_files)
 
-    for key in manifest.get('env', {}):
-        if key in variables:
-            manifest['env'][key] = variables[key]
-
-    return yaml.dump(manifest, default_flow_style=False, allow_unicode=True)
+    return template_string(manifest, variables)
 
 
 if __name__ == "__main__":
-    print('---')  # noqa
-    print(paas_manifest(*sys.argv[1:]))  # noqa
+    print(paas_manifest(*sys.argv[1:]))

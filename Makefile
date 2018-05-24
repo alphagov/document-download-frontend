@@ -174,11 +174,13 @@ cf-login: ## Log in to Cloud Foundry
 .PHONY: generate-manifest
 generate-manifest:
 	$(if ${CF_SPACE},,$(error Must specify CF_SPACE))
+
 	$(if $(shell which gpg2), $(eval export GPG=gpg2), $(eval export GPG=gpg))
 	$(if ${GPG_PASSPHRASE_TXT}, $(eval export DECRYPT_CMD=echo -n $$$${GPG_PASSPHRASE_TXT} | ${GPG} --quiet --batch --passphrase-fd 0 --pinentry-mode loopback -d), $(eval export DECRYPT_CMD=${GPG} --quiet --batch -d))
 
-	@./scripts/generate_manifest.py ${CF_MANIFEST_FILE} \
-	    <(${DECRYPT_CMD} ${NOTIFY_CREDENTIALS}/credentials/${CF_SPACE}/paas/environment-variables.gpg)
+	@./scripts/generate_manifest.py manifest.yml.j2 \
+	    <(${DECRYPT_CMD} ${NOTIFY_CREDENTIALS}/credentials/${CF_SPACE}/document-download/paas-environment.gpg) \
+	    <(echo environment: ${CF_SPACE})
 
 .PHONY: cf-deploy
 cf-deploy: ## Deploys the app to Cloud Foundry

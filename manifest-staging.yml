@@ -1,9 +1,0 @@
----
-
-inherit: manifest-base.yml
-
-routes:
-  - route: document-download-frontend-staging.cloudapps.digital
-
-instances: 2
-memory: 1G
