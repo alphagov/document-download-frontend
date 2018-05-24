@@ -63,4 +63,4 @@ def paas_manifest(manifest_file, *vars_files):
 
 
 if __name__ == "__main__":
-    print(paas_manifest(*sys.argv[1:]))
+    print(paas_manifest(*sys.argv[1:]))  # noqa
