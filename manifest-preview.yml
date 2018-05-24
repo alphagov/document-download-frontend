@@ -1,0 +1,12 @@
+---
+
+inherit: manifest-base.yml
+
+env:
+  NOTIFY_ENVIRONMENT: preview
+
+services:
+  - logit-ssl-syslog-drain
+
+routes:
+  - route: document-download-frontend-preview.cloudapps.digital

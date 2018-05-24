@@ -1,5 +1,6 @@
 import os
 
+
 class Config(object):
     DOCUMENT_DOWNLOAD_API_HOST_NAME = os.environ.get('DOCUMENT_DOWNLOAD_API_HOST_NAME')
 
@@ -17,9 +18,11 @@ class Config(object):
     DOCUMENT_DOWNLOAD_ENVIRONMENT = 'development'
     CHECK_PROXY_HEADER = False
 
+    NOTIFY_LOG_PATH = '/home/vcap/logs/app.log'
+
 
 class Development(Config):
-    DEBUG = True
+    DEBUG = False
     NOTIFY_LOG_PATH = 'application.log'
 
 

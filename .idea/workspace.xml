@@ -2,15 +2,26 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="636f3eae-3c38-4a4c-a65f-15df0d6dcd7e" name="Default" comment="Merge branch 'intiial-document-download-repo' of https://github.com/alphagov/document-download-frontend into intiial-document-download-repo&#10;&#10;# Conflicts:&#10;#&#9;app/__init__.py&#10;#&#9;app/assets/stylesheets/main.scss&#10;#&#9;app/config.py&#10;#&#9;app/main/views/index.py&#10;#&#9;app/templates/views/index.html&#10;#&#9;app/utils.py&#10;#&#9;application.py&#10;#&#9;environment.sh&#10;#&#9;requirements_for_test.txt">
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/docker/tianon.gpg" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Makefile" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/docker/Dockerfile" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/docker/Makefile" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/docker/VERSION" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/docker/entrypoint.sh" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/gunicorn_config.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/manifest-base.yml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/manifest-preview.yml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/manifest-production.yml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/manifest-sandbox.yml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/manifest-staging.yml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/scripts/generate_manifest.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/scripts/run_app_paas.sh" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/__init__.py" afterPath="$PROJECT_DIR$/app/__init__.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/assets/stylesheets/main.scss" afterPath="$PROJECT_DIR$/app/assets/stylesheets/main.scss" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/config.py" afterPath="$PROJECT_DIR$/app/config.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/main/views/index.py" afterPath="$PROJECT_DIR$/app/main/views/index.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/templates/views/index.html" afterPath="$PROJECT_DIR$/app/templates/views/index.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/utils.py" afterPath="$PROJECT_DIR$/app/utils.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/application.py" afterPath="$PROJECT_DIR$/application.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/environment.sh" afterPath="$PROJECT_DIR$/environment.sh" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/application.log.json" afterPath="$PROJECT_DIR$/application.log.json" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/requirements_for_test.txt" afterPath="$PROJECT_DIR$/requirements_for_test.txt" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/scripts/run_tests.sh" afterPath="$PROJECT_DIR$/scripts/run_tests.sh" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -21,21 +32,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="requirements_for_test.txt" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/requirements_for_test.txt">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="15">
-              <caret line="1" column="0" lean-forward="false" selection-start-line="1" selection-start-column="0" selection-end-line="1" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="environment.sh" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/environment.sh">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="60">
-              <caret line="4" column="29" lean-forward="true" selection-start-line="4" selection-start-column="29" selection-end-line="4" selection-end-column="29" />
+              <caret line="4" column="29" lean-forward="false" selection-start-line="4" selection-start-column="29" selection-end-line="4" selection-end-column="29" />
               <folding />
             </state>
           </provider>
@@ -45,17 +46,17 @@
         <entry file="file://$PROJECT_DIR$/app/utils.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="30">
-              <caret line="4" column="0" lean-forward="true" selection-start-line="4" selection-start-column="0" selection-end-line="4" selection-end-column="0" />
+              <caret line="4" column="0" lean-forward="false" selection-start-line="4" selection-start-column="0" selection-end-line="4" selection-end-column="0" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="__init__.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="__init__.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/__init__.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="120">
-              <caret line="104" column="0" lean-forward="true" selection-start-line="104" selection-start-column="0" selection-end-line="104" selection-end-column="0" />
+            <state relative-caret-position="-1199">
+              <caret line="8" column="36" lean-forward="false" selection-start-line="8" selection-start-column="36" selection-end-line="8" selection-end-column="36" />
               <folding />
             </state>
           </provider>
@@ -75,8 +76,14 @@
         <entry file="file://$PROJECT_DIR$/app/config.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="-509">
-              <caret line="1" column="0" lean-forward="true" selection-start-line="1" selection-start-column="0" selection-end-line="1" selection-end-column="0" />
-              <folding />
+              <caret line="1" column="0" lean-forward="false" selection-start-line="1" selection-start-column="0" selection-end-line="1" selection-end-column="0" />
+              <folding>
+                <marker date="1527175977000" expanded="true" signature="689:730" ph="..." />
+                <marker date="1527175977000" expanded="true" signature="757:819" ph="..." />
+                <marker date="1527175977000" expanded="true" signature="844:962" ph="..." />
+                <marker date="1527175977000" expanded="true" signature="987:1101" ph="..." />
+                <marker date="1527175977000" expanded="true" signature="1123:1239" ph="..." />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -91,7 +98,7 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="main.scss" pinned="false" current-in-tab="true">
+      <file leaf-file-name="main.scss" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/assets/stylesheets/main.scss">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="323">
@@ -101,11 +108,21 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="application.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/application.py">
+      <file leaf-file-name="run_tests.sh" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/scripts/run_tests.sh">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="135">
-              <caret line="14" column="54" lean-forward="false" selection-start-line="14" selection-start-column="54" selection-end-line="14" selection-end-column="54" />
+            <state relative-caret-position="350">
+              <caret line="37" column="35" lean-forward="false" selection-start-line="37" selection-start-column="35" selection-end-line="37" selection-end-column="35" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="requirements_for_test.txt" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/requirements_for_test.txt">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="0">
+              <caret line="0" column="19" lean-forward="false" selection-start-line="0" selection-start-column="19" selection-end-line="0" selection-end-column="19" />
               <folding />
             </state>
           </provider>
@@ -158,7 +175,6 @@
         <option value="$PROJECT_DIR$/manifest-sandbox.yml" />
         <option value="$PROJECT_DIR$/manifest-staging.yml" />
         <option value="$PROJECT_DIR$/docker/VERSION" />
-        <option value="$PROJECT_DIR$/scripts/run_tests.sh" />
         <option value="$PROJECT_DIR$/docker/Makefile" />
         <option value="$PROJECT_DIR$/gunicorn_error.log" />
         <option value="$PROJECT_DIR$/manifest-preview.yml" />
@@ -169,13 +185,14 @@
         <option value="$PROJECT_DIR$/Makefile" />
         <option value="$PROJECT_DIR$/manifest.yml.j2" />
         <option value="$PROJECT_DIR$/environment.sh" />
-        <option value="$PROJECT_DIR$/requirements_for_test.txt" />
         <option value="$PROJECT_DIR$/application.py" />
         <option value="$PROJECT_DIR$/app/utils.py" />
-        <option value="$PROJECT_DIR$/app/__init__.py" />
         <option value="$PROJECT_DIR$/app/templates/views/index.html" />
         <option value="$PROJECT_DIR$/app/config.py" />
         <option value="$PROJECT_DIR$/app/assets/stylesheets/main.scss" />
+        <option value="$PROJECT_DIR$/scripts/run_tests.sh" />
+        <option value="$PROJECT_DIR$/requirements_for_test.txt" />
+        <option value="$PROJECT_DIR$/app/__init__.py" />
       </list>
     </option>
   </component>
@@ -214,15 +231,7 @@
             <path>
               <item name="document-download-frontend" type="b2602c69:ProjectViewProjectNode" />
               <item name="document-download-frontend" type="462c0819:PsiDirectoryNode" />
-              <item name="app" type="462c0819:PsiDirectoryNode" />
-              <item name="assets" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="document-download-frontend" type="b2602c69:ProjectViewProjectNode" />
-              <item name="document-download-frontend" type="462c0819:PsiDirectoryNode" />
-              <item name="app" type="462c0819:PsiDirectoryNode" />
-              <item name="assets" type="462c0819:PsiDirectoryNode" />
-              <item name="stylesheets" type="462c0819:PsiDirectoryNode" />
+              <item name="scripts" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -377,14 +386,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/scripts/run_tests.sh">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="495">
-          <caret line="33" column="48" lean-forward="false" selection-start-line="33" selection-start-column="48" selection-end-line="33" selection-end-column="48" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/docker/Makefile">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="435">
@@ -489,14 +490,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/requirements_for_test.txt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="15">
-          <caret line="1" column="0" lean-forward="false" selection-start-line="1" selection-start-column="0" selection-end-line="1" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/application.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="135">
@@ -516,7 +509,7 @@
     <entry file="file://$PROJECT_DIR$/environment.sh">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="60">
-          <caret line="4" column="29" lean-forward="true" selection-start-line="4" selection-start-column="29" selection-end-line="4" selection-end-column="29" />
+          <caret line="4" column="29" lean-forward="false" selection-start-line="4" selection-start-column="29" selection-end-line="4" selection-end-column="29" />
           <folding />
         </state>
       </provider>
@@ -524,15 +517,7 @@
     <entry file="file://$PROJECT_DIR$/app/utils.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="30">
-          <caret line="4" column="0" lean-forward="true" selection-start-line="4" selection-start-column="0" selection-end-line="4" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/__init__.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="120">
-          <caret line="104" column="0" lean-forward="true" selection-start-line="104" selection-start-column="0" selection-end-line="104" selection-end-column="0" />
+          <caret line="4" column="0" lean-forward="false" selection-start-line="4" selection-start-column="0" selection-end-line="4" selection-end-column="0" />
           <folding />
         </state>
       </provider>
@@ -548,8 +533,14 @@
     <entry file="file://$PROJECT_DIR$/app/config.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-509">
-          <caret line="1" column="0" lean-forward="true" selection-start-line="1" selection-start-column="0" selection-end-line="1" selection-end-column="0" />
-          <folding />
+          <caret line="1" column="0" lean-forward="false" selection-start-line="1" selection-start-column="0" selection-end-line="1" selection-end-column="0" />
+          <folding>
+            <marker date="1527175977000" expanded="true" signature="689:730" ph="..." />
+            <marker date="1527175977000" expanded="true" signature="757:819" ph="..." />
+            <marker date="1527175977000" expanded="true" signature="844:962" ph="..." />
+            <marker date="1527175977000" expanded="true" signature="987:1101" ph="..." />
+            <marker date="1527175977000" expanded="true" signature="1123:1239" ph="..." />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -565,6 +556,30 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="323">
           <caret line="23" column="26" lean-forward="false" selection-start-line="23" selection-start-column="26" selection-end-line="23" selection-end-column="26" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/scripts/run_tests.sh">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="350">
+          <caret line="37" column="35" lean-forward="false" selection-start-line="37" selection-start-column="35" selection-end-line="37" selection-end-column="35" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/requirements_for_test.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="19" lean-forward="false" selection-start-line="0" selection-start-column="19" selection-end-line="0" selection-end-column="19" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/__init__.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1199">
+          <caret line="8" column="36" lean-forward="false" selection-start-line="8" selection-start-column="36" selection-end-line="8" selection-end-column="36" />
           <folding />
         </state>
       </provider>

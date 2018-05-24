@@ -1,0 +1,6 @@
+---
+
+inherit: manifest-base.yml
+
+routes:
+  - route: document-download-frontend-sandbox.cloudapps.digital

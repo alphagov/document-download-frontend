@@ -1,12 +1,6 @@
 import os
 
-<<<<<<< HEAD
 from flask import (
-=======
-import itertools
-from flask import (
-    session,
->>>>>>> initial build for document download
     render_template,
     make_response,
     current_app,
@@ -14,10 +8,6 @@ from flask import (
 from flask_wtf import CSRFProtect
 from flask_wtf.csrf import CSRFError
 
-<<<<<<< HEAD
-=======
-from notifications_python_client.errors import HTTPError
->>>>>>> initial build for document download
 from notifications_utils import logging, request_helper
 from notifications_utils.clients.statsd.statsd_client import StatsdClient
 
