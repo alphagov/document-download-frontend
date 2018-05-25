@@ -1,5 +1,6 @@
 Flask==0.12.2
 Flask-WTF==0.14.2
+Flask-Login==0.4.1
 
 pytz==2018.4
 gunicorn==19.8.1

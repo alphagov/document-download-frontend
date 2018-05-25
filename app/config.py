@@ -2,21 +2,30 @@ import os
 
 
 class Config(object):
-    DOCUMENT_DOWNLOAD_API_HOST_NAME = os.environ.get('DOCUMENT_DOWNLOAD_API_HOST_NAME')
-
     # if we're not on cloudfoundry, we can get to this app from localhost. but on cloudfoundry its different
     ADMIN_BASE_URL = os.environ.get('ADMIN_BASE_URL', 'http://localhost:6012')
+    ADMIN_CLIENT_SECRET = os.environ.get('ADMIN_CLIENT_SECRET')
+    ADMIN_CLIENT_USER_NAME = 'notify-admin'
+
+    API_HOST_NAME = os.environ.get('API_HOST_NAME')
+
+    CHECK_PROXY_HEADER = False
+
+    DANGEROUS_SALT = os.environ.get('DANGEROUS_SALT')
 
     # Logging
     DEBUG = False
+
+    DOCUMENT_DOWNLOAD_API_HOST_NAME = os.environ.get('DOCUMENT_DOWNLOAD_API_HOST_NAME')
+    DOCUMENT_DOWNLOAD_ENVIRONMENT = 'development'
     DOCUMENT_DOWNLOAD_LOG_PATH = os.getenv('DOCUMENT_DOWNLOAD_LOG_PATH')
 
     HEADER_COLOUR = '#FFBF47'  # $yellow
     HTTP_PROTOCOL = 'http'
-    SHOW_STYLEGUIDE = True
 
-    DOCUMENT_DOWNLOAD_ENVIRONMENT = 'development'
-    CHECK_PROXY_HEADER = False
+    ROUTE_SECRET_KEY_1 = os.environ.get('ROUTE_SECRET_KEY_1', '')
+
+    SHOW_STYLEGUIDE = True
 
     NOTIFY_LOG_PATH = '/home/vcap/logs/app.log'
 

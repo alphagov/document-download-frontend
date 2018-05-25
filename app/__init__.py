@@ -1,24 +1,32 @@
 import os
+from functools import partial
 
 from flask import (
     render_template,
     make_response,
     current_app,
 )
+from flask.globals import _lookup_req_object
 from flask_wtf import CSRFProtect
 from flask_wtf.csrf import CSRFError
 
 from notifications_utils import logging, request_helper
 from notifications_utils.clients.statsd.statsd_client import StatsdClient
+from werkzeug.local import LocalProxy
 
 from app.config import configs
 from app.asset_fingerprinter import AssetFingerprinter
+from app.notify_client.service_api_client import ServiceAPIClient
 from app.utils import get_cdn_domain
 
 csrf = CSRFProtect()
 
 statsd_client = StatsdClient()
 asset_fingerprinter = AssetFingerprinter()
+service_api_client = ServiceAPIClient()
+
+# The current service attached to the request stack.
+current_service = LocalProxy(partial(_lookup_req_object, 'service'))
 
 
 def create_app(application):
@@ -42,6 +50,8 @@ def create_app(application):
     # add_template_filters(application)
 
     register_errorhandlers(application)
+
+    service_api_client.init_app(application)
 
 
 def init_app(application):
