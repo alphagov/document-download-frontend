@@ -22,7 +22,7 @@ class Config(object):
 
 
 class Development(Config):
-    DEBUG = False
+    DEBUG = True
     NOTIFY_LOG_PATH = 'application.log'
 
 

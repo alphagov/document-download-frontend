@@ -16,6 +16,10 @@ function check_params {
 }
 
 function configure_aws_logs {
+  # create files so that aws logs agent doesn't complain
+  touch /home/vcap/logs/gunicorn_error.log
+  touch /home/vcap/logs/app.log.json
+
   aws configure set plugins.cwlogs cwlogs
 
   cat > /home/vcap/app/awslogs.conf << EOF
@@ -23,7 +27,7 @@ function configure_aws_logs {
 state_file = /home/vcap/logs/awslogs-state
 
 [/home/vcap/logs/app.log]
-file = /home/vcap/logs/app.log*
+file = /home/vcap/logs/app.log.json
 log_group_name = paas-${CW_APP_NAME}-application
 log_stream_name = {hostname}
 
@@ -48,8 +52,6 @@ function on_exit {
       break
     fi
   done
-  echo "Application process terminated, waiting 10 seconds"
-  sleep 10
   echo "Terminating remaining subprocesses.."
   kill 0
 }

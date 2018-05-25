@@ -31,6 +31,9 @@ MANIFEST
 *.manifest
 *.spec
 
+# PyCharm
+.idea
+
 # Installer logs
 pip-log.txt
 pip-delete-this-directory.txt
@@ -110,3 +113,8 @@ cache/
 node_modules
 bower_components
 npm-debug.log
+
+# Pytest and Coverall
+test_results.xml
+application.log.json
+app.log.json

@@ -1,167 +1,88 @@
-.DEFAULT_GOAL := help
 SHELL := /bin/bash
-DATE = $(shell date +%Y-%m-%d:%H:%M:%S)
 
-PIP_ACCEL_CACHE ?= ${CURDIR}/cache/pip-accel
-APP_NAME = document-download-frontend
-APP_VERSION_FILE = app/version.py
-
-GIT_BRANCH ?= $(shell git symbolic-ref --short HEAD 2> /dev/null || echo "detached")
-GIT_COMMIT ?= $(shell git rev-parse HEAD 2> /dev/null || echo "")
-
-DOCKER_IMAGE_TAG := $(shell cat docker/VERSION)
-DOCKER_BUILDER_IMAGE_NAME = govuk/${APP_NAME}-builder:${DOCKER_IMAGE_TAG}
-DOCKER_TTY ?= $(if ${JENKINS_HOME},,t)
-
-BUILD_TAG ?= ${APP_NAME}-manual
-BUILD_NUMBER ?= 0
-DEPLOY_BUILD_NUMBER ?= ${BUILD_NUMBER}
-BUILD_URL ?=
-
-DOCKER_CONTAINER_PREFIX = ${USER}-${BUILD_TAG}
+GIT_COMMIT ?= $(shell git rev-parse HEAD)
 
 CF_API ?= api.cloud.service.gov.uk
-CF_ORG ?= govuk-notify
-CF_SPACE ?= ${DEPLOY_ENV}
-CF_HOME ?= ${HOME}
-$(eval export CF_HOME)
-
-CF_MANIFEST_FILE ?= manifest-${CF_SPACE}.yml
 NOTIFY_CREDENTIALS ?= ~/.notify-credentials
+
+CF_APP = document-download-frontend
 
 .PHONY: help
 help:
 	@cat $(MAKEFILE_LIST) | grep -E '^[a-zA-Z_-]+:.*?## .*$$' | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 
-.PHONY: venv
-venv: venv/bin/activate ## Create virtualenv if it does not exist
-
-venv/bin/activate:
-	test -d venv || virtualenv venv -p python3
-	. venv/bin/activate && pip install pip-accel
-
-.PHONY: check-env-vars
-check-env-vars: ## Check mandatory environment variables
-	$(if ${DEPLOY_ENV},,$(error Must specify DEPLOY_ENV))
-	$(if ${DNS_NAME},,$(error Must specify DNS_NAME))
-
-.PHONY: sandbox
-sandbox: ## Set environment to sandbox
-	$(eval export DEPLOY_ENV=sandbox)
-	$(eval export DNS_NAME="cloudapps.digital")
-	@true
-
-.PHONY: preview
-preview: ## Set environment to preview
-	$(eval export DEPLOY_ENV=preview)
-	$(eval export DNS_NAME="notify.works")
-	@true
-
-.PHONY: staging
-staging: ## Set environment to staging
-	$(eval export DEPLOY_ENV=staging)
-	$(eval export DNS_NAME="staging-notify.works")
-	@true
-
-.PHONY: production
-production: ## Set environment to production
-	$(eval export DEPLOY_ENV=production)
-	$(eval export DNS_NAME="notifications.service.gov.uk")
-	@true
-
-.PHONY: dependencies
-dependencies: venv ## Install build dependencies
-	npm set progress=false
-	npm install
-	npm rebuild node-sass
-	mkdir -p ${PIP_ACCEL_CACHE}
-	. venv/bin/activate && PIP_ACCEL_CACHE=${PIP_ACCEL_CACHE} pip-accel install -r requirements_for_test.txt
-
-.PHONY: generate-version-file
-generate-version-file: ## Generates the app version file
-	@echo -e "__travis_commit__ = \"${GIT_COMMIT}\"\n__time__ = \"${DATE}\"\n__travis_job_number__ = \"${BUILD_NUMBER}\"\n__travis_job_url__ = \"${BUILD_URL}\"" > ${APP_VERSION_FILE}
-
-.PHONY: build
-build: dependencies generate-version-file ## Build project
-	npm run build
-	. venv/bin/activate && PIP_ACCEL_CACHE=${PIP_ACCEL_CACHE} pip-accel install -r requirements.txt
-
-.PHONY: build-paas-artifact
-build-paas-artifact: ## Build the deploy artifact for PaaS
-	rm -rf target
-	mkdir -p target
-	zip -y -q -r -x@deploy-exclude.lst target/${APP_NAME}.zip ./
-
-.PHONY: upload-paas-artifact ## Upload the deploy artifact for PaaS
-upload-paas-artifact:
-	$(if ${DEPLOY_BUILD_NUMBER},,$(error Must specify DEPLOY_BUILD_NUMBER))
-	$(if ${JENKINS_S3_BUCKET},,$(error Must specify JENKINS_S3_BUCKET))
-	aws s3 cp --region eu-west-1 --sse AES256 target/${APP_NAME}.zip s3://${JENKINS_S3_BUCKET}/build/${APP_NAME}/${DEPLOY_BUILD_NUMBER}.zip
+.PHONY: run
+run:
+	FLASK_APP=application.py FLASK_DEBUG=1 ENVIRONMENT=development flask run -p 7000
 
 .PHONY: test
-test: venv ## Run tests
-	./scripts/run_tests.sh
+test:
+	py.test --cov=app --cov-report=term-missing tests/
+	if [[ ! -z $$COVERALLS_REPO_TOKEN ]]; then coveralls; fi
 
-.PHONY: coverage
-coverage: venv ## Create coverage report
-	. venv/bin/activate && coveralls
+.PHONY: preview
+preview:
+	$(eval export CF_SPACE=preview)
+	$(eval export DNS_NAME=download.notify.works)
+	cf target -s ${CF_SPACE}
 
-.PHONY: prepare-docker-build-image
-prepare-docker-build-image: ## Prepare the Docker builder image
-	mkdir -p ${PIP_ACCEL_CACHE}
-	make -C docker build
+.PHONY: staging
+staging:
+	$(eval export CF_SPACE=staging)
+	$(eval export DNS_NAME=download.staging-notify.works)
+	cf target -s ${CF_SPACE}
 
-define run_docker_container
-	@docker run -i${DOCKER_TTY} --rm \
-		--name "${DOCKER_CONTAINER_PREFIX}-${1}" \
-		-v "`pwd`:/var/project" \
-		-v "${PIP_ACCEL_CACHE}:/var/project/cache/pip-accel" \
-		-e UID=$(shell id -u) \
-		-e GID=$(shell id -g) \
-		-e GIT_COMMIT=${GIT_COMMIT} \
-		-e BUILD_NUMBER=${BUILD_NUMBER} \
-		-e BUILD_URL=${BUILD_URL} \
-		-e http_proxy="${HTTP_PROXY}" \
-		-e HTTP_PROXY="${HTTP_PROXY}" \
-		-e https_proxy="${HTTPS_PROXY}" \
-		-e HTTPS_PROXY="${HTTPS_PROXY}" \
-		-e NO_PROXY="${NO_PROXY}" \
-		-e COVERALLS_REPO_TOKEN=${COVERALLS_REPO_TOKEN} \
-		-e CIRCLECI=1 \
-		-e CI_NAME=${CI_NAME} \
-		-e CI_BUILD_NUMBER=${BUILD_NUMBER} \
-		-e CI_BUILD_URL=${BUILD_URL} \
-		-e CI_BRANCH=${GIT_BRANCH} \
-		-e CI_PULL_REQUEST=${CI_PULL_REQUEST} \
-		-e CF_API="${CF_API}" \
-		-e CF_USERNAME="${CF_USERNAME}" \
-		-e CF_PASSWORD="${CF_PASSWORD}" \
-		-e CF_ORG="${CF_ORG}" \
-		-e CF_SPACE="${CF_SPACE}" \
-		${DOCKER_BUILDER_IMAGE_NAME} \
-		${2}
-endef
+.PHONY: production
+production:
+	$(eval export CF_SPACE=production)
+	$(eval export DNS_NAME=download.notifications.service.gov.uk)
+	cf target -s ${CF_SPACE}
 
-.PHONY: build-with-docker
-build-with-docker: prepare-docker-build-image ## Build inside a Docker container
-	$(call run_docker_container,build,gosu hostuser make build)
+.PHONY: generate-manifest
+generate-manifest:
+	$(if ${CF_SPACE},,$(error Must specify CF_SPACE))
 
-.PHONY: test-with-docker
-test-with-docker: build-with-docker ## Run tests inside a Docker container
-	$(call run_docker_container,test,gosu hostuser make test)
+	$(if $(shell which gpg2), $(eval export GPG=gpg2), $(eval export GPG=gpg))
+	$(if ${GPG_PASSPHRASE_TXT}, $(eval export DECRYPT_CMD=echo -n $$$${GPG_PASSPHRASE_TXT} | ${GPG} --quiet --batch --passphrase-fd 0 --pinentry-mode loopback -d), $(eval export DECRYPT_CMD=${GPG} --quiet --batch -d))
 
-# FIXME: CIRCLECI=1 is an ugly hack because the coveralls-python library sends the PR link only this way
-.PHONY: coverage-with-docker
-coverage-with-docker: prepare-docker-build-image ## Generates coverage report inside a Docker container
-	$(call run_docker_container,coverage,gosu hostuser make coverage)
+	@jinja2 --strict manifest.yml.j2 \
+	    -D environment=${CF_SPACE} --format=yaml \
+	    <(${DECRYPT_CMD} ${NOTIFY_CREDENTIALS}/credentials/${CF_SPACE}/document-download/paas-environment.gpg) 2>&1
 
-.PHONY: clean-docker-containers
-clean-docker-containers: ## Clean up any remaining docker containers
-	docker rm -f $(shell docker ps -q -f "name=${DOCKER_CONTAINER_PREFIX}") 2> /dev/null || true
+.PHONY: cf-push
+cf-push:
+	$(if ${CF_SPACE},,$(error Must specify CF_SPACE))
+	cf push ${CF_APP}-${CF_SPACE} -f <(make -s generate-manifest)
 
-.PHONY: clean
-clean:
-	rm -rf node_modules cache target venv .coverage
+.PHONY: cf-deploy
+cf-deploy: ## Deploys the app to Cloud Foundry
+	$(if ${CF_SPACE},,$(error Must specify CF_SPACE))
+	@cf app --guid ${CF_APP}-${CF_SPACE} || exit 1
+	cf rename ${CF_APP}-${CF_SPACE} ${CF_APP}-${CF_SPACE}-rollback
+	cf push ${CF_APP}-${CF_SPACE} -f <(make -s generate-manifest)
+	cf scale -i $$(cf curl /v2/apps/$$(cf app --guid ${CF_APP}-${CF_SPACE}-rollback) | jq -r ".entity.instances" 2>/dev/null || echo "1") ${CF_APP}-${CF_SPACE}
+	cf stop ${CF_APP}-${CF_SPACE}-rollback
+	# sleep for 10 seconds to try and make sure that all worker threads (either web api or celery) have finished before we delete
+	sleep 10
+
+	# get the new GUID, and find all crash events for that. If there were any crashes we will abort the deploy.
+	[ $$(cf curl "/v2/events?q=type:app.crash&q=actee:$$(cf app --guid ${CF_APP}-${CF_SPACE})" | jq ".total_results") -eq 0 ]
+	cf delete -f ${CF_APP}-${CF_SPACE}-rollback
+
+.PHONY: cf-rollback
+cf-rollback: ## Rollbacks the app to the previous release
+	$(if ${CF_APP},,$(error Must specify CF_APP))
+	$(if ${CF_SPACE},,$(error Must specify CF_SPACE))
+	@cf app --guid ${CF_APP}-${CF_SPACE}-rollback || exit 1
+	@[ $$(cf curl /v2/apps/`cf app --guid ${CF_APP}-${CF_SPACE}-rollback` | jq -r ".entity.state") = "STARTED" ] || (echo "Error: rollback is not possible because ${CF_APP}-${CF_SPACE}-rollback is not in a started state" && exit 1)
+	cf delete -f ${CF_APP}-${CF_SPACE} || true
+	cf rename ${CF_APP}-${CF_SPACE}-rollback ${CF_APP}-${CF_SPACE}
+
+.PHONY: cf-create-cdn-route
+cf-create-cdn-route:
+	$(if ${CF_SPACE},,$(error Must specify CF_SPACE))
+	$(if ${DNS_NAME},,$(error Must specify DNS_NAME))
+	cf create-service cdn-route cdn-route document-download-cdn-route -c '{"domain": "${DNS_NAME}"}'
 
 .PHONY: cf-login
 cf-login: ## Log in to Cloud Foundry
@@ -171,38 +92,40 @@ cf-login: ## Log in to Cloud Foundry
 	@echo "Logging in to Cloud Foundry on ${CF_API}"
 	@cf login -a "${CF_API}" -u ${CF_USERNAME} -p "${CF_PASSWORD}" -o "${CF_ORG}" -s "${CF_SPACE}"
 
-.PHONY: generate-manifest
-generate-manifest:
-	$(if ${CF_SPACE},,$(error Must specify CF_SPACE))
+.PHONY: docker-build
+docker-build:
+	docker build --pull \
+		--build-arg HTTP_PROXY="${HTTP_PROXY}" \
+		--build-arg HTTPS_PROXY="${HTTP_PROXY}" \
+		--build-arg NO_PROXY="${NO_PROXY}" \
+		-t govuk/${CF_APP}:${GIT_COMMIT} \
+		.
 
-	$(if $(shell which gpg2), $(eval export GPG=gpg2), $(eval export GPG=gpg))
-	$(if ${GPG_PASSPHRASE_TXT}, $(eval export DECRYPT_CMD=echo -n $$$${GPG_PASSPHRASE_TXT} | ${GPG} --quiet --batch --passphrase-fd 0 --pinentry-mode loopback -d), $(eval export DECRYPT_CMD=${GPG} --quiet --batch -d))
+.PHONY: test-with-docker
+test-with-docker: docker-build
+	docker run --rm \
+		-e COVERALLS_REPO_TOKEN=${COVERALLS_REPO_TOKEN} \
+		-e CIRCLECI=1 \
+		-e CI_BUILD_NUMBER=${BUILD_NUMBER} \
+		-e CI_BUILD_URL=${BUILD_URL} \
+		-e CI_NAME=${CI_NAME} \
+		-e CI_BRANCH=${GIT_BRANCH} \
+		-e CI_PULL_REQUEST=${CI_PULL_REQUEST} \
+		-e http_proxy="${http_proxy}" \
+		-e https_proxy="${https_proxy}" \
+		-e NO_PROXY="${NO_PROXY}" \
+		govuk/${CF_APP}:${GIT_COMMIT} \
+		make test
 
-	@./scripts/generate_manifest.py manifest.yml.j2 \
-	    <(${DECRYPT_CMD} ${NOTIFY_CREDENTIALS}/credentials/${CF_SPACE}/document-download/paas-environment.gpg) \
-	    <(echo environment: ${CF_SPACE})
+.PHONY: build-paas-artifact
+build-paas-artifact:  ## Build the deploy artifact for PaaS
+	rm -rf target
+	mkdir -p target
+	git archive -o target/${CF_APP}.zip HEAD
 
-.PHONY: cf-deploy
-cf-deploy: ## Deploys the app to Cloud Foundry
-	$(if ${CF_SPACE},,$(error Must specify CF_SPACE))
-	@cf app --guid ${APP_NAME} || exit 1
-	cf rename ${APP_NAME} ${APP_NAME}-rollback
-	cf push -f <(make -s generate-manifest)
-	cf scale -i $$(cf curl /v2/apps/$$(cf app --guid ${APP_NAME}-rollback) | jq -r ".entity.instances" 2>/dev/null || echo "1") ${APP_NAME}
-	cf stop ${APP_NAME}-rollback
-	cf delete -f ${APP_NAME}-rollback
 
-.PHONY: cf-rollback
-cf-rollback: ## Rollbacks the app to the previous release
-	@cf app --guid ${APP_NAME}-rollback || exit 1
-	@[ $$(cf curl /v2/apps/`cf app --guid ${APP_NAME}-rollback` | jq -r ".entity.state") = "STARTED" ] || (echo "Error: rollback is not possible because ${APP_NAME}-rollback is not in a started state" && exit 1)
-	cf delete -f ${APP_NAME} || true
-	cf rename ${APP_NAME}-rollback ${APP_NAME}
-
-.PHONY: cf-push
-cf-push:
-	cf push -f <(make -s generate-manifest)
-
-.PHONY: cf-target
-cf-target: check-env-vars
-	@cf target -o ${CF_ORG} -s ${CF_SPACE}
+.PHONY: upload-paas-artifact ## Upload the deploy artifact for PaaS
+upload-paas-artifact:
+	$(if ${BUILD_NUMBER},,$(error Must specify BUILD_NUMBER))
+	$(if ${JENKINS_S3_BUCKET},,$(error Must specify JENKINS_S3_BUCKET))
+	aws s3 cp --region eu-west-1 --sse AES256 target/${CF_APP}.zip s3://${JENKINS_S3_BUCKET}/build/${CF_APP}/${BUILD_NUMBER}.zip
