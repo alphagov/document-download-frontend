@@ -16,14 +16,14 @@ from werkzeug.local import LocalProxy
 
 from app.config import configs
 from app.asset_fingerprinter import AssetFingerprinter
-from app.notify_client.service_api_client import ServiceAPIClient
+from app.notify_client.service_api_client import ServiceApiClient
 from app.utils import get_cdn_domain
 
 csrf = CSRFProtect()
 
 statsd_client = StatsdClient()
 asset_fingerprinter = AssetFingerprinter()
-service_api_client = ServiceAPIClient()
+service_api_client = ServiceApiClient()
 
 # The current service attached to the request stack.
 current_service = LocalProxy(partial(_lookup_req_object, 'service'))

@@ -12,9 +12,7 @@ def download_document_landing(service_id, document_id):
         abort(404)
 
     try:
-        print("test")
         service = service_api_client.get_service(service_id)
-        print("test")
     except HTTPError as e:
         abort(e.status_code)
 
