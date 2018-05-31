@@ -21,3 +21,8 @@ def app_(request):
 def client(app_):
     with app_.test_request_context(), app_.test_client() as client:
         yield client
+
+
+@pytest.fixture(scope='function')
+def sample_service():
+    return {'name': 'Sample Service'}

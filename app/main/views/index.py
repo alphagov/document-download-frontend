@@ -1,5 +1,7 @@
 from flask import abort, current_app, render_template, request
+from notifications_python_client.errors import HTTPError
 
+from app import service_api_client
 from app.main import main
 
 
@@ -9,9 +11,16 @@ def download_document_landing(service_id, document_id):
     if not key:
         abort(404)
 
+    try:
+        service = service_api_client.get_service(service_id)
+    except HTTPError as e:
+        abort(e.status_code)
+
     return render_template(
         'views/index.html',
         service_id=service_id,
+        service_name=service['data']['name'],
+        service_contact_link='https://www.google.com',  # to be replaced by the contact URL when populated
         document_id=document_id,
         key=key
     )

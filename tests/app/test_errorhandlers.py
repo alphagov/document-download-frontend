@@ -10,9 +10,10 @@ def test_bad_url_returns_page_not_found(client):
     assert page.h1.string.strip() == 'Page could not be found'
 
 
-def test_csrf_returns_400(client, mocker):
+def test_csrf_returns_400(client, mocker, sample_service):
     # we turn off CSRF handling for tests, so fake a CSRF response here.
     csrf_err = CSRFError('400 Bad Request: The CSRF tokens do not match.')
+    mocker.patch('app.service_api_client.get_service', return_value={'data': sample_service})
     mocker.patch('app.main.views.index.render_template', side_effect=csrf_err)
 
     response = client.get(
