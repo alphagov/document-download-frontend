@@ -1,0 +1,22 @@
+---
+applications:
+- name: document-download-frontend
+
+  instances: 1
+  memory: 512M
+
+  health-check-type: none
+
+  buildpack: python_buildpack
+  command: scripts/run_app_paas.sh gunicorn -c gunicorn_config.py application
+
+  routes:
+    - route: document-download-frontend.cloudapps.digital
+
+  env:
+    NOTIFY_APP_NAME: document-download-frontend
+    FLASK_APP: application.py
+    DOCUMENT_DOWNLOAD_API_HOST_NAME: https://download.notify.works
+    DOCUMENT_DOWNLOAD_ENVIRONMENT: {{ environment }}
+    AWS_ACCESS_KEY_ID: {{ AWS_ACCESS_KEY_ID }}
+    AWS_SECRET_ACCESS_KEY: {{ AWS_SECRET_ACCESS_KEY }}
