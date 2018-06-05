@@ -17,6 +17,7 @@ run:
 
 .PHONY: test
 test:
+	find . -name \*.pyc -delete
 	py.test --cov=app --cov-report=term-missing tests/
 	if [[ ! -z $$COVERALLS_REPO_TOKEN ]]; then coveralls; fi
 

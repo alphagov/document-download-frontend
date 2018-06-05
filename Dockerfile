@@ -5,6 +5,7 @@ ARG HTTPS_PROXY
 ARG NO_PROXY
 
 ENV PYTHONUNBUFFERED=1 \
+	NODEJS_VERSION=6.3.1-1nodesource1~jessie1 \
 	DEBIAN_FRONTEND=noninteractive
 
 RUN \
@@ -17,6 +18,13 @@ RUN \
 		git \
 		build-essential \
 		zip \
+	    rlwrap \
+	&& echo "Clean up" \
+	&& rm -rf /var/lib/apt/lists/* /tmp/* \
+	&& echo "Install nodejs" \
+	&& cd /tmp \
+	&& curl -x "$HTTP_PROXY" -sSLO https://deb.nodesource.com/node_6.x/pool/main/n/nodejs/nodejs_${NODEJS_VERSION}_amd64.deb \
+	&& dpkg -i /tmp/nodejs_${NODEJS_VERSION}_amd64.deb \
 	&& echo "Clean up" \
 	&& rm -rf /var/lib/apt/lists/* /tmp/*
 
@@ -35,3 +43,5 @@ COPY requirements-dev.txt requirements-dev.txt
 RUN pip install --no-cache-dir -r requirements-dev.txt
 
 COPY . .
+
+RUN npm install && npm run build
