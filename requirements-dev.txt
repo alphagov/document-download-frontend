@@ -3,9 +3,12 @@
 pytest==3.4.0
 pytest-mock==1.6.3
 pytest-cov==2.5.1
+pytest-env==0.6.2
 
 requests-mock==1.4.0
 
 coveralls==1.2.0
 
 jinja2-cli[yaml]==0.6.0
+
+bs4==0.0.1
