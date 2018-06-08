@@ -149,7 +149,7 @@ build-with-docker: docker-build
 build-paas-artifact:  ## Build the deploy artifact for PaaS
 	rm -rf target
 	mkdir -p target
-	git archive -o target/${CF_APP}.zip HEAD
+	zip -y -q -r -x@deploy-exclude.lst target/${CF_APP}.zip ./deploy-exclude.lst
 
 
 .PHONY: upload-paas-artifact ## Upload the deploy artifact for PaaS
