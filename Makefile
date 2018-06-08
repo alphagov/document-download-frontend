@@ -18,8 +18,18 @@ run:
 .PHONY: test
 test:
 	find . -name \*.pyc -delete
+	npm install
+	npm run build
 	py.test --cov=app --cov-report=term-missing tests/
 	if [[ ! -z $$COVERALLS_REPO_TOKEN ]]; then coveralls; fi
+
+.PHONY: build
+build:
+	find . -name \*.pyc -delete
+	npm set progress=false
+	npm install
+	npm rebuild node-sass --force
+	npm run build
 
 .PHONY: preview
 preview:
@@ -133,7 +143,7 @@ build-with-docker: docker-build
 		-e https_proxy="${https_proxy}" \
 		-e NO_PROXY="${NO_PROXY}" \
 		govuk/${CF_APP}:${GIT_COMMIT} \
-		npm set progress=false && npm install && npm rebuild node-sass && npm run build
+		make build
 
 .PHONY: build-paas-artifact
 build-paas-artifact:  ## Build the deploy artifact for PaaS
