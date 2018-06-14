@@ -1,5 +1,4 @@
 import os
-import uuid
 from functools import partial
 
 from datetime import timedelta
@@ -9,7 +8,6 @@ from flask import (
     current_app,
 )
 from flask.globals import _lookup_req_object
-from flask_login import LoginManager, AnonymousUserMixin
 from flask_wtf import CSRFProtect
 from flask_wtf.csrf import CSRFError
 
@@ -30,8 +28,6 @@ service_api_client = ServiceApiClient()
 
 # The current service attached to the request stack.
 current_service = LocalProxy(partial(_lookup_req_object, 'service'))
-
-login_manager = LoginManager()
 
 
 def create_app(application):
@@ -60,12 +56,6 @@ def create_app(application):
     register_errorhandlers(application)
 
     service_api_client.init_app(application)
-
-    login_manager.init_app(application)
-    login_manager.login_view = 'main.download_document_landing'
-    login_manager.login_message_category = 'default'
-    login_manager.session_protection = None
-    login_manager.anonymous_user = AnonymousUser
 
 
 def init_app(application):
@@ -131,16 +121,3 @@ def register_errorhandlers(application):  # noqa (C901 too complex)
         if current_app.config.get('DEBUG', None):
             raise error
         return _error_response(500)
-
-
-@login_manager.user_loader
-def load_user(user_id):
-    return None
-
-
-class AnonymousUser(AnonymousUserMixin):
-
-    id = str(uuid.uuid4())
-
-    def get_id(self):
-        return self.id

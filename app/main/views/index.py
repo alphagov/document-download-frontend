@@ -1,5 +1,4 @@
 from flask import abort, current_app, render_template, request, session, url_for
-from flask_login import current_user
 from notifications_python_client.errors import HTTPError
 from werkzeug.utils import redirect
 
@@ -19,7 +18,7 @@ def download_document_landing(service_id, document_id):
         abort(e.status_code)
 
     session.permanent = False
-    session['user_id'] = current_user.get_id()
+    session['document_id'] = document_id
 
     return render_template(
         'views/index.html',
@@ -37,10 +36,10 @@ def download_document_download(service_id, document_id):
     if not key:
         abort(404)
 
-    user_id = session.get('user_id')
+    session_document = session.get('document_id')
 
     # the user hasn't clicked through the landing page - redirect them back there
-    if current_user.get_id() != user_id:
+    if session_document is None or session_document != document_id:
         url = url_for('main.download_document_landing', service_id=service_id, document_id=document_id, key=key)
         return redirect(url)
 
