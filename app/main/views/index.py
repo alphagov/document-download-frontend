@@ -1,5 +1,6 @@
-from flask import abort, current_app, render_template, request
+from flask import abort, current_app, render_template, request, session, url_for
 from notifications_python_client.errors import HTTPError
+from werkzeug.utils import redirect
 
 from app import service_api_client
 from app.main import main
@@ -16,11 +17,14 @@ def download_document_landing(service_id, document_id):
     except HTTPError as e:
         abort(e.status_code)
 
+    session.permanent = False
+    session['document_id'] = document_id
+
     return render_template(
         'views/index.html',
         service_id=service_id,
         service_name=service['data']['name'],
-        service_contact_link='https://www.google.com',  # to be replaced by the contact URL when populated
+        service_contact_link=service['data']['contact_link'],
         document_id=document_id,
         key=key
     )
@@ -31,6 +35,13 @@ def download_document_download(service_id, document_id):
     key = request.args.get('key', None)
     if not key:
         abort(404)
+
+    session_document = session.get('document_id')
+
+    # the user hasn't clicked through the landing page - redirect them back there
+    if session_document is None or session_document != document_id:
+        url = url_for('main.download_document_landing', service_id=service_id, document_id=document_id, key=key)
+        return redirect(url)
 
     download_link = '{}/services/{}/documents/{}?key={}'.format(
         current_app.config['DOCUMENT_DOWNLOAD_API_HOST_NAME'],

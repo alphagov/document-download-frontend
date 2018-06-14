@@ -11,6 +11,7 @@ class Config(object):
 
     CHECK_PROXY_HEADER = False
 
+    SECRET_KEY = os.environ.get('SECRET_KEY')
     DANGEROUS_SALT = os.environ.get('DANGEROUS_SALT')
 
     # Logging

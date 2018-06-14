@@ -1,6 +1,7 @@
 import os
 from functools import partial
 
+from datetime import timedelta
 from flask import (
     render_template,
     make_response,
@@ -43,6 +44,9 @@ def create_app(application):
 
     from app.main import main as main_blueprint
     application.register_blueprint(main_blueprint)
+
+    application.permanent_session_lifetime = timedelta(seconds=5)
+    application.secret_key = application.config['SECRET_KEY']
 
     # from .status import status as status_blueprint
     # application.register_blueprint(status_blueprint)

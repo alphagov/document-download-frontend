@@ -31,5 +31,8 @@ make generate-version-file
 # Install Python development dependencies
 pip3 install -r requirements-dev.txt
 
-npm install && npm run build
+npm set progress=false
+npm install
+npm rebuild node-sass --force
+npm run build
 

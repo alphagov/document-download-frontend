@@ -1,15 +1,27 @@
 from unittest.mock import Mock
 
+import flask
 import pytest
 from bs4 import BeautifulSoup
 from flask import url_for
 from notifications_python_client.errors import HTTPError
 
 
-def test_download_document_404s_if_no_key_in_query_string(client):
+def test_download_document_landing_404s_if_no_key_in_query_string(client):
     response = client.get(
         url_for(
             'main.download_document_landing',
+            service_id='1234',
+            document_id='1234'
+        )
+    )
+    assert response.status_code == 404
+
+
+def test_download_document_download_404s_if_no_key_in_query_string(client):
+    response = client.get(
+        url_for(
+            'main.download_document_download',
             service_id='1234',
             document_id='1234'
         )
@@ -52,6 +64,50 @@ def test_download_document_create_creates_link_for_document(client, mocker, samp
         document_id='1234',
         key='1234'
     )
+
+
+def test_document_download_redirects_not_via_landing(client, mocker, sample_service):
+    mocker.patch('app.service_api_client.get_service', return_value={'data': sample_service})
+
+    response = client.get(
+        url_for(
+            'main.download_document_download',
+            service_id='1234',
+            document_id='1234',
+            key='1234'
+        )
+    )
+
+    assert flask.session.get('document_id') is None
+    assert response.status_code == 302
+
+
+def test_download_document_download(client, mocker, sample_service):
+    mocker.patch('app.service_api_client.get_service', return_value={'data': sample_service})
+
+    landing_response = client.get(
+        url_for(
+            'main.download_document_landing',
+            service_id='service_1234',
+            document_id='document_1234',
+            key='key_1234'
+        )
+    )
+
+    assert flask.session['document_id'] == 'document_1234'
+    assert landing_response.status_code == 200
+
+    download_response = client.get(
+        url_for(
+            'main.download_document_download',
+            service_id='service_1234',
+            document_id='document_1234',
+            key='key_1234'
+        )
+    )
+
+    assert flask.session['document_id'] == 'document_1234'
+    assert download_response.status_code == 200
 
 
 @pytest.mark.parametrize('view', ['post_my_document'])
