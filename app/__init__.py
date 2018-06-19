@@ -1,4 +1,3 @@
-import os
 from functools import partial
 
 from flask import (
@@ -12,6 +11,8 @@ from flask_wtf.csrf import CSRFError
 
 from notifications_utils import logging, request_helper
 from notifications_utils.clients.statsd.statsd_client import StatsdClient
+from notifications_utils.base64_uuid import Base64UUIDConverter
+from notifications_utils.document_download_blueprint import doc_dl_blueprint
 from werkzeug.local import LocalProxy
 
 from app.config import configs
@@ -32,6 +33,7 @@ current_service = LocalProxy(partial(_lookup_req_object, 'service'))
 def create_app(application):
     application.config.from_object(configs[application.env])
 
+    application.url_map.converters['base64_uuid'] = Base64UUIDConverter
 
     init_app(application)
     statsd_client.init_app(application)
@@ -41,6 +43,8 @@ def create_app(application):
 
     from app.main import main as main_blueprint
     application.register_blueprint(main_blueprint)
+    # contains the external mail link
+    application.register_blueprint(doc_dl_blueprint)
 
     # from .status import status as status_blueprint
     # application.register_blueprint(status_blueprint)

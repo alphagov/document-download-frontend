@@ -39,6 +39,13 @@ class Development(Config):
 class Test(Development):
     TESTING = True
 
+    # used during tests as a domain name
+    SERVER_NAME = 'document-download-frontend'
+
+    API_HOST_NAME = 'http://test-notify-api'
+    ADMIN_BASE_URL = 'http://test-notify-admin'
+    DOCUMENT_DOWNLOAD_API_HOST_NAME = 'http://test-doc-download-api'
+
 
 class Preview(Config):
     HTTP_PROTOCOL = 'https'

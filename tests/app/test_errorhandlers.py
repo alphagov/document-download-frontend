@@ -1,3 +1,5 @@
+import uuid
+
 from bs4 import BeautifulSoup
 from flask import url_for
 from flask_wtf.csrf import CSRFError
@@ -18,9 +20,9 @@ def test_csrf_returns_400(client, mocker, sample_service):
 
     response = client.get(
         url_for(
-            'main.download_document_landing',
-            service_id='1234',
-            document_id='1234',
+            'document_download.landing',
+            service_id=uuid.uuid4(),
+            document_id=uuid.uuid4(),
             key='1234'
         )
     )
