@@ -13,7 +13,7 @@ help:
 
 .PHONY: run
 run:
-	FLASK_APP=application.py FLASK_DEBUG=1 ENVIRONMENT=development flask run -p 7001
+	FLASK_APP=application.py FLASK_ENV=development flask run -p 7001
 
 .PHONY: test
 test:

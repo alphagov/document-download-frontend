@@ -30,10 +30,8 @@ current_service = LocalProxy(partial(_lookup_req_object, 'service'))
 
 
 def create_app(application):
+    application.config.from_object(configs[application.env])
 
-    environment = os.environ['DOCUMENT_DOWNLOAD_ENVIRONMENT']
-
-    application.config.from_object(configs[environment])
 
     init_app(application)
     statsd_client.init_app(application)

@@ -33,31 +33,26 @@ class Development(Config):
     ADMIN_CLIENT_SECRET = 'dev-notify-secret-key'
 
     DEBUG = True
-    DOCUMENT_DOWNLOAD_ENVIRONMENT = 'development'
     NOTIFY_LOG_PATH = 'application.log'
 
 
 class Test(Development):
     TESTING = True
-    DOCUMENT_DOWNLOAD_ENVIRONMENT = 'test'
 
 
 class Preview(Config):
     HTTP_PROTOCOL = 'https'
     HEADER_COLOUR = '#F499BE'  # $baby-pink
-    DOCUMENT_DOWNLOAD_ENVIRONMENT = 'preview'
 
 
 class Staging(Config):
     HTTP_PROTOCOL = 'https'
     HEADER_COLOUR = '#6F72AF'  # $mauve
-    DOCUMENT_DOWNLOAD_ENVIRONMENT = 'staging'
 
 
 class Production(Config):
     HEADER_COLOUR = '#005EA5'  # $govuk-blue
     HTTP_PROTOCOL = 'https'
-    DOCUMENT_DOWNLOAD_ENVIRONMENT = 'production'
 
 
 configs = {
