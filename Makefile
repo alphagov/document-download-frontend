@@ -13,7 +13,7 @@ help:
 
 .PHONY: run
 run:
-	FLASK_APP=application.py FLASK_DEBUG=1 ENVIRONMENT=development flask run -p 7000
+	FLASK_APP=application.py FLASK_DEBUG=1 ENVIRONMENT=development flask run -p 7001
 
 .PHONY: test
 test:
@@ -144,6 +144,23 @@ build-with-docker: docker-build
 		-e NO_PROXY="${NO_PROXY}" \
 		govuk/${CF_APP}:${GIT_COMMIT} \
 		make build
+
+.PHONY: run-with-docker
+run-with-docker: docker-build
+		docker run --rm \
+		-v "`pwd`:/var/project" \
+		-e COVERALLS_REPO_TOKEN=${COVERALLS_REPO_TOKEN} \
+		-e CIRCLECI=1 \
+		-e CI_BUILD_NUMBER=${BUILD_NUMBER} \
+		-e CI_BUILD_URL=${BUILD_URL} \
+		-e CI_NAME=${CI_NAME} \
+		-e CI_BRANCH=${GIT_BRANCH} \
+		-e CI_PULL_REQUEST=${CI_PULL_REQUEST} \
+		-e http_proxy="${http_proxy}" \
+		-e https_proxy="${https_proxy}" \
+		-e NO_PROXY="${NO_PROXY}" \
+		govuk/${CF_APP}:${GIT_COMMIT} \
+		make run
 
 .PHONY: build-paas-artifact
 build-paas-artifact:  ## Build the deploy artifact for PaaS

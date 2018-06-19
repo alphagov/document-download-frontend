@@ -11,27 +11,29 @@ class Config(object):
 
     CHECK_PROXY_HEADER = False
 
-    DANGEROUS_SALT = os.environ.get('DANGEROUS_SALT')
-
     # Logging
     DEBUG = False
 
     DOCUMENT_DOWNLOAD_API_HOST_NAME = os.environ.get('DOCUMENT_DOWNLOAD_API_HOST_NAME')
-    DOCUMENT_DOWNLOAD_ENVIRONMENT = 'development'
-    DOCUMENT_DOWNLOAD_LOG_PATH = os.getenv('DOCUMENT_DOWNLOAD_LOG_PATH')
 
     HEADER_COLOUR = '#FFBF47'  # $yellow
     HTTP_PROTOCOL = 'http'
 
     ROUTE_SECRET_KEY_1 = os.environ.get('ROUTE_SECRET_KEY_1', '')
 
-    SHOW_STYLEGUIDE = True
-
+    # needs to refer to notify for utils
     NOTIFY_LOG_PATH = '/home/vcap/logs/app.log'
 
 
 class Development(Config):
+    API_HOST_NAME = 'http://localhost:6011'
+    ADMIN_BASE_URL = 'http://localhost:6012'
+    DOCUMENT_DOWNLOAD_API_HOST_NAME = 'http://localhost:7000'
+
+    ADMIN_CLIENT_SECRET = 'dev-notify-secret-key'
+
     DEBUG = True
+    DOCUMENT_DOWNLOAD_ENVIRONMENT = 'development'
     NOTIFY_LOG_PATH = 'application.log'
 
 
@@ -52,10 +54,10 @@ class Staging(Config):
     DOCUMENT_DOWNLOAD_ENVIRONMENT = 'staging'
 
 
-class Live(Config):
+class Production(Config):
     HEADER_COLOUR = '#005EA5'  # $govuk-blue
     HTTP_PROTOCOL = 'https'
-    DOCUMENT_DOWNLOAD_ENVIRONMENT = 'live'
+    DOCUMENT_DOWNLOAD_ENVIRONMENT = 'production'
 
 
 configs = {
@@ -63,6 +65,5 @@ configs = {
     'test': Test,
     'preview': Preview,
     'staging': Staging,
-    'live': Live,
-    'production': Live,
+    'production': Production,
 }
