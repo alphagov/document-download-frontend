@@ -11,9 +11,9 @@ from flask_wtf.csrf import CSRFError
 
 from notifications_utils import logging, request_helper
 from notifications_utils.clients.statsd.statsd_client import StatsdClient
-from notifications_utils.base64_uuid import Base64UUIDConverter
-from notifications_utils.document_download_blueprint import doc_dl_blueprint
+from notifications_utils.base64_uuid import base64_to_uuid, uuid_to_base64
 from werkzeug.local import LocalProxy
+from werkzeug.routing import BaseConverter, ValidationError
 
 from app.config import configs
 from app.asset_fingerprinter import AssetFingerprinter
@@ -30,6 +30,20 @@ service_api_client = ServiceApiClient()
 current_service = LocalProxy(partial(_lookup_req_object, 'service'))
 
 
+class Base64UUIDConverter(BaseConverter):
+    def to_python(self, value):
+        try:
+            return base64_to_uuid(value)
+        except ValueError:
+            raise ValidationError()
+
+    def to_url(self, value):
+        try:
+            return uuid_to_base64(value)
+        except Exception:
+            raise ValidationError()
+
+
 def create_app(application):
     application.config.from_object(configs[application.env])
 
@@ -43,8 +57,6 @@ def create_app(application):
 
     from app.main import main as main_blueprint
     application.register_blueprint(main_blueprint)
-    # contains the external mail link
-    application.register_blueprint(doc_dl_blueprint)
 
     # from .status import status as status_blueprint
     # application.register_blueprint(status_blueprint)

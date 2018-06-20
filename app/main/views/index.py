@@ -1,12 +1,11 @@
 from flask import abort, current_app, render_template, request
 from notifications_python_client.errors import HTTPError
-from notifications_utils.document_download_blueprint import doc_dl_blueprint
 
 from app import service_api_client
 from app.main import main
 
 
-@doc_dl_blueprint.route('', methods=['GET'])
+@main.route('/d/<base64_uuid:service_id>/<base64_uuid:document_id>', methods=['GET'])
 def landing(service_id, document_id):
     key = request.args.get('key', None)
     if not key:
@@ -27,7 +26,7 @@ def landing(service_id, document_id):
     )
 
 
-@doc_dl_blueprint.route('/download', methods=['GET'])
+@main.route('/d/<base64_uuid:service_id>/<base64_uuid:document_id>/download', methods=['GET'])
 def download_document(service_id, document_id):
     key = request.args.get('key', None)
     if not key:

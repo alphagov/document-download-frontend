@@ -20,7 +20,7 @@ def test_csrf_returns_400(client, mocker, sample_service):
 
     response = client.get(
         url_for(
-            'document_download.landing',
+            'main.landing',
             service_id=uuid.uuid4(),
             document_id=uuid.uuid4(),
             key='1234'
