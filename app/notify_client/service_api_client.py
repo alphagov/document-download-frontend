@@ -9,10 +9,9 @@ class ServiceApiClient:
         self.api_client = None
 
     def init_app(self, application):
-        # get api_key and base_url out of application.config
-        api_key = application.config['ADMIN_CLIENT_USER_NAME'] + '-' + application.config['ADMIN_CLIENT_SECRET']
-        self.api_client = NotificationsAPIClient(base_url=application.config['API_HOST_NAME'],
-                                                 api_key=api_key)
+        self.api_client = NotificationsAPIClient(base_url=application.config['API_HOST_NAME'], api_key='a' * 75)
+        self.api_client.service_id = application.config['ADMIN_CLIENT_USER_NAME']
+        self.api_client.api_key = application.config['ADMIN_CLIENT_SECRET']
 
     def get_service(self, service_id):
         """

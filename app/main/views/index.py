@@ -5,8 +5,8 @@ from app import service_api_client
 from app.main import main
 
 
-@main.route("/services/<service_id>/documents/<document_id>", methods=['GET'])
-def download_document_landing(service_id, document_id):
+@main.route('/d/<base64_uuid:service_id>/<base64_uuid:document_id>', methods=['GET'])
+def landing(service_id, document_id):
     key = request.args.get('key', None)
     if not key:
         abort(404)
@@ -26,8 +26,8 @@ def download_document_landing(service_id, document_id):
     )
 
 
-@main.route("/services/<service_id>/documents/<document_id>/download", methods=['GET'])
-def download_document_download(service_id, document_id):
+@main.route('/d/<base64_uuid:service_id>/<base64_uuid:document_id>/download', methods=['GET'])
+def download_document(service_id, document_id):
     key = request.args.get('key', None)
     if not key:
         abort(404)
