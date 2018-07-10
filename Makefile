@@ -34,19 +34,19 @@ build:
 .PHONY: preview
 preview:
 	$(eval export CF_SPACE=preview)
-	$(eval export DNS_NAME=download.notify.works)
+	$(eval export DNS_NAME=documents.notify.works)
 	cf target -s ${CF_SPACE}
 
 .PHONY: staging
 staging:
 	$(eval export CF_SPACE=staging)
-	$(eval export DNS_NAME=download.staging-notify.works)
+	$(eval export DNS_NAME=documents.staging-notify.works)
 	cf target -s ${CF_SPACE}
 
 .PHONY: production
 production:
 	$(eval export CF_SPACE=production)
-	$(eval export DNS_NAME=download.notifications.service.gov.uk)
+	$(eval export DNS_NAME=documents.service.gov.uk)
 	cf target -s ${CF_SPACE}
 
 .PHONY: generate-manifest
