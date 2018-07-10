@@ -38,6 +38,7 @@ RUN \
 WORKDIR /var/project
 
 COPY requirements.txt requirements.txt
+COPY requirements-app.txt requirements-app.txt
 COPY requirements-dev.txt requirements-dev.txt
 
 RUN pip install --no-cache-dir -r requirements-dev.txt
