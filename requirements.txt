@@ -43,7 +43,7 @@ pyasn1==0.4.3
 PyJWT==1.6.4
 PyPDF2==1.26.0
 python-dateutil==2.7.3
-python-json-logger==0.1.8
+python-json-logger==0.1.9
 pytz==2018.4
 PyYAML==3.12
 redis==2.10.6
