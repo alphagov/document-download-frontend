@@ -43,11 +43,3 @@ def download_document(service_id, document_id):
         'views/download.html',
         download_link=download_link,
     )
-
-
-@main.route("/post-my-document", methods=['GET'])
-def post_my_document():
-
-    return render_template(
-        'views/post-my-document.html',
-    )
