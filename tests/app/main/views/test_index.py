@@ -89,3 +89,23 @@ def test_static_pages(client, view):
     page = BeautifulSoup(response.data.decode('utf-8'), 'html.parser')
 
     assert not page.select_one('meta[name=description]')
+
+
+@pytest.mark.parametrize('view', ['main.landing', 'main.download_document'])
+def test_pages_are_not_indexed(view, client, mocker, sample_service):
+    mocker.patch('app.service_api_client.get_service', return_value={'data': sample_service})
+    service_id = uuid4()
+    document_id = uuid4()
+    key = '1234'
+
+    response = client.get(
+        url_for(
+            view,
+            service_id=service_id,
+            document_id=document_id,
+            key=key
+        )
+    )
+
+    assert response.status_code == 200
+    assert response.headers['X-Robots-Tag'] == 'noindex, nofollow'

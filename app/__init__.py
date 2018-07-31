@@ -82,6 +82,7 @@ def init_app(application):
 
 #  https://www.owasp.org/index.php/List_of_useful_HTTP_headers
 def useful_headers_after_request(response):
+    response.headers.add('X-Robots-Tag', 'noindex, nofollow')
     response.headers.add('X-Frame-Options', 'deny')
     response.headers.add('X-Content-Type-Options', 'nosniff')
     response.headers.add('X-XSS-Protection', '1; mode=block')
