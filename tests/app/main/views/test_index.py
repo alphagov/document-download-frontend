@@ -81,16 +81,6 @@ def test_download_document_creates_link_to_actual_doc_from_api(client, mocker, s
     )
 
 
-@pytest.mark.parametrize('view', ['post_my_document'])
-def test_static_pages(client, view):
-    response = client.get(url_for('main.{}'.format(view)))
-
-    assert response.status_code == 200
-    page = BeautifulSoup(response.data.decode('utf-8'), 'html.parser')
-
-    assert not page.select_one('meta[name=description]')
-
-
 @pytest.mark.parametrize('view', ['main.landing', 'main.download_document'])
 def test_pages_are_not_indexed(view, client, mocker, sample_service):
     mocker.patch('app.service_api_client.get_service', return_value={'data': sample_service})
