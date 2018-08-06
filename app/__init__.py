@@ -104,8 +104,7 @@ def useful_headers_after_request(response):
 
 def register_errorhandlers(application):  # noqa (C901 too complex)
     def _error_response(error_code):
-        resp = make_response(render_template("error/{0}.html".format(error_code)), error_code)
-        return useful_headers_after_request(resp)
+        return make_response(render_template("error/{0}.html".format(error_code)), error_code)
 
     @application.errorhandler(410)
     @application.errorhandler(404)
