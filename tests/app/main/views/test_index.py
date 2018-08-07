@@ -101,8 +101,15 @@ def test_pages_are_not_indexed(view, client, mocker, sample_service):
     assert response.headers['X-Robots-Tag'] == 'noindex, nofollow'
 
 
-def test_landing_page_has_supplier_contact_info(client, mocker, sample_service):
-    mocker.patch('app.service_api_client.get_service', return_value={'data': sample_service})
+@pytest.mark.parametrize('contact_link,type,expected_result', [
+    ('https://sample-service.gov.uk', 'link', 'https://sample-service.gov.uk'),
+    ('info@sample-service.gov.uk', 'email', 'mailto:info@sample-service.gov.uk'),
+    ('07123456789', 'number', 'contact Sample Service at 07123456789'),
+
+])
+def test_landing_page_has_supplier_contact_info(client, mocker, sample_service, contact_link, type, expected_result):
+    service = {'name': 'Sample Service', 'contact_link': contact_link}
+    mocker.patch('app.service_api_client.get_service', return_value={'data': service})
     service_id = uuid4()
     document_id = uuid4()
     response = client.get(
@@ -116,4 +123,7 @@ def test_landing_page_has_supplier_contact_info(client, mocker, sample_service):
 
     assert response.status_code == 200
     page = BeautifulSoup(response.data.decode('utf-8'), 'html.parser')
-    assert page.findAll(attrs={'href': 'https://sample-service.gov.uk'})
+    if type == 'number':
+        assert page.findAll(text=expected_result)
+    else:
+        assert page.findAll(attrs={'href': expected_result})
