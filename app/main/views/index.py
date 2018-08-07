@@ -20,7 +20,7 @@ def landing(service_id, document_id):
         'views/index.html',
         service_id=service_id,
         service_name=service['data']['name'],
-        service_contact_link='https://www.google.com',  # to be replaced by the contact URL when populated
+        service_contact_link=service['data']['contact_link'],  # to be replaced by the contact URL when populated
         document_id=document_id,
         key=key
     )

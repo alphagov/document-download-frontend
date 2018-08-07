@@ -1,5 +1,5 @@
-from uuid import uuid4
 from unittest.mock import Mock
+from uuid import uuid4
 
 import pytest
 from bs4 import BeautifulSoup
@@ -99,3 +99,21 @@ def test_pages_are_not_indexed(view, client, mocker, sample_service):
 
     assert response.status_code == 200
     assert response.headers['X-Robots-Tag'] == 'noindex, nofollow'
+
+
+def test_landing_page_has_supplier_contact_info(client, mocker, sample_service):
+    mocker.patch('app.service_api_client.get_service', return_value={'data': sample_service})
+    service_id = uuid4()
+    document_id = uuid4()
+    response = client.get(
+        url_for(
+            'main.landing',
+            service_id=service_id,
+            document_id=document_id,
+            key='1234'
+        )
+    )
+
+    assert response.status_code == 200
+    page = BeautifulSoup(response.data.decode('utf-8'), 'html.parser')
+    assert page.findAll(attrs={'href': 'https://sample-service.gov.uk'})

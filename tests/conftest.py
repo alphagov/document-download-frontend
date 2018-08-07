@@ -25,4 +25,4 @@ def client(app_):
 
 @pytest.fixture(scope='function')
 def sample_service():
-    return {'name': 'Sample Service'}
+    return {'name': 'Sample Service', 'contact_link': 'https://sample-service.gov.uk'}
