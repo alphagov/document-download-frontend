@@ -17,16 +17,14 @@ def test_get_cdn_domain_on_non_localhost(client, mocker):
 @pytest.mark.parametrize(
     "contact_info,expected_result",
     [
-        ("07123456789", "phone"),
-        ("0300 200 3300", "phone"),
-        ("020 3049 7444", "phone"),
+        ("07123456789", "other"),
         ("pinkdiamond@homeworld.gem", "email"),
         ("pink.diamond@digital.diamond-office.gov.uk", "email"),
         ("https://homeworld.gem/contact-us", "link"),
         ("http://homeworld.gem/contact-us", "link"),
-        ("www.homeworld.gem", "unrecognised"),
-        ("homeworld.gem", "unrecognised"),
-        ("pinkdiamond", "unrecognised")
+        ("www.homeworld.gem", "other"),
+        ("homeworld.gem", "other"),
+        ("pinkdiamond", "other")
     ]
 )
 def test_assess_contact_type_recognises_email_phone_and_link(contact_info, expected_result):

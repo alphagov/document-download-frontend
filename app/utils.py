@@ -16,12 +16,11 @@ def get_cdn_domain():
 
     return "static-logos.{}".format(domain)
 
-def assess_contact_type(service_contact_link):
-    if re.search(email_regex, service_contact_link):
+
+def assess_contact_type(service_contact_info):
+    if re.search(email_regex, service_contact_info):
         return "email"
-    if re.search(r"^(?:(?:\(?(?:0(?:0|11)\)?[\s-]?\(?|\+)44\)?[\s-]?(?:\(?0\)?[\s-]?)?)|(?:\(?0))(?:(?:\d{5}\)?[\s-]?\d{4,5})|(?:\d{4}\)?[\s-]?(?:\d{5}|\d{3}[\s-]?\d{3}))|(?:\d{3}\)?[\s-]?\d{3}[\s-]?\d{3,4})|(?:\d{2}\)?[\s-]?\d{4}[\s-]?\d{4}))(?:[\s-]?(?:x|ext\.?|\#)\d{3,4})?$", service_contact_link):
-        return "phone"
-    if re.search(r"http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+", service_contact_link):
+    if service_contact_info.startswith("http"):
         return "link"
     else:
-        return "unrecognised"
+        return "other"

@@ -17,14 +17,14 @@ def landing(service_id, document_id):
     except HTTPError as e:
         abort(e.status_code)
 
-    service_contact_link = service['data']['contact_link']
-    contact_link_type = assess_contact_type(service_contact_link)
+    service_contact_info = service['data']['contact_link']
+    contact_info_type = assess_contact_type(service_contact_info)
     return render_template(
         'views/index.html',
         service_id=service_id,
         service_name=service['data']['name'],
-        service_contact_link=service_contact_link,
-        contact_link_type=contact_link_type,
+        service_contact_info=service_contact_info,
+        contact_info_type=contact_info_type,
         document_id=document_id,
         key=key
     )

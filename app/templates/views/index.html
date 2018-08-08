@@ -8,7 +8,13 @@
   </p>
   <p>
     If you are unsure if this is a genuine communication,
-    <a href={{ service_contact_link }}> contact {{ service_name }}</a>
+    {% if contact_info_type == "link" %}
+      <a href={{ service_contact_info }}> contact {{ service_name }}</a>
+    {% elif contact_info_type == "email" %}
+      contact {{ service_name }} by emailing <a href={{ "mailto:" + service_contact_info }}>{{service_contact_info}}</a>
+    {% else %}
+      contact {{ service_name }} at {{ service_contact_info }}
+    {% endif %}
     for verification.
   </p>
 {% endblock %}
