@@ -105,7 +105,7 @@ def test_pages_are_not_indexed(view, client, mocker, sample_service):
 @pytest.mark.parametrize('contact_info,type,expected_result', [
     ('https://sample-service.gov.uk', 'link', 'https://sample-service.gov.uk'),
     ('info@sample-service.gov.uk', 'email', 'mailto:info@sample-service.gov.uk'),
-    ('07123456789', 'number', 'contact Sample Service at 07123456789'),
+    ('07123456789', 'number', 'contact Sample Service on 07123456789'),
 
 ])
 def test_landing_page_has_supplier_contact_info(client, mocker, sample_service, contact_info, type, expected_result):
