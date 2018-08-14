@@ -1,7 +1,8 @@
-from uuid import uuid4
 from unittest.mock import Mock
+from uuid import uuid4
 
 import pytest
+import re
 from bs4 import BeautifulSoup
 from flask import url_for
 from notifications_python_client.errors import HTTPError
@@ -99,3 +100,31 @@ def test_pages_are_not_indexed(view, client, mocker, sample_service):
 
     assert response.status_code == 200
     assert response.headers['X-Robots-Tag'] == 'noindex, nofollow'
+
+
+@pytest.mark.parametrize('contact_info,type,expected_result', [
+    ('https://sample-service.gov.uk', 'link', 'https://sample-service.gov.uk'),
+    ('info@sample-service.gov.uk', 'email', 'mailto:info@sample-service.gov.uk'),
+    ('07123456789', 'number', 'contact Sample Service on 07123456789'),
+
+])
+def test_landing_page_has_supplier_contact_info(client, mocker, sample_service, contact_info, type, expected_result):
+    service = {'name': 'Sample Service', 'contact_link': contact_info}
+    mocker.patch('app.service_api_client.get_service', return_value={'data': service})
+    service_id = uuid4()
+    document_id = uuid4()
+    response = client.get(
+        url_for(
+            'main.landing',
+            service_id=service_id,
+            document_id=document_id,
+            key='1234'
+        )
+    )
+
+    assert response.status_code == 200
+    page = BeautifulSoup(response.data.decode('utf-8'), 'html.parser')
+    if type == 'number':
+        assert page.findAll(text=re.compile(expected_result))
+    else:
+        assert page.findAll(attrs={'href': expected_result})

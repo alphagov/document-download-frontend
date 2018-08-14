@@ -3,6 +3,7 @@ from notifications_python_client.errors import HTTPError
 
 from app import service_api_client
 from app.main import main
+from app.utils import assess_contact_type
 
 
 @main.route('/d/<base64_uuid:service_id>/<base64_uuid:document_id>', methods=['GET'])
@@ -16,11 +17,14 @@ def landing(service_id, document_id):
     except HTTPError as e:
         abort(e.status_code)
 
+    service_contact_info = service['data']['contact_link']
+    contact_info_type = assess_contact_type(service_contact_info)
     return render_template(
         'views/index.html',
         service_id=service_id,
         service_name=service['data']['name'],
-        service_contact_link='https://www.google.com',  # to be replaced by the contact URL when populated
+        service_contact_info=service_contact_info,
+        contact_info_type=contact_info_type,
         document_id=document_id,
         key=key
     )

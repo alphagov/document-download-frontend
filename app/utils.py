@@ -1,6 +1,8 @@
 from urllib.parse import urlparse
 
 from flask import current_app
+from notifications_utils.recipients import email_regex
+import re
 
 
 def get_cdn_domain():
@@ -13,3 +15,12 @@ def get_cdn_domain():
     domain = parsed_uri.netloc[len(subdomain + '.'):]
 
     return "static-logos.{}".format(domain)
+
+
+def assess_contact_type(service_contact_info):
+    if re.search(email_regex, service_contact_info):
+        return "email"
+    if service_contact_info.startswith("http"):
+        return "link"
+    else:
+        return "other"
