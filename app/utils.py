@@ -1,7 +1,7 @@
 from urllib.parse import urlparse
 
 from flask import current_app
-from notifications_utils.recipients import email_regex
+from notifications_utils.recipients import EMAIL_REGEX_PATTERN
 import re
 
 
@@ -18,7 +18,7 @@ def get_cdn_domain():
 
 
 def assess_contact_type(service_contact_info):
-    if re.search(email_regex, service_contact_info):
+    if re.search(EMAIL_REGEX_PATTERN, service_contact_info):
         return "email"
     if service_contact_info.startswith("http"):
         return "link"
