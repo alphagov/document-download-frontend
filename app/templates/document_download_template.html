@@ -27,7 +27,9 @@
 {% block content %}
 	<div id="content">
 		<main role="main">
-			{% block fullwidth_content %}{% endblock %}
+			<div class="column-main">
+			{% block main_content %}{% endblock %}
+			</div>
 		</main>
 	</div>
 {% endblock %}
