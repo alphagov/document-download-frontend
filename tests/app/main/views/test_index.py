@@ -50,7 +50,7 @@ def test_landing_page_creates_link_for_document(client, mocker, sample_service):
     assert response.status_code == 200
     page = BeautifulSoup(response.data.decode('utf-8'), 'html.parser')
 
-    assert page.select_one('main a')['href'] == url_for(
+    assert page.find('a', string="Continue")['href'] == url_for(
         'main.download_document',
         service_id=service_id,
         document_id=document_id,
@@ -105,7 +105,7 @@ def test_pages_are_not_indexed(view, client, mocker, sample_service):
 @pytest.mark.parametrize('contact_info,type,expected_result', [
     ('https://sample-service.gov.uk', 'link', 'https://sample-service.gov.uk'),
     ('info@sample-service.gov.uk', 'email', 'mailto:info@sample-service.gov.uk'),
-    ('07123456789', 'number', 'contact Sample Service on 07123456789'),
+    ('07123456789', 'number', 'call 07123456789'),
 
 ])
 def test_landing_page_has_supplier_contact_info(client, mocker, sample_service, contact_info, type, expected_result):
