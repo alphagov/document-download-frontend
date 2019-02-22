@@ -59,6 +59,7 @@ def test_landing_page_creates_link_for_document(client, mocker, sample_service):
 
 
 def test_download_document_creates_link_to_actual_doc_from_api(client, mocker, sample_service):
+    mocker.patch('app.service_api_client.get_service', return_value={'data': sample_service})
     service_id = uuid4()
     document_id = uuid4()
     key = '1234'
@@ -75,11 +76,34 @@ def test_download_document_creates_link_to_actual_doc_from_api(client, mocker, s
     assert response.status_code == 200
     page = BeautifulSoup(response.data.decode('utf-8'), 'html.parser')
 
-    assert page.select_one('main a')['href'] == 'http://test-doc-download-api/services/{}/documents/{}?key={}'.format(
+    assert page.select('main a')[0]['href'] == 'http://test-doc-download-api/services/{}/documents/{}?key={}'.format(
         service_id,
         document_id,
         key
     )
+
+
+def test_download_document_shows_contact_information(client, mocker, sample_service):
+    mocker.patch('app.service_api_client.get_service', return_value={'data': sample_service})
+    service_id = uuid4()
+    document_id = uuid4()
+    key = '1234'
+
+    response = client.get(
+        url_for(
+            'main.download_document',
+            service_id=service_id,
+            document_id=document_id,
+            key=key
+        )
+    )
+
+    assert response.status_code == 200
+    page = BeautifulSoup(response.data.decode('utf-8'), 'html.parser')
+
+    contact_link = page.select('main a')[1]
+    assert contact_link.text.strip() == 'contact Sample Service'
+    assert contact_link['href'] == 'https://sample-service.gov.uk'
 
 
 @pytest.mark.parametrize('view', ['main.landing', 'main.download_document'])
