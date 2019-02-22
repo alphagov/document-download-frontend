@@ -43,7 +43,17 @@ def download_document(service_id, document_id):
         key
     )
 
+    try:
+        service = service_api_client.get_service(service_id)
+    except HTTPError as e:
+        abort(e.status_code)
+
+    service_contact_info = service['data']['contact_link']
+    contact_info_type = assess_contact_type(service_contact_info)
     return render_template(
         'views/download.html',
         download_link=download_link,
+        service_name=service['data']['name'],
+        service_contact_info=service_contact_info,
+        contact_info_type=contact_info_type,
     )
