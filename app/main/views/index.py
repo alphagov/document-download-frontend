@@ -6,6 +6,11 @@ from app.main import main
 from app.utils import assess_contact_type
 
 
+@main.route('/_status')
+def status():
+    return "ok", 200
+
+
 @main.route('/d/<base64_uuid:service_id>/<base64_uuid:document_id>', methods=['GET'])
 def landing(service_id, document_id):
     key = request.args.get('key', None)

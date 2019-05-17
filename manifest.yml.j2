@@ -4,8 +4,6 @@ applications:
 
   memory: 512M
 
-  health-check-type: none
-
   buildpack: python_buildpack
 
   {% set hostname={
@@ -17,6 +15,9 @@ applications:
   routes:
     - route: document-download-frontend-{{ environment }}.cloudapps.digital
     - route: {{ hostname }}
+
+  health-check-type: http
+  health-check-http-endpoint: '/_status'
 
   env:
     ADMIN_BASE_URL: {{ ADMIN_BASE_URL }}
