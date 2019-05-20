@@ -8,6 +8,12 @@ from flask import url_for
 from notifications_python_client.errors import HTTPError
 
 
+def test_status(client):
+    response = client.get(url_for('main.status'))
+    assert response.status_code == 200
+    assert response.get_data(as_text=True) == 'ok'
+
+
 def test_landing_page_404s_if_no_key_in_query_string(client):
     response = client.get(
         url_for(

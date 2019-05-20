@@ -2,13 +2,9 @@
 applications:
 - name: document-download-frontend
 
-  instances: 1
   memory: 512M
 
-  health-check-type: none
-
   buildpack: python_buildpack
-  command: unset GUNICORN_CMD_ARGS; scripts/run_app_paas.sh gunicorn -c gunicorn_config.py application
 
   {% set hostname={
     "preview": "documents.notify.works",
@@ -19,6 +15,9 @@ applications:
   routes:
     - route: document-download-frontend-{{ environment }}.cloudapps.digital
     - route: {{ hostname }}
+
+  health-check-type: http
+  health-check-http-endpoint: '/_status'
 
   env:
     ADMIN_BASE_URL: {{ ADMIN_BASE_URL }}
