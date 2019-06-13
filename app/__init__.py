@@ -1,22 +1,17 @@
 from functools import partial
 
-from flask import (
-    render_template,
-    make_response,
-    current_app,
-)
+from flask import current_app, make_response, render_template
 from flask.globals import _lookup_req_object
 from flask_wtf import CSRFProtect
 from flask_wtf.csrf import CSRFError
-
 from notifications_utils import logging, request_helper
-from notifications_utils.clients.statsd.statsd_client import StatsdClient
 from notifications_utils.base64_uuid import base64_to_uuid, uuid_to_base64
+from notifications_utils.clients.statsd.statsd_client import StatsdClient
 from werkzeug.local import LocalProxy
 from werkzeug.routing import BaseConverter, ValidationError
 
-from app.config import configs
 from app.asset_fingerprinter import AssetFingerprinter
+from app.config import configs
 from app.notify_client.service_api_client import ServiceApiClient
 from app.utils import get_cdn_domain
 

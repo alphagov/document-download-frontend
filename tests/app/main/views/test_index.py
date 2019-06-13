@@ -1,8 +1,8 @@
+import re
 from unittest.mock import Mock
 from uuid import uuid4
 
 import pytest
-import re
 from bs4 import BeautifulSoup
 from flask import url_for
 from notifications_python_client.errors import HTTPError

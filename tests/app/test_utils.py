@@ -1,5 +1,6 @@
-from app.utils import get_cdn_domain, assess_contact_type
 import pytest
+
+from app.utils import assess_contact_type, get_cdn_domain
 
 
 def test_get_cdn_domain_on_localhost(client, mocker):
