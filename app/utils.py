@@ -1,8 +1,8 @@
+import re
 from urllib.parse import urlparse
 
 from flask import current_app
 from notifications_utils.recipients import EMAIL_REGEX_PATTERN
-import re
 
 
 def get_cdn_domain():

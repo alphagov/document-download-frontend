@@ -25,11 +25,7 @@ if [ ! $VIRTUAL_ENV ]; then
   . ./venv/bin/activate
 fi
 
-# we need the version file to exist otherwise the app will blow up
-make generate-version-file
-
 # Install Python development dependencies
 pip3 install -r requirements-dev.txt
 
 npm install && npm run build
-

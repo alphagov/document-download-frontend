@@ -24,6 +24,9 @@ if [[ -z "$VIRTUAL_ENV" ]] && [[ -d venv ]]; then
   source ./venv/bin/activate
 fi
 
+make test-requirements
+display_result $? 1 "Requirements check"
+
 flake8 .
 display_result $? 1 "Code style check"
 
@@ -33,6 +36,5 @@ display_result $? 2 "Import order check"
 npm test
 display_result $? 3 "Front end code style check"
 
-## Code coverage
-py.test -n4 --maxfail=10 --cov=app --cov-report=term-missing tests/ --junitxml=test_results.xml --strict
-display_result $? 4 "Code coverage"
+py.test tests/
+display_result $? 4 "Unit tests"
