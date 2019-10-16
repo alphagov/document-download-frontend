@@ -8,7 +8,7 @@ versions of all nested dependencies. If `requirements-app.txt` has been changed 
 we want to update the unpinned nested dependencies) `requirements.txt` should be
 More testing content!
 regenerated with
-
+blah blah
 ```
 make freeze-requirements
 ```
