@@ -253,5 +253,6 @@ details .arrow {
 }
 
 #global-cookie-message {
+  // sass-lint:disable no-important
   display: none !important;
 }
