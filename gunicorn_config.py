@@ -9,4 +9,4 @@ worker_class = "eventlet"
 worker_connections = 1000
 
 errorlog = "/home/vcap/logs/gunicorn_error.log"
-gunicorn.SERVER_SOFTWARE = ''
+gunicorn.SERVER_SOFTWARE = 'None'
