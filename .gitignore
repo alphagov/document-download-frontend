@@ -50,6 +50,7 @@ venv/
 ENV/
 env.bak/
 venv.bak/
+.envrc
 
 # Frontend dependencies and compiled assets
 app/assets/stylesheets/govuk_template/.sass-cache/
