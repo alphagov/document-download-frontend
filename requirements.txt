@@ -46,7 +46,7 @@ PyPDF2==1.26.0
 python-dateutil==2.8.1
 python-json-logger==0.1.11
 pytz==2018.9
-PyYAML==3.13
+PyYAML==5.1
 redis==3.3.11
 requests==2.22.0
 rsa==3.4.2
