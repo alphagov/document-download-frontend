@@ -21,6 +21,26 @@ applications:
   health-check-type: http
   health-check-http-endpoint: '/_status'
 
+  processes:
+    - type: web
+      command: web: unset GUNICORN_CMD_ARGS; gunicorn -c gunicorn_config.py application
+      health-check-type: process
+      memory: 2G
+
+  services:
+    - logit-ssl-syslog-drain
+
+  sidecars:
+    - name: aws-logs
+      process_types:
+        - web
+      command: >
+        touch /home/vcap/logs/gunicorn_error.log &&
+        touch /home/vcap/logs/app.log.json &&
+        aws configure set plugins.cwlogs cwlogs &&
+        aws logs push --region eu-west-1 --config-file awslogs.conf
+      memory: 64M
+
   env:
     ADMIN_BASE_URL: {{ ADMIN_BASE_URL }}
     ADMIN_CLIENT_SECRET: {{ ADMIN_CLIENT_SECRET }}
