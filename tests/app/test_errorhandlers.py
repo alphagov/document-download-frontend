@@ -9,7 +9,7 @@ def test_bad_url_returns_page_not_found(client):
     response = client.get('/bad_url')
     assert response.status_code == 404
     page = BeautifulSoup(response.data.decode('utf-8'), 'html.parser')
-    assert page.h1.string.strip() == 'Page could not be found'
+    assert page.h1.string.strip() == 'Page not found'
 
 
 def test_csrf_returns_400(client, mocker, sample_service):
@@ -29,4 +29,4 @@ def test_csrf_returns_400(client, mocker, sample_service):
 
     assert response.status_code == 400
     page = BeautifulSoup(response.data.decode('utf-8'), 'html.parser')
-    assert page.h1.string.strip() == 'Something went wrong, please go back and try again.'
+    assert page.h1.string.strip() == 'Page not found'
