@@ -105,6 +105,7 @@ def register_errorhandlers(application):  # noqa (C901 too complex)
     @application.errorhandler(404)
     @application.errorhandler(403)
     @application.errorhandler(401)
+    @application.errorhandler(400)
     def handle_http_error(error):
         return _error_response(error.code)
 
