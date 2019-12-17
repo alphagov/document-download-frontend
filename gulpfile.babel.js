@@ -42,7 +42,7 @@ gulp.task('copy:govuk_template:css', () => gulp.src(paths.template + 'assets/sty
   .pipe(gulp.dest(paths.dist + 'stylesheets/'))
 );
 
-gulp.task('copy:govuk_template:js', () => gulp.src(paths.template + 'assets/javascripts/**/*.js')
+gulp.task('copy:govuk_template:js', () => gulp.src(paths.src + 'javascripts/govuk-template.js')
   .pipe(plugins.uglify())
   .pipe(gulp.dest(paths.dist + 'javascripts/'))
 );
