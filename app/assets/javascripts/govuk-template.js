@@ -1,8 +1,9 @@
 (function() {
-  "use strict"
+  "use strict";
 
   // header navigation toggle
   if (document.querySelectorAll && document.addEventListener){
+    /* jshint ignore:start */
     var els = document.querySelectorAll('.js-header-toggle'),
         i, _i;
     for(i=0,_i=els.length; i<_i; i++){
@@ -26,5 +27,6 @@
         target.setAttribute('aria-hidden', target.getAttribute('aria-hidden') === "false");
       });
     }
+    /* jshint ignore:end */
   }
 }).call(this);
