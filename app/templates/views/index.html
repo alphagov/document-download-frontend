@@ -5,7 +5,7 @@
   <p>{{ service_name or '[SERVICE_NAME]'}} sent you a file to download.
 </p>
   <p>
-    If you're not sure why you've been sent a file, or you have any questions,
+    If you’re not sure why you’ve been sent a file, or you have any questions,
     {% if contact_info_type == "link" %}
       <a href={{ service_contact_info }}> contact {{ service_name }}</a>.
     {% elif contact_info_type == "email" %}
