@@ -22,3 +22,8 @@ $path: '/static/images/';
 @import 'elements/elements-typography';
 @import 'elements/layout';
 @import 'elements/panels';
+
+// TO DO: replace this when adding GOV.UK Frontend
+#global-cookie-message {
+  display: none;
+}

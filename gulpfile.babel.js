@@ -28,6 +28,7 @@ const plugins = loadPlugins(),
 // Move GOV.UK template resources
 
 gulp.task('copy:govuk_template:template', () => gulp.src(paths.template + 'views/layouts/govuk_template.html')
+  .pipe(plugins.replace(/<script src="{{ asset_path }}javascripts\/govuk-template\.js\?\d+\.\d+\.\d+"><\/script>/, ''))
   .pipe(gulp.dest(paths.templates))
 );
 
