@@ -119,71 +119,11 @@ cf-login: ## Log in to Cloud Foundry
 	@echo "Logging in to Cloud Foundry on ${CF_API}"
 	@cf login -a "${CF_API}" -u ${CF_USERNAME} -p "${CF_PASSWORD}" -o "${CF_ORG}" -s "${CF_SPACE}"
 
-.PHONY: docker-build
-docker-build:
-	docker build --pull \
-		--build-arg HTTP_PROXY="${HTTP_PROXY}" \
-		--build-arg HTTPS_PROXY="${HTTP_PROXY}" \
-		--build-arg NO_PROXY="${NO_PROXY}" \
-		-t govuk/${CF_APP}:${GIT_COMMIT} \
-		.
-
-.PHONY: test-with-docker
-test-with-docker: docker-build
-	docker run --rm \
-		-e COVERALLS_REPO_TOKEN=${COVERALLS_REPO_TOKEN} \
-		-e CIRCLECI=1 \
-		-e CI_BUILD_NUMBER=${BUILD_NUMBER} \
-		-e CI_BUILD_URL=${BUILD_URL} \
-		-e CI_NAME=${CI_NAME} \
-		-e CI_BRANCH=${GIT_BRANCH} \
-		-e CI_PULL_REQUEST=${CI_PULL_REQUEST} \
-		-e http_proxy="${http_proxy}" \
-		-e https_proxy="${https_proxy}" \
-		-e NO_PROXY="${NO_PROXY}" \
-		govuk/${CF_APP}:${GIT_COMMIT} \
-		make test
-
-.PHONY: build-with-docker
-build-with-docker: docker-build
-	docker run --rm \
-		-v "`pwd`:/var/project" \
-		-e COVERALLS_REPO_TOKEN=${COVERALLS_REPO_TOKEN} \
-		-e CIRCLECI=1 \
-		-e CI_BUILD_NUMBER=${BUILD_NUMBER} \
-		-e CI_BUILD_URL=${BUILD_URL} \
-		-e CI_NAME=${CI_NAME} \
-		-e CI_BRANCH=${GIT_BRANCH} \
-		-e CI_PULL_REQUEST=${CI_PULL_REQUEST} \
-		-e http_proxy="${http_proxy}" \
-		-e https_proxy="${https_proxy}" \
-		-e NO_PROXY="${NO_PROXY}" \
-		govuk/${CF_APP}:${GIT_COMMIT} \
-		make build
-
-.PHONY: run-with-docker
-run-with-docker: docker-build
-		docker run --rm \
-		-v "`pwd`:/var/project" \
-		-e COVERALLS_REPO_TOKEN=${COVERALLS_REPO_TOKEN} \
-		-e CIRCLECI=1 \
-		-e CI_BUILD_NUMBER=${BUILD_NUMBER} \
-		-e CI_BUILD_URL=${BUILD_URL} \
-		-e CI_NAME=${CI_NAME} \
-		-e CI_BRANCH=${GIT_BRANCH} \
-		-e CI_PULL_REQUEST=${CI_PULL_REQUEST} \
-		-e http_proxy="${http_proxy}" \
-		-e https_proxy="${https_proxy}" \
-		-e NO_PROXY="${NO_PROXY}" \
-		govuk/${CF_APP}:${GIT_COMMIT} \
-		make run
-
 .PHONY: build-paas-artifact
 build-paas-artifact:  ## Build the deploy artifact for PaaS
 	rm -rf target
 	mkdir -p target
 	zip -y -q -r -x@deploy-exclude.lst target/${CF_APP}.zip ./
-
 
 .PHONY: upload-paas-artifact ## Upload the deploy artifact for PaaS
 upload-paas-artifact:
