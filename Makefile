@@ -11,19 +11,12 @@ CF_APP = document-download-frontend
 help:
 	@cat $(MAKEFILE_LIST) | grep -E '^[a-zA-Z_-]+:.*?## .*$$' | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 
-.PHONY: venv
-venv: venv/bin/activate ## Create virtualenv if it does not exist
-
-venv/bin/activate:
-	test -d venv || virtualenv venv -p python3
-	. venv/bin/activate
-
 .PHONY: run
 run:
 	FLASK_APP=application.py FLASK_ENV=development flask run -p 7001
 
 .PHONY: test
-test: venv
+test:
 	find . -name \*.pyc -delete
 	npm install
 	npm run build
