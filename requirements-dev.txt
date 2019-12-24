@@ -10,8 +10,6 @@ pytest-env==0.6.2
 
 requests-mock==1.7.0
 
-coveralls==1.8.2
-
 jinja2-cli[yaml]==0.7.0
 
 beautifulsoup4==4.8.1
