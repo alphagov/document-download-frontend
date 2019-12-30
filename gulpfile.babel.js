@@ -43,53 +43,12 @@ gulp.task('copy:govuk_template:css', () => gulp.src(paths.template + 'assets/sty
   .pipe(gulp.dest(paths.dist + 'stylesheets/'))
 );
 
-gulp.task('copy:govuk_template:js', () => gulp.src(paths.template + 'assets/javascripts/**/*.js')
-  .pipe(plugins.uglify())
-  .pipe(gulp.dest(paths.dist + 'javascripts/'))
-);
-
 gulp.task('copy:govuk_template:images', () => gulp.src(paths.template + 'assets/stylesheets/images/**/*')
   .pipe(gulp.dest(paths.dist + 'images/'))
 );
 
 gulp.task('copy:govuk_template:fonts', () => gulp.src(paths.template + 'assets/stylesheets/fonts/**/*')
   .pipe(gulp.dest(paths.dist + 'fonts/'))
-);
-
-gulp.task('javascripts', () => gulp
-  .src([
-    paths.toolkit + 'javascripts/govuk/modules.js',
-    paths.toolkit + 'javascripts/govuk/stop-scrolling-at-footer.js',
-    paths.toolkit + 'javascripts/govuk/stick-at-top-when-scrolling.js',
-    paths.src + 'javascripts/detailsPolyfill.js',
-    paths.src + 'javascripts/apiKey.js',
-    paths.src + 'javascripts/autofocus.js',
-    paths.src + 'javascripts/highlightTags.js',
-    paths.src + 'javascripts/fileUpload.js',
-    paths.src + 'javascripts/expandCollapse.js',
-    paths.src + 'javascripts/radioSelect.js',
-    paths.src + 'javascripts/updateContent.js',
-    paths.src + 'javascripts/listEntry.js',
-    paths.src + 'javascripts/liveSearch.js',
-    paths.src + 'javascripts/errorTracking.js',
-    paths.src + 'javascripts/preventDuplicateFormSubmissions.js',
-    paths.src + 'javascripts/fullscreenTable.js',
-    paths.src + 'javascripts/main.js'
-  ])
-  .pipe(plugins.prettyerror())
-  .pipe(plugins.babel({
-    presets: ['es2015']
-  }))
-  .pipe(plugins.addSrc.prepend([
-    paths.npm + 'hogan.js/dist/hogan-3.0.2.js',
-    paths.npm + 'jquery/dist/jquery.min.js',
-    paths.npm + 'query-command-supported/dist/queryCommandSupported.min.js',
-    paths.npm + 'diff-dom/diffDOM.js',
-    paths.npm + 'timeago/jquery.timeago.js'
-  ]))
-  .pipe(plugins.uglify())
-  .pipe(plugins.concat('all.js'))
-  .pipe(gulp.dest(paths.dist + 'javascripts/'))
 );
 
 gulp.task('sass', () => gulp
@@ -125,7 +84,6 @@ gulp.task('copy:govuk_template:error_page', () => gulp.src(paths.src + 'error_pa
 
 // Watch for changes and re-run tasks
 gulp.task('watchForChanges', function() {
-  gulp.watch(paths.src + 'javascripts/**/*', ['javascripts']);
   gulp.watch(paths.src + 'stylesheets/**/*', ['sass']);
   gulp.watch(paths.src + 'images/**/*', ['images']);
   gulp.watch('gulpfile.babel.js', ['default']);
@@ -142,15 +100,8 @@ gulp.task('lint:sass', () => gulp
     .pipe(plugins.sassLint.failOnError())
 );
 
-gulp.task('lint:js', () => gulp
-  .src(paths.src + 'javascripts/**/*.js')
-    .pipe(plugins.jshint())
-    .pipe(plugins.jshint.reporter(stylish))
-    .pipe(plugins.jshint.reporter('fail'))
-);
-
 gulp.task('lint',
-  ['lint:sass', 'lint:js']
+  ['lint:sass']
 );
 
 // Default: compile everything
@@ -160,9 +111,7 @@ gulp.task('default',
     'copy:govuk_template:images',
     'copy:govuk_template:fonts',
     'copy:govuk_template:css',
-    'copy:govuk_template:js',
     'copy:govuk_template:error_page',
-    'javascripts',
     'sass',
     'images'
   ]
@@ -172,4 +121,3 @@ gulp.task('default',
 gulp.task('watch',
     ['default', 'watchForChanges']
 );
-
