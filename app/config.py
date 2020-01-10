@@ -26,9 +26,9 @@ class Config(object):
 
 
 class Development(Config):
-    API_HOST_NAME = 'http://localhost:6011'
-    ADMIN_BASE_URL = 'http://localhost:6012'
-    DOCUMENT_DOWNLOAD_API_HOST_NAME = 'http://localhost:7000'
+    API_HOST_NAME = os.environ.get('API_HOST_NAME', 'http://localhost:6011')
+    ADMIN_BASE_URL = os.environ.get('ADMIN_BASE_URL', 'http://localhost:6012')
+    DOCUMENT_DOWNLOAD_API_HOST_NAME = os.environ.get('DOCUMENT_DOWNLOAD_API_HOST_NAME', 'http://localhost:7000')
 
     ADMIN_CLIENT_SECRET = 'dev-notify-secret-key'
 
