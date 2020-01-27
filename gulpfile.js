@@ -6,12 +6,16 @@
 // 1. LIBRARIES
 // - - - - - - - - - - - - - - -
 const { src, pipe, dest, series, parallel } = require('gulp');
-const loadPlugins = require('gulp-load-plugins');
 const stylish = require('jshint-stylish');
 
-const plugins = loadPlugins({
-  'rename': { 'gulp-base64-inline': 'base64' }
-});
+const plugins = {};
+plugins.base64 = require('gulp-base64-inline');
+plugins.cssUrlAdjuster = require('gulp-css-url-adjuster');
+plugins.prettyerror = require('gulp-prettyerror');
+plugins.replace = require('gulp-replace');
+plugins.sass = require('gulp-sass');
+plugins.sassLint = require('gulp-sass-lint');
+
 
 // 2. CONFIGURATION
 // - - - - - - - - - - - - - - -
