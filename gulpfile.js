@@ -94,7 +94,6 @@ const images = () => {
 // Watch for changes and re-run tasks
 const watchForChanges = () => {
   return watch(paths.src + 'stylesheets/**/*', ['sass'])
-    .watch(paths.src + 'images/**/*', ['images']);
 };
 
 const lint = {
@@ -119,18 +118,15 @@ const defaultTask = parallel(
     copy.govuk_template.images,
     copy.govuk_template.fonts,
     copy.govuk_template.css,
-    copy.govuk_template.js,
-    images
-  ),
-  series(
-    copy.govuk_template.error_page,
+    images,
     sass
-  )
+  ),
+  copy.govuk_template.error_page
 );
 
 exports.default = defaultTask;
 
-exports.lint = series(lint.sass, lint.js);
+exports.lint = series(lint.sass);
 
 // Optional: recompile on changes
 exports.watch = series(defaultTask, watchForChanges);
