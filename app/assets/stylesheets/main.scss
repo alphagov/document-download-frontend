@@ -25,6 +25,24 @@ $path: '/static/images/';
 @import 'elements/layout';
 @import 'elements/panels';
 
+// Dependencies from GOV.UK Frontend
+// https://github.com/alphagov/govuk-frontend/tree/v2.13.0
+
+// set asset URL root to match that of application
+$govuk-assets-path: "/static/";
+
+@import "settings/all";
+@import "tools/all";
+@import "helpers/all";
+
+@import "core/all";
+@import "objects/all";
+
+@import 'components/skip-link/skip-link';
+@import 'components/header/header';
+@import 'components/footer/footer';
+@import 'components/button/button';
+
 // TO DO: replace this when adding GOV.UK Frontend
 #global-cookie-message {
   display: none;
