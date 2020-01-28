@@ -54,6 +54,7 @@ venv.bak/
 
 # Frontend dependencies and compiled assets
 app/assets/stylesheets/govuk_template/.sass-cache/
+app/templates/vendor/
 .sass-cache/
 cache/
 node_modules

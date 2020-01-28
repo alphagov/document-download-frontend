@@ -25,7 +25,8 @@ const paths = {
     templates: 'app/templates/',
     npm: 'node_modules/',
     template: 'node_modules/govuk_template_jinja/',
-    toolkit: 'node_modules/govuk_frontend_toolkit/'
+    toolkit: 'node_modules/govuk_frontend_toolkit/',
+    govuk_frontend: 'node_modules/govuk-frontend/govuk/'
 };
 
 // 3. TASKS
@@ -63,6 +64,19 @@ const copy = {
       return src(paths.src + 'error_pages/**/*')
         .pipe(dest(paths.dist + 'error_pages/'))
     }
+  },
+  govuk_frontend: {
+    fonts: () => {
+      return src(paths.govuk_frontend + 'assets/fonts/**/*')
+        .pipe(dest(paths.dist + 'fonts/'));
+    },
+    templates: (cb) => {
+      src(paths.govuk_frontend + '**/*.njk')
+      .pipe(
+        dest(paths.templates + 'vendor/govuk_frontend')
+        .on('end', () => cb())
+      )
+    }
   }
 };
 
@@ -73,7 +87,8 @@ const sass = () => {
       outputStyle: 'compressed',
       includePaths: [
         paths.npm + 'govuk-elements-sass/public/sass/',
-        paths.toolkit + 'stylesheets/'
+        paths.toolkit + 'stylesheets/',
+        paths.govuk_frontend
       ]
     }))
     .pipe(plugins.base64('../..'))
@@ -86,7 +101,8 @@ const images = () => {
   return src([
       paths.src + 'images/**/*',
       paths.toolkit + 'images/**/*',
-      paths.template + 'assets/images/**/*'
+      paths.template + 'assets/images/**/*',
+      paths.govuk_frontend + 'assets/images/**/*'
     ])
     .pipe(dest(paths.dist + 'images/'))
 };
@@ -118,6 +134,8 @@ const defaultTask = parallel(
     copy.govuk_template.images,
     copy.govuk_template.fonts,
     copy.govuk_template.css,
+    copy.govuk_frontend.templates,
+    copy.govuk_frontend.fonts,
     images,
     sass
   ),
