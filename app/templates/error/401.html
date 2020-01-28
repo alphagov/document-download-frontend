@@ -1,16 +1,18 @@
 {% extends "document_download_template.html" %}
-{% block page_title %}Sorry, there’s a problem with the service – GOV.UK{% endblock %}
+{% block pageTitle %}Sorry, there’s a problem with the service – GOV.UK{% endblock %}
 {% block main_content %}
-  <div class="grid-row">
-    <div class="column-two-thirds">
-      <h1 class="heading-large">
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <h1 class="govuk-heading-l">
         Sorry, there’s a problem with this service
       </h1>
-      <p>
-        You cannot download your file at the moment.
-      </p>
-      <p>
-        To report the problem, email <a href="mailto:notify-support@digital.cabinet-office.gov.uk">notify-support@digital.cabinet-office.gov.uk</a>.
-      </p>
+      <div class="govuk-body">
+          <p>
+            You cannot download your file at the moment.
+          </p>
+          <p>
+            To report the problem, email <a href="mailto:notify-support@digital.cabinet-office.gov.uk">notify-support@digital.cabinet-office.gov.uk</a>.
+          </p>
+      </div>
   </div>
 {% endblock %}

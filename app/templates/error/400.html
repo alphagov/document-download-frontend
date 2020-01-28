@@ -1,20 +1,22 @@
 {% extends "document_download_template.html" %}
-{% block page_title %}Page not found – GOV.UK{% endblock %}
+{% block pageTitle %}Page not found – GOV.UK{% endblock %}
 {% block main_content %}
-<div class="grid-row">
-    <div class="column-two-thirds">
-        <h1 class="heading-large">
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <h1 class="govuk-heading-l">
           Page not found
         </h1>
-        <p>
-          If you selected a link in an email, contact the sender to tell them you cannot download your file.
-        </p>
-        <p>
-          If you typed the web address, check it is correct.
-        </p>
-        <p>
-          If you pasted the web address, check you copied the entire address.
-        </p>
+        <div class="govuk-body">
+            <p>
+              If you selected a link in an email, contact the sender to tell them you cannot download your file.
+            </p>
+            <p>
+              If you typed the web address, check it is correct.
+            </p>
+            <p>
+              If you pasted the web address, check you copied the entire address.
+            </p>
+        </div>
     </div>
 </div>
 {% endblock %}
