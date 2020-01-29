@@ -18,7 +18,6 @@
     "govuk-frontend": "3.5.0",
     "gulp": "4.0.0",
     "gulp-add-src": "1.0.0",
-    "gulp-base64-inline": "1.0.6",
     "gulp-better-rollup": "4.0.1",
     "gulp-concat": "2.6.1",
     "gulp-css-url-adjuster": "0.2.3",
