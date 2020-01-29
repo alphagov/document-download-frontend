@@ -24,47 +24,15 @@ const paths = {
     dist: 'app/static/',
     templates: 'app/templates/',
     npm: 'node_modules/',
-    template: 'node_modules/govuk_template_jinja/',
-    toolkit: 'node_modules/govuk_frontend_toolkit/',
     govuk_frontend: 'node_modules/govuk-frontend/govuk/'
 };
 
 // 3. TASKS
 // - - - - - - - - - - - - - - -
 
-// Move GOV.UK template resources
+// Move GOV.UK Frontend resources
 
 const copy = {
-  govuk_template: {
-    template: () => {
-      return src(paths.template + 'views/layouts/govuk_template.html')
-        .pipe(plugins.replace(/<script src="{{ asset_path }}javascripts\/govuk-template\.js\?\d+\.\d+\.\d+"><\/script>/, ''))
-        .pipe(dest(paths.templates));
-    },
-    css: () => {
-      return src(paths.template + 'assets/stylesheets/**/*.css')
-        .pipe(plugins.sass({
-          outputStyle: 'compressed'
-        }))
-        .on('error', plugins.sass.logError)
-        .pipe(plugins.cssUrlAdjuster({
-          prependRelative: '/static/',
-        }))
-        .pipe(dest(paths.dist + 'stylesheets/'));
-    },
-    images: () => {
-      return src(paths.template + 'assets/stylesheets/images/**/*')
-        .pipe(dest(paths.dist + 'images/'));
-    },
-    fonts: () => {
-      return src(paths.template + 'assets/stylesheets/fonts/**/*')
-        .pipe(dest(paths.dist + 'fonts/'));
-    },
-    error_page: () => {
-      return src(paths.src + 'error_pages/**/*')
-        .pipe(dest(paths.dist + 'error_pages/'))
-    }
-  },
   govuk_frontend: {
     fonts: () => {
       return src(paths.govuk_frontend + 'assets/fonts/**/*')
@@ -86,8 +54,6 @@ const sass = () => {
     .pipe(plugins.sass({
       outputStyle: 'compressed',
       includePaths: [
-        paths.npm + 'govuk-elements-sass/public/sass/',
-        paths.toolkit + 'stylesheets/',
         paths.govuk_frontend
       ]
     }))
@@ -100,8 +66,6 @@ const sass = () => {
 const images = () => {
   return src([
       paths.src + 'images/**/*',
-      paths.toolkit + 'images/**/*',
-      paths.template + 'assets/images/**/*',
       paths.govuk_frontend + 'assets/images/**/*'
     ])
     .pipe(dest(paths.dist + 'images/'))
@@ -128,18 +92,11 @@ const lint = {
 };
 
 // Default: compile everything
-const defaultTask = parallel(
-  series(
-    copy.govuk_template.template,
-    copy.govuk_template.images,
-    copy.govuk_template.fonts,
-    copy.govuk_template.css,
-    copy.govuk_frontend.templates,
-    copy.govuk_frontend.fonts,
-    images,
-    sass
-  ),
-  copy.govuk_template.error_page
+const defaultTask = series(
+  copy.govuk_frontend.templates,
+  copy.govuk_frontend.fonts,
+  images,
+  sass
 );
 
 exports.default = defaultTask;

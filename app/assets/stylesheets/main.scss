@@ -1,35 +1,8 @@
-// Path to assets for use with file-url()
-$path: '/static/images/';
-
-// Dependencies from GOV.UK Frontend Toolkit
-// https://github.com/alphagov/govuk_frontend_toolkit/
-@import 'conditionals';
-@import 'shims';
-@import 'measurements';
-@import 'css3';
-@import 'colours';
-@import 'typography';
-@import 'grid_layout';
-@import 'helpers';
-@import 'design-patterns/buttons';
-
-// Dependencies from GOVU.UK Frontend Toolkit, rewritten for this application
-@import 'url-helpers';
-
-// Dependencies from GOV.UK Elements
-// https://github.com/alphagov/govuk_elements
-@import 'elements/helpers';
-@import 'elements/reset';
-@import 'elements/buttons';
-@import 'elements/elements-typography';
-@import 'elements/layout';
-@import 'elements/panels';
+// set asset URL root to match that of application
+$govuk-assets-path: "/static/";
 
 // Dependencies from GOV.UK Frontend
 // https://github.com/alphagov/govuk-frontend/tree/v2.13.0
-
-// set asset URL root to match that of application
-$govuk-assets-path: "/static/";
 
 @import "settings/all";
 @import "tools/all";
