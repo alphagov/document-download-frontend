@@ -30,4 +30,9 @@
   </div>
 {% endblock %}
 
+{% block bodyEnd %}
+  <!--[if gt IE 8]><!-->
+  <script type="text/javascript" src="{{ asset_url('javascripts/main.js') }}"></script>
+  <!--<![endif]-->
+{% endblock %}
 

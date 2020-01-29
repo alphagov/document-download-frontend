@@ -6,15 +6,22 @@
 // 1. LIBRARIES
 // - - - - - - - - - - - - - - -
 const { src, pipe, dest, series, parallel } = require('gulp');
+const rollupPluginCommonjs = require('@rollup/plugin-commonjs');
+const rollupPluginNodeResolve = require('@rollup/plugin-node-resolve');
 const stylish = require('jshint-stylish');
 
 const plugins = {};
+plugins.addSrc = require('gulp-add-src');
 plugins.base64 = require('gulp-base64-inline');
+plugins.concat = require('gulp-concat');
 plugins.cssUrlAdjuster = require('gulp-css-url-adjuster');
+plugins.jshint = require('gulp-jshint');
 plugins.prettyerror = require('gulp-prettyerror');
 plugins.replace = require('gulp-replace');
+plugins.rollup = require('gulp-better-rollup');
 plugins.sass = require('gulp-sass');
 plugins.sassLint = require('gulp-sass-lint');
+plugins.uglify = require('gulp-uglify');
 
 
 // 2. CONFIGURATION
@@ -47,6 +54,41 @@ const copy = {
     }
   }
 };
+
+
+const javascripts = () => {
+  // JS from third-party sources
+  // We assume none of it will need to pass through Babel
+  return src(paths.src + 'javascripts/modules/all.mjs')
+    // Use Rollup to combine all JS in JS module format into a Immediately Invoked Function
+    // Expression (IIFE) to:
+    // - deliver it in one bundle
+    // - allow it to run in browsers without support for JS Modules
+    .pipe(plugins.rollup(
+      {
+        plugins: [
+          // determine module entry points from either 'module' or 'main' fields in package.json
+          rollupPluginNodeResolve({
+            mainFields: ['module', 'main']
+          }),
+          // gulp rollup runs on nodeJS so reads modules in commonJS format
+          // this adds node_modules to the require path so it can find the GOVUK Frontend modules
+          rollupPluginCommonjs({
+            include: 'node_modules/**'
+          })
+        ]
+      },
+      {
+        format: 'iife',
+        name: 'GOVUK'
+      }
+    ))
+    .pipe(plugins.addSrc.append(paths.src + 'javascripts/main.js'))
+    .pipe(plugins.uglify())
+    .pipe(plugins.concat('main.js'))
+    .pipe(dest(paths.dist + 'javascripts/'))
+};
+
 
 const sass = () => {
   return src(paths.src + '/stylesheets/main*.scss')
@@ -88,20 +130,31 @@ const lint = {
         'options': { 'formatter': stylish }
       }))
       .pipe(plugins.sassLint.failOnError());
-  }
+  },
+  'js': (cb) => {
+    return src(
+        paths.src + 'javascripts/**/*.js'
+      )
+      .pipe(plugins.jshint())
+      .pipe(plugins.jshint.reporter(stylish))
+      .pipe(plugins.jshint.reporter('fail'))
+  } 
 };
 
 // Default: compile everything
-const defaultTask = series(
-  copy.govuk_frontend.templates,
-  copy.govuk_frontend.fonts,
-  images,
-  sass
+const defaultTask = parallel(
+  series(
+    copy.govuk_frontend.templates,
+    copy.govuk_frontend.fonts,
+    images,
+    sass
+  ),
+  javascripts
 );
 
 exports.default = defaultTask;
 
-exports.lint = series(lint.sass);
+exports.lint = series(lint.sass, lint.js);
 
 // Optional: recompile on changes
 exports.watch = series(defaultTask, watchForChanges);
