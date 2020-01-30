@@ -6,6 +6,8 @@
 // 1. LIBRARIES
 // - - - - - - - - - - - - - - -
 const { src, pipe, dest, series, parallel } = require('gulp');
+const oldie = require('oldie');
+const postcss = require('gulp-postcss');
 const rollupPluginCommonjs = require('@rollup/plugin-commonjs');
 const rollupPluginNodeResolve = require('@rollup/plugin-node-resolve');
 const stylish = require('jshint-stylish');
@@ -51,6 +53,10 @@ const copy = {
         .on('end', () => cb())
       )
     }
+  },
+  js: () => {
+    return src(paths.src + 'javascripts/html5shiv.min.js')
+      .pipe(dest(paths.dist + 'javascripts/'));
   }
 };
 
@@ -90,7 +96,7 @@ const javascripts = () => {
 
 
 const sass = () => {
-  return src(paths.src + '/stylesheets/main*.scss')
+  return src(paths.src + '/stylesheets/main.scss')
     .pipe(plugins.prettyerror())
     .pipe(plugins.sass({
       outputStyle: 'compressed',
@@ -100,6 +106,21 @@ const sass = () => {
     }))
     .pipe(dest(paths.dist + 'stylesheets/'))
 };
+
+
+const ieSass = () => {
+  return src(paths.src + '/stylesheets/main-ie*.scss')
+    .pipe(plugins.prettyerror())
+    .pipe(plugins.sass({
+      outputStyle: 'compressed',
+      includePaths: [
+        paths.govuk_frontend
+      ]
+    }))
+    .pipe(postcss(oldie))
+    .pipe(dest(paths.dist + 'stylesheets/'))
+};
+
 
 // Copy images
 
@@ -130,9 +151,10 @@ const lint = {
       .pipe(plugins.sassLint.failOnError());
   },
   'js': (cb) => {
-    return src(
-        paths.src + 'javascripts/**/*.js'
-      )
+    return src([
+        paths.src + 'javascripts/**/*.js',
+        '!' + paths.src + 'javascripts/**/html5shiv.min.js'
+      ])
       .pipe(plugins.jshint())
       .pipe(plugins.jshint.reporter(stylish))
       .pipe(plugins.jshint.reporter('fail'))
@@ -142,10 +164,16 @@ const lint = {
 // Default: compile everything
 const defaultTask = parallel(
   series(
-    copy.govuk_frontend.templates,
-    copy.govuk_frontend.fonts,
-    images,
-    sass
+    parallel(
+      copy.govuk_frontend.templates,
+      copy.govuk_frontend.fonts,
+      copy.js,
+      images
+    ),
+    parallel(
+      sass,
+      ieSass
+    )
   ),
   javascripts
 );
