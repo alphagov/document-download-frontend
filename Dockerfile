@@ -5,7 +5,7 @@ ARG HTTPS_PROXY
 ARG NO_PROXY
 
 ENV PYTHONUNBUFFERED=1 \
-	NODEJS_VERSION=6.3.1-1nodesource1~jessie1 \
+	NODEJS_VERSION=12.x \
 	DEBIAN_FRONTEND=noninteractive
 
 RUN \
@@ -23,8 +23,9 @@ RUN \
 	&& rm -rf /var/lib/apt/lists/* /tmp/* \
 	&& echo "Install nodejs" \
 	&& cd /tmp \
-	&& curl -x "$HTTP_PROXY" -sSLO https://deb.nodesource.com/node_6.x/pool/main/n/nodejs/nodejs_${NODEJS_VERSION}_amd64.deb \
-	&& dpkg -i /tmp/nodejs_${NODEJS_VERSION}_amd64.deb \
+	&& curl -x "$HTTP_PROXY" -sL https://deb.nodesource.com/setup_${NODEJS_VERSION} | bash - \
+	&& apt-get install -y --no-install-recommends nodejs \
+
 	&& echo "Clean up" \
 	&& rm -rf /var/lib/apt/lists/* /tmp/*
 
