@@ -8,7 +8,7 @@
 // For example, `export { Frontend }` will assign `Frontend` to `window.Frontend`
 import Button from 'govuk-frontend/govuk/components/button/button';
 
-// Copy of the initAll function from https://github.com/alphagov/govuk-frontend/blob/v2.13.0/src/all.js
+// Copy of the initAll function from https://github.com/alphagov/govuk-frontend/blob/v3.5.0/src/govuk/all.js
 // except it only includes, and initialises, the components used by this application.
 function initAll (options) {
   // Set the options to an empty object by default if no options are passed.

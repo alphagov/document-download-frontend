@@ -1,8 +1,12 @@
+// Version of node_modules/govuk-frontend/components/all.scss specific to Document Download
+// Included to allow us to only include the components we need
+// All imports come from node_modules/govuk-frontend
+
 // set asset URL root to match that of application
 $govuk-assets-path: "/static/";
 
 // Dependencies from GOV.UK Frontend
-// https://github.com/alphagov/govuk-frontend/tree/v2.13.0
+// https://github.com/alphagov/govuk-frontend
 
 @import "settings/all";
 @import "tools/all";
