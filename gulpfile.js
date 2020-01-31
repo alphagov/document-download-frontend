@@ -64,7 +64,7 @@ const copy = {
 const javascripts = () => {
   // JS from third-party sources
   // We assume none of it will need to pass through Babel
-  return src(paths.src + 'javascripts/modules/all.mjs')
+  return src(paths.src + 'javascripts/main.mjs')
     // Use Rollup to combine all JS in JS module format into a Immediately Invoked Function
     // Expression (IIFE) to:
     // - deliver it in one bundle
@@ -84,13 +84,12 @@ const javascripts = () => {
         ]
       },
       {
+        file: 'main.js',
         format: 'iife',
         name: 'GOVUK'
       }
     ))
-    .pipe(plugins.addSrc.append(paths.src + 'javascripts/main.js'))
     .pipe(plugins.uglify())
-    .pipe(plugins.concat('main.js'))
     .pipe(dest(paths.dist + 'javascripts/'))
 };
 
