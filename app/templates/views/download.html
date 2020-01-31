@@ -5,30 +5,26 @@
 {% endblock %}
 
 {% block main_content %}
-  <h1 class="govuk-heading-l">Download your file</h1>
+  <p>
+    Save your file somewhere you can find it. You may need to print it or show it to someone later.
+  </p>
 
-  <div class="govuk-body">
-    <p>
-      Save your file somewhere you can find it. You may need to print it or show it to someone later.
-    </p>
+  <p>
+    Check the email that {{ service_name or '[SERVICE_NAME]'}} sent you for more information.
+  </p>
 
-    <p>
-      Check the email that {{ service_name or '[SERVICE_NAME]'}} sent you for more information.
-    </p>
+  <p>
+    <a href="{{download_link}}" download class="govuk-link">Download this file to your device</a>
+  </p>
 
-    <p>
-      <a href="{{download_link}}" download class="govuk-link">Download this file to your device</a>
-    </p>
-
-    <p>
-      If you have any questions,
-      {% if contact_info_type == "link" %}
-        <a href={{ service_contact_info }} class="govuk-link"> contact {{ service_name }}</a>.
-      {% elif contact_info_type == "email" %}
-        email <a href={{ "mailto:" + service_contact_info }} class="govuk-link">{{service_contact_info}}</a>.
-      {% else %}
-        call {{ service_contact_info }}.
-      {% endif %}
-    </p>
-  </div>
+  <p>
+    If you have any questions,
+    {% if contact_info_type == "link" %}
+      <a href={{ service_contact_info }} class="govuk-link"> contact {{ service_name }}</a>.
+    {% elif contact_info_type == "email" %}
+      email <a href={{ "mailto:" + service_contact_info }} class="govuk-link">{{service_contact_info}}</a>.
+    {% else %}
+      call {{ service_contact_info }}.
+    {% endif %}
+  </p>
 {% endblock %}
