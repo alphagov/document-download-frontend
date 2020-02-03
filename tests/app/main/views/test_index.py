@@ -7,6 +7,8 @@ from bs4 import BeautifulSoup
 from flask import url_for
 from notifications_python_client.errors import HTTPError
 
+from tests import normalize_spaces
+
 
 def test_status(client):
     response = client.get(url_for('main.status'))
@@ -22,7 +24,10 @@ def test_landing_page_404s_if_no_key_in_query_string(client):
             document_id=uuid4()
         )
     )
+    page = BeautifulSoup(response.data.decode('utf-8'), 'html.parser')
     assert response.status_code == 404
+    assert normalize_spaces(page.title.text) == 'Page not found – GOV.UK'
+    assert normalize_spaces(page.h1.text) == 'Page not found'
 
 
 def test_landing_page_notifications_api_error(client, mocker, sample_service):
@@ -55,7 +60,8 @@ def test_landing_page_creates_link_for_document(client, mocker, sample_service):
 
     assert response.status_code == 200
     page = BeautifulSoup(response.data.decode('utf-8'), 'html.parser')
-
+    assert normalize_spaces(page.title.text) == 'You have a file to download – GOV.UK'
+    assert normalize_spaces(page.h1.text) == 'You have a file to download'
     assert page.find('a', string=re.compile("Continue"))['href'] == url_for(
         'main.download_document',
         service_id=service_id,
@@ -81,7 +87,8 @@ def test_download_document_creates_link_to_actual_doc_from_api(client, mocker, s
 
     assert response.status_code == 200
     page = BeautifulSoup(response.data.decode('utf-8'), 'html.parser')
-
+    assert normalize_spaces(page.title.text) == 'Download your file – GOV.UK'
+    assert normalize_spaces(page.h1.text) == 'Download your file'
     assert page.select('main a')[0]['href'] == 'http://test-doc-download-api/services/{}/documents/{}?key={}'.format(
         service_id,
         document_id,

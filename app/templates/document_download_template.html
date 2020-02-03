@@ -26,8 +26,12 @@
   {% endblock %}
 {% endblock %}
 
+{% set _per_page_title %}
+  {% block per_page_title %}Document Download{% endblock %}
+{% endset %}
+
 {% block pageTitle %}
-   GOV.UK - Document download
+  {{ _per_page_title }} – GOV.UK
 {% endblock %}
 
 {% block header %}
@@ -39,6 +43,7 @@
 {% block content %}
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
+      <h1 class="govuk-heading-l">{{ _per_page_title }}</h1>
       {% block main_content %}{% endblock %}
     </div>
   </div>
@@ -49,4 +54,3 @@
   <script type="text/javascript" src="{{ asset_url('javascripts/main.js') }}"></script>
   <!--<![endif]-->
 {% endblock %}
-
