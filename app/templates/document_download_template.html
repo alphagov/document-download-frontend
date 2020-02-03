@@ -1,39 +1,52 @@
-{% extends "govuk_template.html" %}
+{% extends "template.njk" %}
+
+{% block headIcons %}
+  <link rel="shortcut icon" sizes="16x16 32x32 48x48" href="{{ asset_url('images/favicon.ico') }}" type="image/x-icon" />
+  <link rel="mask-icon" href="{{ asset_url('images/govuk-mask-icon.svg') }}" color="{{ themeColor | default('#0b0c0c') }}"> {# Hardcoded value of $govuk-black #}
+  <link rel="apple-touch-icon" sizes="180x180" href="{{ asset_url('images/govuk-apple-touch-icon-180x180.png') }}">
+  <link rel="apple-touch-icon" sizes="167x167" href="{{ asset_url('images/govuk-apple-touch-icon-167x167.png') }}">
+  <link rel="apple-touch-icon" sizes="152x152" href="{{ asset_url('images/govuk-apple-touch-icon-152x152.png') }}">
+  <link rel="apple-touch-icon" href="{{ asset_url('images/govuk-apple-touch-icon.png') }}">
+{% endblock %}
 
 {% block head %}
-  <!--[if gt IE 8]><!-->
-  <link rel="stylesheet" media="screen" href="{{ asset_url('stylesheets/main.css') }}" />
+  <!--[if !IE 8]><!-->
+    <link rel="stylesheet" media="screen" href="{{ asset_url('stylesheets/main.css') }}" />
   <!--<![endif]-->
-  <style>
-      #global-header-bar { background-color: {{header_colour}} }
-  </style>
-  <!--[if IE 6]>
-  <link rel="stylesheet" media="screen" href="{{ asset_url('stylesheets/main-ie6.css') }}" />
-  <![endif]-->
-  <!--[if IE 7]>
-  <link rel="stylesheet" media="screen" href="{{ asset_url('stylesheets/main-ie7.css') }}" />
-  <![endif]-->
   <!--[if IE 8]>
-  <link rel="stylesheet" media="screen" href="{{ asset_url('stylesheets/main-ie8.css') }}" />
+    <link rel="stylesheet" media="screen" href="{{ asset_url('stylesheets/main-ie8.css') }}">
+  <![endif]-->
+  <style>
+      .govuk-header__container { border-bottom-color: {{header_colour}} }
+  </style>
+  <!--[if lt IE 9]>
+    <script src="{{ asset_url('javascripts/html5shiv.min.js') }}"></script>
   <![endif]-->
   {% block meta %}
   {% endblock %}
 {% endblock %}
 
-{% block page_title %}
-	GOV.UK - Document download
+{% block pageTitle %}
+   GOV.UK - Document download
+{% endblock %}
+
+{% block header %}
+  {{ govukHeader({
+    "assetsPath": "/static/images/"
+  }) }}
 {% endblock %}
 
 {% block content %}
-	<div id="content">
-		<main role="main">
-			<div class="grid-row">
-				<div class="column-two-thirds">
-					{% block main_content %}{% endblock %}
-				</div>
-			</div>
-		</main>
-	</div>
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      {% block main_content %}{% endblock %}
+    </div>
+  </div>
 {% endblock %}
 
+{% block bodyEnd %}
+  <!--[if gt IE 8]><!-->
+  <script type="text/javascript" src="{{ asset_url('javascripts/main.js') }}"></script>
+  <!--<![endif]-->
+{% endblock %}
 

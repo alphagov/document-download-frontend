@@ -6,15 +6,23 @@
 // 1. LIBRARIES
 // - - - - - - - - - - - - - - -
 const { src, pipe, dest, series, parallel } = require('gulp');
+const oldie = require('oldie');
+const postcss = require('gulp-postcss');
+const rollupPluginCommonjs = require('@rollup/plugin-commonjs');
+const rollupPluginNodeResolve = require('@rollup/plugin-node-resolve');
 const stylish = require('jshint-stylish');
 
 const plugins = {};
-plugins.base64 = require('gulp-base64-inline');
+plugins.addSrc = require('gulp-add-src');
+plugins.concat = require('gulp-concat');
 plugins.cssUrlAdjuster = require('gulp-css-url-adjuster');
+plugins.jshint = require('gulp-jshint');
 plugins.prettyerror = require('gulp-prettyerror');
 plugins.replace = require('gulp-replace');
+plugins.rollup = require('gulp-better-rollup');
 plugins.sass = require('gulp-sass');
 plugins.sassLint = require('gulp-sass-lint');
+plugins.uglify = require('gulp-uglify');
 
 
 // 2. CONFIGURATION
@@ -24,69 +32,101 @@ const paths = {
     dist: 'app/static/',
     templates: 'app/templates/',
     npm: 'node_modules/',
-    template: 'node_modules/govuk_template_jinja/',
-    toolkit: 'node_modules/govuk_frontend_toolkit/'
+    govuk_frontend: 'node_modules/govuk-frontend/govuk/'
 };
 
 // 3. TASKS
 // - - - - - - - - - - - - - - -
 
-// Move GOV.UK template resources
+// Move GOV.UK Frontend resources
 
 const copy = {
-  govuk_template: {
-    template: () => {
-      return src(paths.template + 'views/layouts/govuk_template.html')
-        .pipe(plugins.replace(/<script src="{{ asset_path }}javascripts\/govuk-template\.js\?\d+\.\d+\.\d+"><\/script>/, ''))
-        .pipe(dest(paths.templates));
-    },
-    css: () => {
-      return src(paths.template + 'assets/stylesheets/**/*.css')
-        .pipe(plugins.sass({
-          outputStyle: 'compressed'
-        }))
-        .on('error', plugins.sass.logError)
-        .pipe(plugins.cssUrlAdjuster({
-          prependRelative: '/static/',
-        }))
-        .pipe(dest(paths.dist + 'stylesheets/'));
-    },
-    images: () => {
-      return src(paths.template + 'assets/stylesheets/images/**/*')
-        .pipe(dest(paths.dist + 'images/'));
-    },
+  govuk_frontend: {
     fonts: () => {
-      return src(paths.template + 'assets/stylesheets/fonts/**/*')
+      return src(paths.govuk_frontend + 'assets/fonts/**/*')
         .pipe(dest(paths.dist + 'fonts/'));
     },
-    error_page: () => {
-      return src(paths.src + 'error_pages/**/*')
-        .pipe(dest(paths.dist + 'error_pages/'))
+    templates: (cb) => {
+      src(paths.govuk_frontend + '**/*.njk')
+      .pipe(
+        dest(paths.templates + 'vendor/govuk_frontend')
+        .on('end', () => cb())
+      )
     }
+  },
+  js: () => {
+    return src(paths.src + 'javascripts/html5shiv.min.js')
+      .pipe(dest(paths.dist + 'javascripts/'));
   }
 };
 
+
+const javascripts = () => {
+  // JS from third-party sources
+  // We assume none of it will need to pass through Babel
+  return src(paths.src + 'javascripts/main.mjs')
+    // Use Rollup to combine all JS in JS module format into a Immediately Invoked Function
+    // Expression (IIFE) to:
+    // - deliver it in one bundle
+    // - allow it to run in browsers without support for JS Modules
+    .pipe(plugins.rollup(
+      {
+        plugins: [
+          // determine module entry points from either 'module' or 'main' fields in package.json
+          rollupPluginNodeResolve({
+            mainFields: ['module', 'main']
+          }),
+          // gulp rollup runs on nodeJS so reads modules in commonJS format
+          // this adds node_modules to the require path so it can find the GOVUK Frontend modules
+          rollupPluginCommonjs({
+            include: 'node_modules/**'
+          })
+        ]
+      },
+      {
+        file: 'main.js',
+        format: 'iife',
+        name: 'GOVUK'
+      }
+    ))
+    .pipe(plugins.uglify())
+    .pipe(dest(paths.dist + 'javascripts/'))
+};
+
+
 const sass = () => {
-  return src(paths.src + '/stylesheets/main*.scss')
+  return src(paths.src + '/stylesheets/main.scss')
     .pipe(plugins.prettyerror())
     .pipe(plugins.sass({
       outputStyle: 'compressed',
       includePaths: [
-        paths.npm + 'govuk-elements-sass/public/sass/',
-        paths.toolkit + 'stylesheets/'
+        paths.govuk_frontend
       ]
     }))
-    .pipe(plugins.base64('../..'))
     .pipe(dest(paths.dist + 'stylesheets/'))
 };
+
+
+const ieSass = () => {
+  return src(paths.src + '/stylesheets/main-ie*.scss')
+    .pipe(plugins.prettyerror())
+    .pipe(plugins.sass({
+      outputStyle: 'compressed',
+      includePaths: [
+        paths.govuk_frontend
+      ]
+    }))
+    .pipe(postcss(oldie))
+    .pipe(dest(paths.dist + 'stylesheets/'))
+};
+
 
 // Copy images
 
 const images = () => {
   return src([
       paths.src + 'images/**/*',
-      paths.toolkit + 'images/**/*',
-      paths.template + 'assets/images/**/*'
+      paths.govuk_frontend + 'assets/images/**/*'
     ])
     .pipe(dest(paths.dist + 'images/'))
 };
@@ -108,25 +148,38 @@ const lint = {
         'options': { 'formatter': stylish }
       }))
       .pipe(plugins.sassLint.failOnError());
-  }
+  },
+  'js': (cb) => {
+    return src([
+        paths.src + 'javascripts/**/*.js',
+        '!' + paths.src + 'javascripts/**/html5shiv.min.js'
+      ])
+      .pipe(plugins.jshint())
+      .pipe(plugins.jshint.reporter(stylish))
+      .pipe(plugins.jshint.reporter('fail'))
+  } 
 };
 
 // Default: compile everything
 const defaultTask = parallel(
   series(
-    copy.govuk_template.template,
-    copy.govuk_template.images,
-    copy.govuk_template.fonts,
-    copy.govuk_template.css,
-    images,
-    sass
+    parallel(
+      copy.govuk_frontend.templates,
+      copy.govuk_frontend.fonts,
+      copy.js,
+      images
+    ),
+    parallel(
+      sass,
+      ieSass
+    )
   ),
-  copy.govuk_template.error_page
+  javascripts
 );
 
 exports.default = defaultTask;
 
-exports.lint = series(lint.sass);
+exports.lint = series(lint.sass, lint.js);
 
 // Optional: recompile on changes
 exports.watch = series(defaultTask, watchForChanges);
