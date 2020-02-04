@@ -1,4 +1,5 @@
 SHELL := /bin/bash
+PORT := 7001
 
 GIT_COMMIT ?= $(shell git rev-parse HEAD)
 
@@ -13,7 +14,7 @@ help:
 
 .PHONY: run
 run:
-	FLASK_APP=application.py FLASK_ENV=development flask run -p 7001
+	FLASK_APP=application.py FLASK_ENV=development flask run --host=0.0.0.0 -p ${PORT}
 
 .PHONY: test
 test:
@@ -113,57 +114,29 @@ cf-login: ## Log in to Cloud Foundry
 
 .PHONY: docker-build
 docker-build:
-	docker build --pull \
-		--build-arg HTTP_PROXY="${HTTP_PROXY}" \
-		--build-arg HTTPS_PROXY="${HTTP_PROXY}" \
-		--build-arg NO_PROXY="${NO_PROXY}" \
+	docker build \
 		-t govuk/${CF_APP}:${GIT_COMMIT} \
 		.
 
 .PHONY: test-with-docker
 test-with-docker: docker-build
-	docker run --rm \
-		-e CIRCLECI=1 \
-		-e CI_BUILD_NUMBER=${BUILD_NUMBER} \
-		-e CI_BUILD_URL=${BUILD_URL} \
-		-e CI_NAME=${CI_NAME} \
-		-e CI_BRANCH=${GIT_BRANCH} \
-		-e CI_PULL_REQUEST=${CI_PULL_REQUEST} \
-		-e http_proxy="${http_proxy}" \
-		-e https_proxy="${https_proxy}" \
-		-e NO_PROXY="${NO_PROXY}" \
+	docker run -it --rm \
 		govuk/${CF_APP}:${GIT_COMMIT} \
 		make test
 
 .PHONY: build-with-docker
 build-with-docker: docker-build
-	docker run --rm \
+	docker run -it --rm \
 		-v "`pwd`:/var/project" \
-		-e CIRCLECI=1 \
-		-e CI_BUILD_NUMBER=${BUILD_NUMBER} \
-		-e CI_BUILD_URL=${BUILD_URL} \
-		-e CI_NAME=${CI_NAME} \
-		-e CI_BRANCH=${GIT_BRANCH} \
-		-e CI_PULL_REQUEST=${CI_PULL_REQUEST} \
-		-e http_proxy="${http_proxy}" \
-		-e https_proxy="${https_proxy}" \
-		-e NO_PROXY="${NO_PROXY}" \
 		govuk/${CF_APP}:${GIT_COMMIT} \
 		make build
 
 .PHONY: run-with-docker
 run-with-docker: docker-build
-		docker run --rm \
+		docker run -it --rm \
 		-v "`pwd`:/var/project" \
-		-e CIRCLECI=1 \
-		-e CI_BUILD_NUMBER=${BUILD_NUMBER} \
-		-e CI_BUILD_URL=${BUILD_URL} \
-		-e CI_NAME=${CI_NAME} \
-		-e CI_BRANCH=${GIT_BRANCH} \
-		-e CI_PULL_REQUEST=${CI_PULL_REQUEST} \
-		-e http_proxy="${http_proxy}" \
-		-e https_proxy="${https_proxy}" \
-		-e NO_PROXY="${NO_PROXY}" \
+		-p ${PORT}:${PORT} \
+		-e API_HOST_NAME=http://host.docker.internal:6011 \
 		govuk/${CF_APP}:${GIT_COMMIT} \
 		make run
 
