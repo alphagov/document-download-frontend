@@ -8,6 +8,9 @@ NOTIFY_CREDENTIALS ?= ~/.notify-credentials
 
 CF_APP = document-download-frontend
 
+
+## DEVELOPMENT
+
 .PHONY: help
 help:
 	@cat $(MAKEFILE_LIST) | grep -E '^[a-zA-Z_-]+:.*?## .*$$' | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
@@ -49,6 +52,37 @@ test-requirements:
 	         echo "Run 'make freeze-requirements' to update."; exit 1; } \
 || { echo "requirements.txt is up to date"; exit 0; }
 
+.PHONY: docker-build
+docker-build:
+	docker build \
+		-t govuk/${CF_APP}:${GIT_COMMIT} \
+		.
+
+.PHONY: test-with-docker
+test-with-docker: docker-build
+	docker run -it --rm \
+		govuk/${CF_APP}:${GIT_COMMIT} \
+		make test
+
+.PHONY: build-with-docker
+build-with-docker: docker-build
+	docker run -it --rm \
+		-v "`pwd`:/var/project" \
+		govuk/${CF_APP}:${GIT_COMMIT} \
+		make build
+
+.PHONY: run-with-docker
+run-with-docker: docker-build
+		docker run -it --rm \
+		-v "`pwd`:/var/project" \
+		-p ${PORT}:${PORT} \
+		-e API_HOST_NAME=http://host.docker.internal:6011 \
+		govuk/${CF_APP}:${GIT_COMMIT} \
+		make run
+
+
+## DEPLOYMENT
+
 .PHONY: preview
 preview:
 	$(eval export CF_SPACE=preview)
@@ -78,10 +112,13 @@ generate-manifest:
 	    -D environment=${CF_SPACE} --format=yaml \
 	    <(${DECRYPT_CMD} ${NOTIFY_CREDENTIALS}/credentials/${CF_SPACE}/document-download/paas-environment.gpg) 2>&1
 
-.PHONY: cf-push
-cf-push:
+.PHONY: cf-login
+cf-login: ## Log in to Cloud Foundry
+	$(if ${CF_USERNAME},,$(error Must specify CF_USERNAME))
+	$(if ${CF_PASSWORD},,$(error Must specify CF_PASSWORD))
 	$(if ${CF_SPACE},,$(error Must specify CF_SPACE))
-	cf push ${CF_APP} -f <(make -s generate-manifest)
+	@echo "Logging in to Cloud Foundry on ${CF_API}"
+	@cf login -a "${CF_API}" -u ${CF_USERNAME} -p "${CF_PASSWORD}" -o "${CF_ORG}" -s "${CF_SPACE}"
 
 .PHONY: cf-deploy
 cf-deploy: ## Deploys the app to Cloud Foundry
@@ -103,52 +140,3 @@ cf-create-cdn-route:
 	$(if ${CF_SPACE},,$(error Must specify CF_SPACE))
 	$(if ${DNS_NAME},,$(error Must specify DNS_NAME))
 	cf create-service cdn-route cdn-route document-download-cdn-route -c '{"domain": "${DNS_NAME}"}'
-
-.PHONY: cf-login
-cf-login: ## Log in to Cloud Foundry
-	$(if ${CF_USERNAME},,$(error Must specify CF_USERNAME))
-	$(if ${CF_PASSWORD},,$(error Must specify CF_PASSWORD))
-	$(if ${CF_SPACE},,$(error Must specify CF_SPACE))
-	@echo "Logging in to Cloud Foundry on ${CF_API}"
-	@cf login -a "${CF_API}" -u ${CF_USERNAME} -p "${CF_PASSWORD}" -o "${CF_ORG}" -s "${CF_SPACE}"
-
-.PHONY: docker-build
-docker-build:
-	docker build \
-		-t govuk/${CF_APP}:${GIT_COMMIT} \
-		.
-
-.PHONY: test-with-docker
-test-with-docker: docker-build
-	docker run -it --rm \
-		govuk/${CF_APP}:${GIT_COMMIT} \
-		make test
-
-.PHONY: build-with-docker
-build-with-docker: docker-build
-	docker run -it --rm \
-		-v "`pwd`:/var/project" \
-		govuk/${CF_APP}:${GIT_COMMIT} \
-		make build
-
-.PHONY: run-with-docker
-run-with-docker: docker-build
-		docker run -it --rm \
-		-v "`pwd`:/var/project" \
-		-p ${PORT}:${PORT} \
-		-e API_HOST_NAME=http://host.docker.internal:6011 \
-		govuk/${CF_APP}:${GIT_COMMIT} \
-		make run
-
-.PHONY: build-paas-artifact
-build-paas-artifact:  ## Build the deploy artifact for PaaS
-	rm -rf target
-	mkdir -p target
-	zip -y -q -r -x@deploy-exclude.lst target/${CF_APP}.zip ./
-
-
-.PHONY: upload-paas-artifact ## Upload the deploy artifact for PaaS
-upload-paas-artifact:
-	$(if ${BUILD_NUMBER},,$(error Must specify BUILD_NUMBER))
-	$(if ${JENKINS_S3_BUCKET},,$(error Must specify JENKINS_S3_BUCKET))
-	aws s3 cp --region eu-west-1 --sse AES256 target/${CF_APP}.zip s3://${JENKINS_S3_BUCKET}/build/${CF_APP}/${BUILD_NUMBER}.zip
