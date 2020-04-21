@@ -1,0 +1,23 @@
+{% extends "document_download_template.html" %}
+
+{% block per_page_title %}
+  No longer available
+{% endblock %}
+
+{% block main_content %}
+  <p class="govuk-body">
+    The file you are looking for has expired or been deleted.
+  </p>
+
+  <p class="govuk-body">
+    If you have any questions,
+    {% if contact_info_type == "link" %}
+      <a href="{{ service_contact_info }}" class="govuk-link"> contact {{ service_name }}</a>.
+    {% elif contact_info_type == "email" %}
+      email <a href="mailto:{{ service_contact_info }}" class="govuk-link">{{service_contact_info}}</a>.
+    {% else %}
+      call {{ service_contact_info }}.
+    {% endif %}
+  </p>
+
+{% endblock %}

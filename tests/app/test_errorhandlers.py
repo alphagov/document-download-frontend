@@ -17,6 +17,7 @@ def test_csrf_returns_400(client, mocker, sample_service):
     csrf_err = CSRFError('400 Bad Request: The CSRF tokens do not match.')
     mocker.patch('app.service_api_client.get_service', return_value={'data': sample_service})
     mocker.patch('app.main.views.index.render_template', side_effect=csrf_err)
+    mocker.patch('app.main.views.index.is_file_available', return_value=True)
 
     response = client.get(
         url_for(
