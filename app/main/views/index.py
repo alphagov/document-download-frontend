@@ -1,3 +1,4 @@
+import requests
 from flask import abort, current_app, render_template, request
 from notifications_python_client.errors import HTTPError
 
@@ -24,6 +25,15 @@ def landing(service_id, document_id):
 
     service_contact_info = service['data']['contact_link']
     contact_info_type = assess_contact_type(service_contact_info)
+
+    if not is_file_available(service_id, document_id, key):
+        return render_template(
+            'views/file_unavailable.html',
+            service_name=service['data']['name'],
+            service_contact_info=service_contact_info,
+            contact_info_type=contact_info_type,
+        )
+
     return render_template(
         'views/index.html',
         service_id=service_id,
@@ -62,3 +72,24 @@ def download_document(service_id, document_id):
         service_contact_info=service_contact_info,
         contact_info_type=contact_info_type,
     )
+
+
+def is_file_available(service_id, document_id, key):
+    check_file_url = '{}/services/{}/documents/{}/check?key={}'.format(
+        current_app.config['DOCUMENT_DOWNLOAD_API_HOST_NAME'],
+        service_id,
+        document_id,
+        key
+    )
+    response = requests.get(check_file_url)
+
+    # Show 404 if decryption key is missing / invalid
+    if response.status_code == 400 and 'decryption key' in response.json().get('Error', ''):
+        abort(404)
+    # Let the `500` error handler handle unexpected errors from doc-download-api
+    response.raise_for_status()
+
+    if response.json().get('file_exists') == 'True':
+        return True
+
+    return False

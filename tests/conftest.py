@@ -1,4 +1,5 @@
 import pytest
+import requests_mock
 from flask import Flask
 
 from app import create_app
@@ -26,3 +27,9 @@ def client(app_):
 @pytest.fixture(scope='function')
 def sample_service():
     return {'name': 'Sample Service', 'contact_link': 'https://sample-service.gov.uk'}
+
+
+@pytest.fixture
+def rmock():
+    with requests_mock.mock() as rmock:
+        yield rmock
