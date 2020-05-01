@@ -6,6 +6,8 @@ import pytest
 from bs4 import BeautifulSoup
 from flask import current_app, url_for
 from notifications_python_client.errors import HTTPError
+from requests.exceptions import HTTPError as RequestsHTTPError
+from werkzeug.exceptions import NotFound
 
 from app.main.views.index import is_file_available
 from tests import normalize_spaces
@@ -68,8 +70,9 @@ def test_landing_page_when_document_is_unavailable(client, mocker, sample_servic
 
 
 @pytest.mark.parametrize('json_response', [
-    {"Error": "Missing decryption key"},
-    {"Error": "Invalid decryption key"},
+    {"error": "Missing decryption key"},
+    {"error": "Invalid decryption key"},
+    {"error": "Forbidden"},
 ])
 def test_landing_page_when_checking_document_raises_an_error_shows_appropriate_error_page(
     client,
@@ -256,15 +259,17 @@ def test_is_file_available(
     assert is_file_available(service_id, document_id, key) is expected_result
 
 
-@pytest.mark.parametrize('json_response', [
-    {"Error": "Missing decryption key"},
-    {"Error": "Invalid decryption key"},
-    {"Error": "Unexpected error"},
+@pytest.mark.parametrize('json_response, expected_exception', [
+    ({"error": "Missing decryption key"}, NotFound),
+    ({"error": "Invalid decryption key"}, NotFound),
+    ({"error": "Unexpected error"}, RequestsHTTPError),
+    ({"error": "Forbidden"}, NotFound),
 ])
-def test_is_file_available_when_document_download_api_gives_a_decryption_key_error(
+def test_is_file_available_when_document_download_api_gives_an_error(
     client,
     rmock,
     json_response,
+    expected_exception,
 ):
     service_id = uuid4()
     document_id = uuid4()
@@ -281,5 +286,5 @@ def test_is_file_available_when_document_download_api_gives_a_decryption_key_err
         json=json_response
     )
 
-    with pytest.raises(Exception):
+    with pytest.raises(expected_exception):
         is_file_available(service_id, document_id, key)

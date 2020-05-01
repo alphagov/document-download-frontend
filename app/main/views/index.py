@@ -83,9 +83,14 @@ def is_file_available(service_id, document_id, key):
     )
     response = requests.get(check_file_url)
 
-    # Show 404 if decryption key is missing / invalid
-    if response.status_code == 400 and 'decryption key' in response.json().get('Error', ''):
-        abort(404)
+    if response.status_code == 400:
+        error_msg = response.json().get('error', '')
+        # If the decryption key is missing or can't be decoded using `urlsafe_b64decode`,
+        # the error message will contain 'decryption key'.
+        # If the decryption key is wrong, the error message is 'Forbidden'
+        if 'decryption key' in error_msg or 'Forbidden' in error_msg:
+            abort(404)
+
     # Let the `500` error handler handle unexpected errors from doc-download-api
     response.raise_for_status()
 
