@@ -1,0 +1,10 @@
+# see https://pyup.io/docs/configuration/ for all available options
+
+schedule: "every two weeks on tuesday"
+
+search: False
+requirements:
+  - requirements-app.txt
+  - requirements-dev.txt
+  - requirements.txt:
+      update: False
