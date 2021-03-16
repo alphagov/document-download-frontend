@@ -1,5 +1,6 @@
 # document-download-frontend
-GOV.UK Notify Document Download frontend user application
+
+GOV.UK Notify frontend for downloading documents uploaded via [Document Download API](https://github.com/alphagov/document-download-api).
 
 ## First-time setup
 
