@@ -26,15 +26,8 @@ version of Node.
     npm rebuild node-sass
 ```
 
-The app runs within a virtual environment. We use mkvirtualenv for easier working with venvs
-```shell
-    pip install virtualenvwrapper
-    mkvirtualenv -p /usr/local/bin/python3 document-download-frontend
-```
-
 Install dependencies and build the frontend assets:
 ```shell
-    workon document-download-frontend
     ./scripts/bootstrap.sh
 ```
 
