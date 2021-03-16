@@ -1,8 +1,6 @@
 SHELL := /bin/bash
 PORT := 7001
 
-GIT_COMMIT ?= $(shell git rev-parse HEAD)
-
 CF_API ?= api.cloud.service.gov.uk
 NOTIFY_CREDENTIALS ?= ~/.notify-credentials
 
@@ -52,34 +50,6 @@ test-requirements:
 	    && { echo "requirements.txt doesn't match requirements-app.txt."; \
 	         echo "Run 'make freeze-requirements' to update."; exit 1; } \
 || { echo "requirements.txt is up to date"; exit 0; }
-
-.PHONY: docker-build
-docker-build:
-	docker build \
-		-t govuk/${CF_APP}:${GIT_COMMIT} \
-		.
-
-.PHONY: test-with-docker
-test-with-docker: docker-build
-	docker run -it --rm \
-		govuk/${CF_APP}:${GIT_COMMIT} \
-		make test
-
-.PHONY: build-with-docker
-build-with-docker: docker-build
-	docker run -it --rm \
-		-v "`pwd`:/var/project" \
-		govuk/${CF_APP}:${GIT_COMMIT} \
-		make build
-
-.PHONY: run-with-docker
-run-with-docker: docker-build
-		docker run -it --rm \
-		-v "`pwd`:/var/project" \
-		-p ${PORT}:${PORT} \
-		-e API_HOST_NAME=http://host.docker.internal:6011 \
-		govuk/${CF_APP}:${GIT_COMMIT} \
-		make run
 
 
 ## DEPLOYMENT
