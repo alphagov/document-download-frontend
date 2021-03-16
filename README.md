@@ -21,14 +21,6 @@ npm install -g n
 n lts
 ```
 
-## Rebuilding the frontend assets
-
-If you want the front end assets to re-compile on changes, leave this running
-in a separate terminal from the app
-```shell
-    npm run watch
-```
-
 ## To run the application
 
 ```shell
@@ -38,7 +30,18 @@ make bootstrap
 make run-flask
 ```
 
-## Updating application dependencies
+## Common tasks
+
+### Automatically rebuilding the frontend assets
+
+If you want the front end assets to re-compile on changes, leave this running
+in a separate terminal from the app
+
+```shell
+npm run watch
+```
+
+### Updating application dependencies
 
 The `requirements.txt` file is generated from the `requirements-app.txt` in order to pin
 versions of all nested dependencies. If `requirements-app.txt` has been changed (or
