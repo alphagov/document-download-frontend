@@ -2,29 +2,23 @@
 
 GOV.UK Notify frontend for downloading documents uploaded via [Document Download API](https://github.com/alphagov/document-download-api).
 
-## First-time setup
+## Setting up
 
-Brew is a package manager for OSX. The following command installs brew:
+### Python version
+
+Check the version in [runtime.txt](runtime.txt).
+
+### NPM packages
+
 ```shell
-    /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+brew install node
 ```
 
-Languages needed
-- Python 3.6
-- [Node](https://nodejs.org/) 12.14.1 or greater
-- [npm](https://www.npmjs.com/) 6.13.4 or greater
-```shell
-    brew install node
-```
+[NPM](npmjs.org) is Node's package management tool. `n` is a tool for managing different versions of Node. The following installs `n` and uses the long term support (LTS) version of Node.
 
-
-[NPM](npmjs.org) is Node's package management tool. `n` is a tool for managing
-different versions of Node. The following installs `n` and uses the long term support (LTS)
-version of Node.
 ```shell
-    npm install -g n
-    n lts
-    npm rebuild node-sass
+npm install -g n
+n lts
 ```
 
 Install dependencies and build the frontend assets:
