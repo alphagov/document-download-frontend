@@ -1,5 +1,4 @@
 SHELL := /bin/bash
-PORT := 7001
 
 CF_API ?= api.cloud.service.gov.uk
 NOTIFY_CREDENTIALS ?= ~/.notify-credentials
@@ -14,9 +13,9 @@ CF_MANIFEST_PATH ?= /tmp/manifest.yml
 help:
 	@cat $(MAKEFILE_LIST) | grep -E '^[a-zA-Z_-]+:.*?## .*$$' | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 
-.PHONY: run
-run:
-	FLASK_APP=application.py FLASK_ENV=development flask run --host=0.0.0.0 -p ${PORT}
+.PHONY: run-flask
+run-flask:
+	FLASK_APP=application.py FLASK_ENV=development flask run -p 7001
 
 .PHONY: test
 test:

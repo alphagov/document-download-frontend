@@ -48,7 +48,7 @@ in a separate terminal from the app
 
 ## Running the application
 ```shell
-make run
+make run-flask
 ```
 
 ## Updating application dependencies
