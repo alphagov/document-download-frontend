@@ -30,6 +30,15 @@ make bootstrap
 make run-flask
 ```
 
+## To test the application
+
+```shell
+# install dependencies, etc.
+make bootstrap
+
+make test
+```
+
 ## Common tasks
 
 ### Automatically rebuilding the frontend assets

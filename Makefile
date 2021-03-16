@@ -18,10 +18,7 @@ run-flask:
 	FLASK_APP=application.py FLASK_ENV=development flask run -p 7001
 
 .PHONY: test
-test:
-	find . -name \*.pyc -delete
-	npm install
-	npm run build
+test: test-requirements
 	./scripts/run_tests.sh
 
 .PHONY: bootstrap
