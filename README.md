@@ -21,11 +21,6 @@ npm install -g n
 n lts
 ```
 
-Install dependencies and build the frontend assets:
-```shell
-    ./scripts/bootstrap.sh
-```
-
 ## Rebuilding the frontend assets
 
 If you want the front end assets to re-compile on changes, leave this running
@@ -34,8 +29,12 @@ in a separate terminal from the app
     npm run watch
 ```
 
-## Running the application
+## To run the application
+
 ```shell
+# install dependencies, etc.
+make bootstrap
+
 make run-flask
 ```
 

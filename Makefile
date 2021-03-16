@@ -24,12 +24,11 @@ test:
 	npm run build
 	./scripts/run_tests.sh
 
-.PHONY: build
-build:
-	find . -name \*.pyc -delete
-	npm set progress=false
+.PHONY: bootstrap
+bootstrap:
+	pip3 install -r requirements-dev.txt
 	npm install
-	npm rebuild node-sass --force
+	npm rebuild node-sass
 	npm run build
 
 .PHONY: freeze-requirements
