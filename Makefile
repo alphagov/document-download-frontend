@@ -1,7 +1,4 @@
 SHELL := /bin/bash
-PORT := 7001
-
-GIT_COMMIT ?= $(shell git rev-parse HEAD)
 
 CF_API ?= api.cloud.service.gov.uk
 NOTIFY_CREDENTIALS ?= ~/.notify-credentials
@@ -16,23 +13,19 @@ CF_MANIFEST_PATH ?= /tmp/manifest.yml
 help:
 	@cat $(MAKEFILE_LIST) | grep -E '^[a-zA-Z_-]+:.*?## .*$$' | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 
-.PHONY: run
-run:
-	FLASK_APP=application.py FLASK_ENV=development flask run --host=0.0.0.0 -p ${PORT}
+.PHONY: run-flask
+run-flask:
+	FLASK_APP=application.py FLASK_ENV=development flask run -p 7001
 
 .PHONY: test
-test:
-	find . -name \*.pyc -delete
-	npm install
-	npm run build
+test: test-requirements
 	./scripts/run_tests.sh
 
-.PHONY: build
-build:
-	find . -name \*.pyc -delete
-	npm set progress=false
+.PHONY: bootstrap
+bootstrap:
+	pip3 install -r requirements-dev.txt
 	npm install
-	npm rebuild node-sass --force
+	npm rebuild node-sass
 	npm run build
 
 .PHONY: freeze-requirements
@@ -52,34 +45,6 @@ test-requirements:
 	    && { echo "requirements.txt doesn't match requirements-app.txt."; \
 	         echo "Run 'make freeze-requirements' to update."; exit 1; } \
 || { echo "requirements.txt is up to date"; exit 0; }
-
-.PHONY: docker-build
-docker-build:
-	docker build \
-		-t govuk/${CF_APP}:${GIT_COMMIT} \
-		.
-
-.PHONY: test-with-docker
-test-with-docker: docker-build
-	docker run -it --rm \
-		govuk/${CF_APP}:${GIT_COMMIT} \
-		make test
-
-.PHONY: build-with-docker
-build-with-docker: docker-build
-	docker run -it --rm \
-		-v "`pwd`:/var/project" \
-		govuk/${CF_APP}:${GIT_COMMIT} \
-		make build
-
-.PHONY: run-with-docker
-run-with-docker: docker-build
-		docker run -it --rm \
-		-v "`pwd`:/var/project" \
-		-p ${PORT}:${PORT} \
-		-e API_HOST_NAME=http://host.docker.internal:6011 \
-		govuk/${CF_APP}:${GIT_COMMIT} \
-		make run
 
 
 ## DEPLOYMENT
