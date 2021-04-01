@@ -48,12 +48,13 @@ def test_landing_page_notifications_api_error(client, mocker, sample_service):
     assert response.status_code == 404
 
 
-def test_landing_page_when_document_is_unavailable(client, mocker, sample_service):
+@pytest.mark.parametrize('view', ['main.landing', 'main.download_document'])
+def test_when_document_is_unavailable(view, client, mocker, sample_service):
     mocker.patch('app.service_api_client.get_service', return_value={'data': sample_service})
-    mocker.patch('app.main.views.index.is_file_available', return_value=False)
+    mocker.patch('app.main.views.index.get_document_metadata', return_value=None)
     response = client.get(
         url_for(
-            'main.landing',
+            view,
             service_id=uuid4(),
             document_id=uuid4(),
             key='1234'

@@ -59,6 +59,15 @@ def download_document(service_id, document_id):
     metadata = get_document_metadata(service_id, document_id, key)
     service_contact_info = service['data']['contact_link']
     contact_info_type = assess_contact_type(service_contact_info)
+
+    if not metadata:
+        return render_template(
+            'views/file_unavailable.html',
+            service_name=service['data']['name'],
+            service_contact_info=service_contact_info,
+            contact_info_type=contact_info_type,
+        )
+
     return render_template(
         'views/download.html',
         download_link=metadata['direct_file_url'],
