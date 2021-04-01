@@ -135,6 +135,10 @@ def test_landing_page_creates_link_for_document(client, mocker, sample_service):
 
 def test_download_document_creates_link_to_actual_doc_from_api(client, mocker, sample_service):
     mocker.patch('app.service_api_client.get_service', return_value={'data': sample_service})
+
+    metadata = {'document': {'direct_file_url': 'url'} }
+    mocker.patch('app.main.views.index.get_document_metadata', return_value=metadata)
+
     service_id = uuid4()
     document_id = uuid4()
     key = '1234'
@@ -152,15 +156,15 @@ def test_download_document_creates_link_to_actual_doc_from_api(client, mocker, s
     page = BeautifulSoup(response.data.decode('utf-8'), 'html.parser')
     assert normalize_spaces(page.title.text) == 'Download your file – GOV.UK'
     assert normalize_spaces(page.h1.text) == 'Download your file'
-    assert page.select('main a')[0]['href'] == 'http://test-doc-download-api/services/{}/documents/{}?key={}'.format(
-        service_id,
-        document_id,
-        key
-    )
+    assert page.select('main a')[0]['href'] == 'url'
 
 
 def test_download_document_shows_contact_information(client, mocker, sample_service):
     mocker.patch('app.service_api_client.get_service', return_value={'data': sample_service})
+
+    metadata = {'document': {'direct_file_url': 'url'} }
+    mocker.patch('app.main.views.index.get_document_metadata', return_value=metadata)
+
     service_id = uuid4()
     document_id = uuid4()
     key = '1234'
@@ -186,6 +190,10 @@ def test_download_document_shows_contact_information(client, mocker, sample_serv
 def test_pages_are_not_indexed(view, client, mocker, sample_service):
     mocker.patch('app.service_api_client.get_service', return_value={'data': sample_service})
     mocker.patch('app.main.views.index.is_file_available', return_value=True)
+
+    metadata = {'document': {'direct_file_url': 'url'} }
+    mocker.patch('app.main.views.index.get_document_metadata', return_value=metadata)
+
     service_id = uuid4()
     document_id = uuid4()
     key = '1234'

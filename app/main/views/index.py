@@ -51,23 +51,17 @@ def download_document(service_id, document_id):
     if not key:
         abort(404)
 
-    download_link = '{}/services/{}/documents/{}?key={}'.format(
-        current_app.config['DOCUMENT_DOWNLOAD_API_HOST_NAME'],
-        service_id,
-        document_id,
-        key
-    )
-
     try:
         service = service_api_client.get_service(service_id)
     except HTTPError as e:
         abort(e.status_code)
 
+    metadata = get_document_metadata(service_id, document_id, key)
     service_contact_info = service['data']['contact_link']
     contact_info_type = assess_contact_type(service_contact_info)
     return render_template(
         'views/download.html',
-        download_link=download_link,
+        download_link=metadata['document']['direct_file_url'],
         service_name=service['data']['name'],
         service_contact_info=service_contact_info,
         contact_info_type=contact_info_type,
@@ -75,6 +69,11 @@ def download_document(service_id, document_id):
 
 
 def is_file_available(service_id, document_id, key):
+    metadata = get_document_metadata(service_id, document_id, key)
+    return metadata['file_exists'] == 'True'
+
+
+def get_document_metadata(service_id, document_id, key):
     check_file_url = '{}/services/{}/documents/{}/check?key={}'.format(
         current_app.config['DOCUMENT_DOWNLOAD_API_HOST_NAME'],
         service_id,
@@ -94,7 +93,4 @@ def is_file_available(service_id, document_id, key):
     # Let the `500` error handler handle unexpected errors from doc-download-api
     response.raise_for_status()
 
-    if response.json().get('file_exists') == 'True':
-        return True
-
-    return False
+    return response.json()
