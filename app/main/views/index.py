@@ -26,7 +26,7 @@ def landing(service_id, document_id):
     service_contact_info = service['data']['contact_link']
     contact_info_type = assess_contact_type(service_contact_info)
 
-    if not is_file_available(service_id, document_id, key):
+    if not get_document_metadata(service_id, document_id, key):
         return render_template(
             'views/file_unavailable.html',
             service_name=service['data']['name'],
@@ -61,16 +61,11 @@ def download_document(service_id, document_id):
     contact_info_type = assess_contact_type(service_contact_info)
     return render_template(
         'views/download.html',
-        download_link=metadata['document']['direct_file_url'],
+        download_link=metadata['direct_file_url'],
         service_name=service['data']['name'],
         service_contact_info=service_contact_info,
         contact_info_type=contact_info_type,
     )
-
-
-def is_file_available(service_id, document_id, key):
-    metadata = get_document_metadata(service_id, document_id, key)
-    return metadata['file_exists'] == 'True'
 
 
 def get_document_metadata(service_id, document_id, key):
@@ -93,4 +88,4 @@ def get_document_metadata(service_id, document_id, key):
     # Let the `500` error handler handle unexpected errors from doc-download-api
     response.raise_for_status()
 
-    return response.json()
+    return response.json().get('document')

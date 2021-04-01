@@ -9,7 +9,7 @@ from notifications_python_client.errors import HTTPError
 from requests.exceptions import HTTPError as RequestsHTTPError
 from werkzeug.exceptions import NotFound
 
-from app.main.views.index import is_file_available
+from app.main.views.index import get_document_metadata
 from tests import normalize_spaces
 
 
@@ -111,7 +111,10 @@ def test_landing_page_creates_link_for_document(client, mocker, sample_service):
     mocker.patch('app.service_api_client.get_service', return_value={'data': sample_service})
     service_id = uuid4()
     document_id = uuid4()
-    mocker.patch('app.main.views.index.is_file_available', return_value=True)
+
+    metadata = {'direct_file_url': 'url'}
+    mocker.patch('app.main.views.index.get_document_metadata', return_value=metadata)
+
     response = client.get(
         url_for(
             'main.landing',
@@ -136,7 +139,7 @@ def test_landing_page_creates_link_for_document(client, mocker, sample_service):
 def test_download_document_creates_link_to_actual_doc_from_api(client, mocker, sample_service):
     mocker.patch('app.service_api_client.get_service', return_value={'data': sample_service})
 
-    metadata = {'document': {'direct_file_url': 'url'} }
+    metadata = {'direct_file_url': 'url'}
     mocker.patch('app.main.views.index.get_document_metadata', return_value=metadata)
 
     service_id = uuid4()
@@ -162,7 +165,7 @@ def test_download_document_creates_link_to_actual_doc_from_api(client, mocker, s
 def test_download_document_shows_contact_information(client, mocker, sample_service):
     mocker.patch('app.service_api_client.get_service', return_value={'data': sample_service})
 
-    metadata = {'document': {'direct_file_url': 'url'} }
+    metadata = {'direct_file_url': 'url'}
     mocker.patch('app.main.views.index.get_document_metadata', return_value=metadata)
 
     service_id = uuid4()
@@ -189,9 +192,8 @@ def test_download_document_shows_contact_information(client, mocker, sample_serv
 @pytest.mark.parametrize('view', ['main.landing', 'main.download_document'])
 def test_pages_are_not_indexed(view, client, mocker, sample_service):
     mocker.patch('app.service_api_client.get_service', return_value={'data': sample_service})
-    mocker.patch('app.main.views.index.is_file_available', return_value=True)
 
-    metadata = {'document': {'direct_file_url': 'url'} }
+    metadata = {'direct_file_url': 'url'}
     mocker.patch('app.main.views.index.get_document_metadata', return_value=metadata)
 
     service_id = uuid4()
@@ -220,7 +222,10 @@ def test_pages_are_not_indexed(view, client, mocker, sample_service):
 def test_landing_page_has_supplier_contact_info(client, mocker, sample_service, contact_info, type, expected_result):
     service = {'name': 'Sample Service', 'contact_link': contact_info}
     mocker.patch('app.service_api_client.get_service', return_value={'data': service})
-    mocker.patch('app.main.views.index.is_file_available', return_value=True)
+
+    metadata = {'direct_file_url': 'url'}
+    mocker.patch('app.main.views.index.get_document_metadata', return_value=metadata)
+
     service_id = uuid4()
     document_id = uuid4()
     response = client.get(
@@ -240,19 +245,11 @@ def test_landing_page_has_supplier_contact_info(client, mocker, sample_service, 
         assert page.findAll(attrs={'href': expected_result})
 
 
-@pytest.mark.parametrize('json_response, expected_result', [
-    ({"file_exists": "True"}, True),
-    ({"file_exists": "False"}, False),
-])
-def test_is_file_available(
-    client,
-    rmock,
-    json_response,
-    expected_result,
-):
+def test_get_document_metadata(client, rmock):
     service_id = uuid4()
     document_id = uuid4()
     key = '1234'
+    json_response = {"document": {"direct_file_url": "url"}}
 
     rmock.get(
         '{}/services/{}/documents/{}/check?key={}'.format(
@@ -264,7 +261,8 @@ def test_is_file_available(
         json=json_response
     )
 
-    assert is_file_available(service_id, document_id, key) is expected_result
+    result = get_document_metadata(service_id, document_id, key)
+    assert result == json_response["document"]
 
 
 @pytest.mark.parametrize('json_response, expected_exception', [
@@ -273,7 +271,7 @@ def test_is_file_available(
     ({"error": "Unexpected error"}, RequestsHTTPError),
     ({"error": "Forbidden"}, NotFound),
 ])
-def test_is_file_available_when_document_download_api_gives_an_error(
+def test_get_document_metadata_when_document_download_api_gives_an_error(
     client,
     rmock,
     json_response,
@@ -295,4 +293,4 @@ def test_is_file_available_when_document_download_api_gives_an_error(
     )
 
     with pytest.raises(expected_exception):
-        is_file_available(service_id, document_id, key)
+        get_document_metadata(service_id, document_id, key)
