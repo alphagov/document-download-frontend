@@ -26,7 +26,7 @@ def landing(service_id, document_id):
     service_contact_info = service['data']['contact_link']
     contact_info_type = assess_contact_type(service_contact_info)
 
-    if not get_document_metadata(service_id, document_id, key):
+    if not _get_document_metadata(service_id, document_id, key):
         return render_template(
             'views/file_unavailable.html',
             service_name=service['data']['name'],
@@ -56,7 +56,7 @@ def download_document(service_id, document_id):
     except HTTPError as e:
         abort(e.status_code)
 
-    metadata = get_document_metadata(service_id, document_id, key)
+    metadata = _get_document_metadata(service_id, document_id, key)
     service_contact_info = service['data']['contact_link']
     contact_info_type = assess_contact_type(service_contact_info)
 
@@ -77,7 +77,7 @@ def download_document(service_id, document_id):
     )
 
 
-def get_document_metadata(service_id, document_id, key):
+def _get_document_metadata(service_id, document_id, key):
     check_file_url = '{}/services/{}/documents/{}/check?key={}'.format(
         current_app.config['DOCUMENT_DOWNLOAD_API_HOST_NAME'],
         service_id,

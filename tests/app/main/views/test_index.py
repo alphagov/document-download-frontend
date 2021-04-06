@@ -7,8 +7,37 @@ from bs4 import BeautifulSoup
 from flask import current_app, url_for
 from notifications_python_client.errors import HTTPError
 
-from app.main.views.index import get_document_metadata
 from tests import normalize_spaces
+
+
+@pytest.fixture
+def service_id():
+    return uuid4()
+
+
+@pytest.fixture
+def document_id():
+    return uuid4()
+
+
+@pytest.fixture
+def key():
+    return '1234'
+
+
+@pytest.fixture
+def document_has_metadata(service_id, document_id, key, rmock, client):
+    json_response = {"document": {"direct_file_url": "url"}}
+
+    rmock.get(
+        '{}/services/{}/documents/{}/check?key={}'.format(
+            current_app.config['DOCUMENT_DOWNLOAD_API_HOST_NAME'],
+            service_id,
+            document_id,
+            key
+        ),
+        json=json_response
+    )
 
 
 def test_status(client):
@@ -18,12 +47,12 @@ def test_status(client):
 
 
 @pytest.mark.parametrize('view', ['main.landing', 'main.download_document'])
-def test_404_if_no_key_in_query_string(view, client):
+def test_404_if_no_key_in_query_string(service_id, document_id, view, client):
     response = client.get(
         url_for(
             view,
-            service_id=uuid4(),
-            document_id=uuid4()
+            service_id=service_id,
+            document_id=document_id,
         )
     )
     page = BeautifulSoup(response.data.decode('utf-8'), 'html.parser')
@@ -33,7 +62,14 @@ def test_404_if_no_key_in_query_string(view, client):
 
 
 @pytest.mark.parametrize('view', ['main.landing', 'main.download_document'])
-def test_notifications_api_error(view, client, mocker, sample_service):
+def test_notifications_api_error(
+    view,
+    service_id,
+    document_id,
+    client,
+    mocker,
+    sample_service
+):
     mocker.patch('app.service_api_client.get_service', return_value={'data': sample_service})
     mocker.patch('app.service_api_client.get_service', side_effect=HTTPError(response=Mock(status_code=404)))
     response = client.get(
@@ -49,15 +85,23 @@ def test_notifications_api_error(view, client, mocker, sample_service):
 
 
 @pytest.mark.parametrize('view', ['main.landing', 'main.download_document'])
-def test_when_document_is_unavailable(view, client, mocker, sample_service):
+def test_when_document_is_unavailable(
+    view,
+    service_id,
+    document_id,
+    key,
+    client,
+    mocker,
+    sample_service
+):
     mocker.patch('app.service_api_client.get_service', return_value={'data': sample_service})
-    mocker.patch('app.main.views.index.get_document_metadata', return_value=None)
+    mocker.patch('app.main.views.index._get_document_metadata', return_value=None)
     response = client.get(
         url_for(
             view,
-            service_id=uuid4(),
-            document_id=uuid4(),
-            key='1234'
+            service_id=service_id,
+            document_id=document_id,
+            key=key,
         )
     )
 
@@ -80,16 +124,17 @@ def test_when_document_is_unavailable(view, client, mocker, sample_service):
     {"error": "Forbidden"},
 ])
 def test_404_hides_incorrect_credentials(
+    view,
     client,
+    service_id,
+    document_id,
+    key,
     rmock,
     mocker,
     json_response,
     sample_service,
 ):
     mocker.patch('app.service_api_client.get_service', return_value={'data': sample_service})
-    service_id = uuid4()
-    document_id = uuid4()
-    key = '1234'
 
     rmock.get(
         '{}/services/{}/documents/{}/check?key={}'.format(
@@ -112,20 +157,23 @@ def test_404_hides_incorrect_credentials(
     assert response.status_code == 404
 
 
-def test_landing_page_creates_link_for_document(client, mocker, sample_service):
+def test_landing_page_creates_link_for_document(
+    service_id,
+    document_id,
+    key,
+    document_has_metadata,
+    client,
+    mocker,
+    sample_service
+):
     mocker.patch('app.service_api_client.get_service', return_value={'data': sample_service})
-    service_id = uuid4()
-    document_id = uuid4()
-
-    metadata = {'direct_file_url': 'url'}
-    mocker.patch('app.main.views.index.get_document_metadata', return_value=metadata)
 
     response = client.get(
         url_for(
             'main.landing',
             service_id=service_id,
             document_id=document_id,
-            key='1234'
+            key=key,
         )
     )
 
@@ -141,15 +189,16 @@ def test_landing_page_creates_link_for_document(client, mocker, sample_service):
     )
 
 
-def test_download_document_creates_link_to_actual_doc_from_api(client, mocker, sample_service):
+def test_download_document_creates_link_to_actual_doc_from_api(
+    service_id,
+    document_id,
+    key,
+    document_has_metadata,
+    client,
+    mocker,
+    sample_service
+):
     mocker.patch('app.service_api_client.get_service', return_value={'data': sample_service})
-
-    metadata = {'direct_file_url': 'url'}
-    mocker.patch('app.main.views.index.get_document_metadata', return_value=metadata)
-
-    service_id = uuid4()
-    document_id = uuid4()
-    key = '1234'
 
     response = client.get(
         url_for(
@@ -167,15 +216,16 @@ def test_download_document_creates_link_to_actual_doc_from_api(client, mocker, s
     assert page.select('main a')[0]['href'] == 'url'
 
 
-def test_download_document_shows_contact_information(client, mocker, sample_service):
+def test_download_document_shows_contact_information(
+    service_id,
+    document_id,
+    key,
+    document_has_metadata,
+    client,
+    mocker,
+    sample_service
+):
     mocker.patch('app.service_api_client.get_service', return_value={'data': sample_service})
-
-    metadata = {'direct_file_url': 'url'}
-    mocker.patch('app.main.views.index.get_document_metadata', return_value=metadata)
-
-    service_id = uuid4()
-    document_id = uuid4()
-    key = '1234'
 
     response = client.get(
         url_for(
@@ -195,15 +245,17 @@ def test_download_document_shows_contact_information(client, mocker, sample_serv
 
 
 @pytest.mark.parametrize('view', ['main.landing', 'main.download_document'])
-def test_pages_are_not_indexed(view, client, mocker, sample_service):
+def test_pages_are_not_indexed(
+    view,
+    service_id,
+    document_id,
+    key,
+    document_has_metadata,
+    client,
+    mocker,
+    sample_service
+):
     mocker.patch('app.service_api_client.get_service', return_value={'data': sample_service})
-
-    metadata = {'direct_file_url': 'url'}
-    mocker.patch('app.main.views.index.get_document_metadata', return_value=metadata)
-
-    service_id = uuid4()
-    document_id = uuid4()
-    key = '1234'
 
     response = client.get(
         url_for(
@@ -224,21 +276,27 @@ def test_pages_are_not_indexed(view, client, mocker, sample_service):
     ('07123456789', 'number', 'call 07123456789'),
 
 ])
-def test_landing_page_has_supplier_contact_info(client, mocker, sample_service, contact_info, type, expected_result):
+def test_landing_page_has_supplier_contact_info(
+    service_id,
+    document_id,
+    key,
+    document_has_metadata,
+    client,
+    mocker,
+    sample_service,
+    contact_info,
+    type,
+    expected_result
+):
     service = {'name': 'Sample Service', 'contact_link': contact_info}
     mocker.patch('app.service_api_client.get_service', return_value={'data': service})
 
-    metadata = {'direct_file_url': 'url'}
-    mocker.patch('app.main.views.index.get_document_metadata', return_value=metadata)
-
-    service_id = uuid4()
-    document_id = uuid4()
     response = client.get(
         url_for(
             'main.landing',
             service_id=service_id,
             document_id=document_id,
-            key='1234'
+            key=key,
         )
     )
 
@@ -248,23 +306,3 @@ def test_landing_page_has_supplier_contact_info(client, mocker, sample_service, 
         assert page.findAll(text=re.compile(expected_result))
     else:
         assert page.findAll(attrs={'href': expected_result})
-
-
-def test_get_document_metadata(client, rmock):
-    service_id = uuid4()
-    document_id = uuid4()
-    key = '1234'
-    json_response = {"document": {"direct_file_url": "url"}}
-
-    rmock.get(
-        '{}/services/{}/documents/{}/check?key={}'.format(
-            current_app.config['DOCUMENT_DOWNLOAD_API_HOST_NAME'],
-            service_id,
-            document_id,
-            key
-        ),
-        json=json_response
-    )
-
-    result = get_document_metadata(service_id, document_id, key)
-    assert result == json_response["document"]

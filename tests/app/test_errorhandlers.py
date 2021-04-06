@@ -19,7 +19,7 @@ def test_csrf_returns_400(client, mocker, sample_service):
     mocker.patch('app.main.views.index.render_template', side_effect=csrf_err)
 
     metadata = {'direct_file_url': 'url'}
-    mocker.patch('app.main.views.index.get_document_metadata', return_value=metadata)
+    mocker.patch('app.main.views.index._get_document_metadata', return_value=metadata)
 
     response = client.get(
         url_for(
