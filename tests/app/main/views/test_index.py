@@ -6,8 +6,6 @@ import pytest
 from bs4 import BeautifulSoup
 from flask import current_app, url_for
 from notifications_python_client.errors import HTTPError
-from requests.exceptions import HTTPError as RequestsHTTPError
-from werkzeug.exceptions import NotFound
 
 from app.main.views.index import get_document_metadata
 from tests import normalize_spaces
@@ -19,10 +17,11 @@ def test_status(client):
     assert response.get_data(as_text=True) == 'ok'
 
 
-def test_landing_page_404s_if_no_key_in_query_string(client):
+@pytest.mark.parametrize('view', ['main.landing', 'main.download_document'])
+def test_404_if_no_key_in_query_string(view, client):
     response = client.get(
         url_for(
-            'main.landing',
+            view,
             service_id=uuid4(),
             document_id=uuid4()
         )
@@ -33,12 +32,13 @@ def test_landing_page_404s_if_no_key_in_query_string(client):
     assert normalize_spaces(page.h1.text) == 'Page not found'
 
 
-def test_landing_page_notifications_api_error(client, mocker, sample_service):
+@pytest.mark.parametrize('view', ['main.landing', 'main.download_document'])
+def test_notifications_api_error(view, client, mocker, sample_service):
     mocker.patch('app.service_api_client.get_service', return_value={'data': sample_service})
     mocker.patch('app.service_api_client.get_service', side_effect=HTTPError(response=Mock(status_code=404)))
     response = client.get(
         url_for(
-            'main.landing',
+            view,
             service_id=uuid4(),
             document_id=uuid4(),
             key='1234'
@@ -70,12 +70,16 @@ def test_when_document_is_unavailable(view, client, mocker, sample_service):
     assert contact_link['href'] == 'https://sample-service.gov.uk'
 
 
+@pytest.mark.parametrize('view', [
+    'main.landing',
+    'main.download_document',
+])
 @pytest.mark.parametrize('json_response', [
     {"error": "Missing decryption key"},
     {"error": "Invalid decryption key"},
     {"error": "Forbidden"},
 ])
-def test_landing_page_when_checking_document_raises_an_error_shows_appropriate_error_page(
+def test_404_hides_incorrect_credentials(
     client,
     rmock,
     mocker,
@@ -264,34 +268,3 @@ def test_get_document_metadata(client, rmock):
 
     result = get_document_metadata(service_id, document_id, key)
     assert result == json_response["document"]
-
-
-@pytest.mark.parametrize('json_response, expected_exception', [
-    ({"error": "Missing decryption key"}, NotFound),
-    ({"error": "Invalid decryption key"}, NotFound),
-    ({"error": "Unexpected error"}, RequestsHTTPError),
-    ({"error": "Forbidden"}, NotFound),
-])
-def test_get_document_metadata_when_document_download_api_gives_an_error(
-    client,
-    rmock,
-    json_response,
-    expected_exception,
-):
-    service_id = uuid4()
-    document_id = uuid4()
-    key = '1234'
-
-    rmock.get(
-        '{}/services/{}/documents/{}/check?key={}'.format(
-            current_app.config['DOCUMENT_DOWNLOAD_API_HOST_NAME'],
-            service_id,
-            document_id,
-            key
-        ),
-        status_code=400,
-        json=json_response
-    )
-
-    with pytest.raises(expected_exception):
-        get_document_metadata(service_id, document_id, key)
