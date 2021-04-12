@@ -6,11 +6,38 @@ import pytest
 from bs4 import BeautifulSoup
 from flask import current_app, url_for
 from notifications_python_client.errors import HTTPError
-from requests.exceptions import HTTPError as RequestsHTTPError
-from werkzeug.exceptions import NotFound
 
-from app.main.views.index import is_file_available
 from tests import normalize_spaces
+
+
+@pytest.fixture
+def service_id():
+    return uuid4()
+
+
+@pytest.fixture
+def document_id():
+    return uuid4()
+
+
+@pytest.fixture
+def key():
+    return '1234'
+
+
+@pytest.fixture
+def document_has_metadata(service_id, document_id, key, rmock, client):
+    json_response = {"document": {"direct_file_url": "url"}}
+
+    rmock.get(
+        '{}/services/{}/documents/{}/check?key={}'.format(
+            current_app.config['DOCUMENT_DOWNLOAD_API_HOST_NAME'],
+            service_id,
+            document_id,
+            key
+        ),
+        json=json_response
+    )
 
 
 def test_status(client):
@@ -19,12 +46,13 @@ def test_status(client):
     assert response.get_data(as_text=True) == 'ok'
 
 
-def test_landing_page_404s_if_no_key_in_query_string(client):
+@pytest.mark.parametrize('view', ['main.landing', 'main.download_document'])
+def test_404_if_no_key_in_query_string(service_id, document_id, view, client):
     response = client.get(
         url_for(
-            'main.landing',
-            service_id=uuid4(),
-            document_id=uuid4()
+            view,
+            service_id=service_id,
+            document_id=document_id,
         )
     )
     page = BeautifulSoup(response.data.decode('utf-8'), 'html.parser')
@@ -33,12 +61,20 @@ def test_landing_page_404s_if_no_key_in_query_string(client):
     assert normalize_spaces(page.h1.text) == 'Page not found'
 
 
-def test_landing_page_notifications_api_error(client, mocker, sample_service):
+@pytest.mark.parametrize('view', ['main.landing', 'main.download_document'])
+def test_notifications_api_error(
+    view,
+    service_id,
+    document_id,
+    client,
+    mocker,
+    sample_service
+):
     mocker.patch('app.service_api_client.get_service', return_value={'data': sample_service})
     mocker.patch('app.service_api_client.get_service', side_effect=HTTPError(response=Mock(status_code=404)))
     response = client.get(
         url_for(
-            'main.landing',
+            view,
             service_id=uuid4(),
             document_id=uuid4(),
             key='1234'
@@ -48,15 +84,24 @@ def test_landing_page_notifications_api_error(client, mocker, sample_service):
     assert response.status_code == 404
 
 
-def test_landing_page_when_document_is_unavailable(client, mocker, sample_service):
+@pytest.mark.parametrize('view', ['main.landing', 'main.download_document'])
+def test_when_document_is_unavailable(
+    view,
+    service_id,
+    document_id,
+    key,
+    client,
+    mocker,
+    sample_service
+):
     mocker.patch('app.service_api_client.get_service', return_value={'data': sample_service})
-    mocker.patch('app.main.views.index.is_file_available', return_value=False)
+    mocker.patch('app.main.views.index._get_document_metadata', return_value=None)
     response = client.get(
         url_for(
-            'main.landing',
-            service_id=uuid4(),
-            document_id=uuid4(),
-            key='1234'
+            view,
+            service_id=service_id,
+            document_id=document_id,
+            key=key,
         )
     )
 
@@ -69,22 +114,27 @@ def test_landing_page_when_document_is_unavailable(client, mocker, sample_servic
     assert contact_link['href'] == 'https://sample-service.gov.uk'
 
 
+@pytest.mark.parametrize('view', [
+    'main.landing',
+    'main.download_document',
+])
 @pytest.mark.parametrize('json_response', [
     {"error": "Missing decryption key"},
     {"error": "Invalid decryption key"},
     {"error": "Forbidden"},
 ])
-def test_landing_page_when_checking_document_raises_an_error_shows_appropriate_error_page(
+def test_404_hides_incorrect_credentials(
+    view,
     client,
+    service_id,
+    document_id,
+    key,
     rmock,
     mocker,
     json_response,
     sample_service,
 ):
     mocker.patch('app.service_api_client.get_service', return_value={'data': sample_service})
-    service_id = uuid4()
-    document_id = uuid4()
-    key = '1234'
 
     rmock.get(
         '{}/services/{}/documents/{}/check?key={}'.format(
@@ -107,17 +157,23 @@ def test_landing_page_when_checking_document_raises_an_error_shows_appropriate_e
     assert response.status_code == 404
 
 
-def test_landing_page_creates_link_for_document(client, mocker, sample_service):
+def test_landing_page_creates_link_for_document(
+    service_id,
+    document_id,
+    key,
+    document_has_metadata,
+    client,
+    mocker,
+    sample_service
+):
     mocker.patch('app.service_api_client.get_service', return_value={'data': sample_service})
-    service_id = uuid4()
-    document_id = uuid4()
-    mocker.patch('app.main.views.index.is_file_available', return_value=True)
+
     response = client.get(
         url_for(
             'main.landing',
             service_id=service_id,
             document_id=document_id,
-            key='1234'
+            key=key,
         )
     )
 
@@ -133,11 +189,16 @@ def test_landing_page_creates_link_for_document(client, mocker, sample_service):
     )
 
 
-def test_download_document_creates_link_to_actual_doc_from_api(client, mocker, sample_service):
+def test_download_document_creates_link_to_actual_doc_from_api(
+    service_id,
+    document_id,
+    key,
+    document_has_metadata,
+    client,
+    mocker,
+    sample_service
+):
     mocker.patch('app.service_api_client.get_service', return_value={'data': sample_service})
-    service_id = uuid4()
-    document_id = uuid4()
-    key = '1234'
 
     response = client.get(
         url_for(
@@ -152,18 +213,19 @@ def test_download_document_creates_link_to_actual_doc_from_api(client, mocker, s
     page = BeautifulSoup(response.data.decode('utf-8'), 'html.parser')
     assert normalize_spaces(page.title.text) == 'Download your file – GOV.UK'
     assert normalize_spaces(page.h1.text) == 'Download your file'
-    assert page.select('main a')[0]['href'] == 'http://test-doc-download-api/services/{}/documents/{}?key={}'.format(
-        service_id,
-        document_id,
-        key
-    )
+    assert page.select('main a')[0]['href'] == 'url'
 
 
-def test_download_document_shows_contact_information(client, mocker, sample_service):
+def test_download_document_shows_contact_information(
+    service_id,
+    document_id,
+    key,
+    document_has_metadata,
+    client,
+    mocker,
+    sample_service
+):
     mocker.patch('app.service_api_client.get_service', return_value={'data': sample_service})
-    service_id = uuid4()
-    document_id = uuid4()
-    key = '1234'
 
     response = client.get(
         url_for(
@@ -183,12 +245,17 @@ def test_download_document_shows_contact_information(client, mocker, sample_serv
 
 
 @pytest.mark.parametrize('view', ['main.landing', 'main.download_document'])
-def test_pages_are_not_indexed(view, client, mocker, sample_service):
+def test_pages_are_not_indexed(
+    view,
+    service_id,
+    document_id,
+    key,
+    document_has_metadata,
+    client,
+    mocker,
+    sample_service
+):
     mocker.patch('app.service_api_client.get_service', return_value={'data': sample_service})
-    mocker.patch('app.main.views.index.is_file_available', return_value=True)
-    service_id = uuid4()
-    document_id = uuid4()
-    key = '1234'
 
     response = client.get(
         url_for(
@@ -209,18 +276,27 @@ def test_pages_are_not_indexed(view, client, mocker, sample_service):
     ('07123456789', 'number', 'call 07123456789'),
 
 ])
-def test_landing_page_has_supplier_contact_info(client, mocker, sample_service, contact_info, type, expected_result):
+def test_landing_page_has_supplier_contact_info(
+    service_id,
+    document_id,
+    key,
+    document_has_metadata,
+    client,
+    mocker,
+    sample_service,
+    contact_info,
+    type,
+    expected_result
+):
     service = {'name': 'Sample Service', 'contact_link': contact_info}
     mocker.patch('app.service_api_client.get_service', return_value={'data': service})
-    mocker.patch('app.main.views.index.is_file_available', return_value=True)
-    service_id = uuid4()
-    document_id = uuid4()
+
     response = client.get(
         url_for(
             'main.landing',
             service_id=service_id,
             document_id=document_id,
-            key='1234'
+            key=key,
         )
     )
 
@@ -230,61 +306,3 @@ def test_landing_page_has_supplier_contact_info(client, mocker, sample_service, 
         assert page.findAll(text=re.compile(expected_result))
     else:
         assert page.findAll(attrs={'href': expected_result})
-
-
-@pytest.mark.parametrize('json_response, expected_result', [
-    ({"file_exists": "True"}, True),
-    ({"file_exists": "False"}, False),
-])
-def test_is_file_available(
-    client,
-    rmock,
-    json_response,
-    expected_result,
-):
-    service_id = uuid4()
-    document_id = uuid4()
-    key = '1234'
-
-    rmock.get(
-        '{}/services/{}/documents/{}/check?key={}'.format(
-            current_app.config['DOCUMENT_DOWNLOAD_API_HOST_NAME'],
-            service_id,
-            document_id,
-            key
-        ),
-        json=json_response
-    )
-
-    assert is_file_available(service_id, document_id, key) is expected_result
-
-
-@pytest.mark.parametrize('json_response, expected_exception', [
-    ({"error": "Missing decryption key"}, NotFound),
-    ({"error": "Invalid decryption key"}, NotFound),
-    ({"error": "Unexpected error"}, RequestsHTTPError),
-    ({"error": "Forbidden"}, NotFound),
-])
-def test_is_file_available_when_document_download_api_gives_an_error(
-    client,
-    rmock,
-    json_response,
-    expected_exception,
-):
-    service_id = uuid4()
-    document_id = uuid4()
-    key = '1234'
-
-    rmock.get(
-        '{}/services/{}/documents/{}/check?key={}'.format(
-            current_app.config['DOCUMENT_DOWNLOAD_API_HOST_NAME'],
-            service_id,
-            document_id,
-            key
-        ),
-        status_code=400,
-        json=json_response
-    )
-
-    with pytest.raises(expected_exception):
-        is_file_available(service_id, document_id, key)
