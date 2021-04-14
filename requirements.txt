@@ -2,12 +2,12 @@
 # Run `make freeze-requirements` to update requirements.txt
 # with package version changes made in requirements-app.txt
 
-Flask==1.1.1
+Flask==1.1.2
 Flask-WTF==0.14.3
 
-gunicorn==20.0.4
-whitenoise==5.0.1  #manages static assets
-eventlet==0.26.1
+gunicorn==20.1.0
+whitenoise==5.2.0  #manages static assets
+eventlet==0.30.2
 
 notifications-python-client==6.0.2
 
@@ -18,10 +18,10 @@ git+https://github.com/alphagov/notifications-utils.git@44.0.2#egg=notifications
 git+https://github.com/alphagov/govuk-frontend-jinja.git@v0.5.1-alpha#egg=govuk-frontend-jinja==v0.5.1-alpha
 
 ## The following requirements were added by pip freeze:
-awscli==1.19.39
+awscli==1.19.51
 bleach==3.3.0
-boto3==1.17.39
-botocore==1.20.39
+boto3==1.17.51
+botocore==1.20.51
 cachetools==4.2.1
 certifi==2020.12.5
 chardet==4.0.0
@@ -40,10 +40,9 @@ Jinja2==2.11.3
 jmespath==0.10.0
 MarkupSafe==1.1.1
 mistune==0.8.4
-monotonic==1.5
 orderedset==2.0.3
 packaging==20.9
-phonenumbers==8.12.20
+phonenumbers==8.12.21
 pyasn1==0.4.8
 PyJWT==2.0.1
 pyparsing==2.4.7
@@ -54,8 +53,8 @@ pytz==2021.1
 PyYAML==5.4.1
 redis==3.5.3
 requests==2.25.1
-rsa==4.5
-s3transfer==0.3.6
+rsa==4.7.2
+s3transfer==0.3.7
 Shapely==1.7.1
 six==1.15.0
 smartypants==2.0.1
