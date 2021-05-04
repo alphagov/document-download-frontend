@@ -9,7 +9,7 @@ gunicorn==20.1.0
 whitenoise==5.2.0  #manages static assets
 eventlet==0.30.2
 
-notifications-python-client==6.0.2
+notifications-python-client==6.1.0
 
 # PaaS
 awscli-cwlogs>=1.4,<1.5
@@ -18,11 +18,11 @@ git+https://github.com/alphagov/notifications-utils.git@44.0.2#egg=notifications
 git+https://github.com/alphagov/govuk-frontend-jinja.git@v0.5.1-alpha#egg=govuk-frontend-jinja==v0.5.1-alpha
 
 ## The following requirements were added by pip freeze:
-awscli==1.19.51
+awscli==1.19.64
 bleach==3.3.0
-boto3==1.17.51
-botocore==1.20.51
-cachetools==4.2.1
+boto3==1.17.64
+botocore==1.20.64
+cachetools==4.2.2
 certifi==2020.12.5
 chardet==4.0.0
 click==7.1.2
@@ -42,9 +42,9 @@ MarkupSafe==1.1.1
 mistune==0.8.4
 orderedset==2.0.3
 packaging==20.9
-phonenumbers==8.12.21
+phonenumbers==8.12.22
 pyasn1==0.4.8
-PyJWT==2.0.1
+PyJWT==2.1.0
 pyparsing==2.4.7
 PyPDF2==1.26.0
 python-dateutil==2.8.1
@@ -54,7 +54,7 @@ PyYAML==5.4.1
 redis==3.5.3
 requests==2.25.1
 rsa==4.7.2
-s3transfer==0.3.7
+s3transfer==0.4.2
 Shapely==1.7.1
 six==1.15.0
 smartypants==2.0.1
