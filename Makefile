@@ -19,7 +19,10 @@ run-flask:
 
 .PHONY: test
 test: test-requirements
-	./scripts/run_tests.sh
+	flake8 .
+	isort --check-only ./app ./tests
+	npm test
+	pytest
 
 .PHONY: bootstrap
 bootstrap:
