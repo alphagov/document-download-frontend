@@ -20,7 +20,7 @@ plugins.jshint = require('gulp-jshint');
 plugins.prettyerror = require('gulp-prettyerror');
 plugins.replace = require('gulp-replace');
 plugins.rollup = require('gulp-better-rollup');
-plugins.sass = require('gulp-sass');
+plugins.sass = require('gulp-sass')(require('sass'));
 plugins.sassLint = require('gulp-sass-lint');
 plugins.uglify = require('gulp-uglify');
 
@@ -97,7 +97,7 @@ const javascripts = () => {
 const sass = () => {
   return src(paths.src + '/stylesheets/main.scss')
     .pipe(plugins.prettyerror())
-    .pipe(plugins.sass({
+    .pipe(plugins.sass.sync({
       outputStyle: 'compressed',
       includePaths: [
         paths.govuk_frontend
