@@ -6,7 +6,7 @@ Flask-WTF==0.14.3
 
 gunicorn==20.1.0
 whitenoise==5.2.0  #manages static assets
-eventlet==0.30.2  # pyup: ignore # 0.31 breaks Gunicorn
+eventlet==0.31.0  # pyup: ignore # 0.31 breaks Gunicorn
 
 notifications-python-client==6.1.0
 
