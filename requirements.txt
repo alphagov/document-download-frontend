@@ -8,58 +8,58 @@ Flask-WTF==0.14.3
 gunicorn==20.1.0
 whitenoise==5.2.0  #manages static assets
 eventlet==0.30.2  # pyup: ignore # 0.31 breaks Gunicorn
+werkzeug==2.0.2
 
 notifications-python-client==6.1.0
 
 # PaaS
 awscli-cwlogs>=1.4,<1.5
 
-git+https://github.com/alphagov/notifications-utils.git@44.0.2#egg=notifications-utils==44.0.2
+git+https://github.com/alphagov/notifications-utils.git@47.0.1#egg=notifications-utils==47.0.1
 git+https://github.com/alphagov/govuk-frontend-jinja.git@v0.5.1-alpha#egg=govuk-frontend-jinja==v0.5.1-alpha
 
 ## The following requirements were added by pip freeze:
-awscli==1.19.64
-bleach==3.3.0
-boto3==1.17.64
-botocore==1.20.64
-cachetools==4.2.2
-certifi==2020.12.5
-chardet==4.0.0
-click==7.1.2
+awscli==1.21.5
+bleach==4.1.0
+boto3==1.19.5
+botocore==1.22.5
+cachetools==4.2.4
+certifi==2021.10.8
+charset-normalizer==2.0.7
+click==8.0.3
 colorama==0.4.3
 dnspython==1.16.0
 docopt==0.6.2
 docutils==0.15.2
 flask-redis==0.4.0
 geojson==2.5.0
-govuk-bank-holidays==0.8
-greenlet==1.0.0
-idna==2.10
-itsdangerous==1.1.0
-Jinja2==2.11.3
+govuk-bank-holidays==0.10
+greenlet==1.1.2
+idna==3.3
+itsdangerous==2.0.1
+Jinja2==3.0.2
 jmespath==0.10.0
-MarkupSafe==1.1.1
+MarkupSafe==2.0.1
 mistune==0.8.4
 orderedset==2.0.3
-packaging==20.9
-phonenumbers==8.12.22
+packaging==21.0
+phonenumbers==8.12.36
 pyasn1==0.4.8
-PyJWT==2.1.0
-pyparsing==2.4.7
+PyJWT==2.3.0
+pyparsing==3.0.3
 PyPDF2==1.26.0
-python-dateutil==2.8.1
-python-json-logger==2.0.1
-pytz==2021.1
+python-dateutil==2.8.2
+python-json-logger==2.0.2
+pytz==2021.3
 PyYAML==5.4.1
 redis==3.5.3
-requests==2.25.1
+requests==2.26.0
 rsa==4.7.2
-s3transfer==0.4.2
-Shapely==1.7.1
-six==1.15.0
+s3transfer==0.5.0
+Shapely==1.8.0
+six==1.16.0
 smartypants==2.0.1
 statsd==3.3.0
-urllib3==1.26.4
+urllib3==1.26.7
 webencodings==0.5.1
-Werkzeug==1.0.1
 WTForms==2.3.3
