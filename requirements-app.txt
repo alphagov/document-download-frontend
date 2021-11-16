@@ -2,7 +2,7 @@
 # with package version changes made in requirements-app.txt
 
 Flask==2.0.2
-Flask-WTF==0.14.3
+Flask-WTF==1.0.0
 
 gunicorn==20.1.0
 whitenoise==5.2.0  #manages static assets
