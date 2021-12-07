@@ -52,13 +52,4 @@ npm run watch
 
 ### Updating application dependencies
 
-The `requirements.txt` file is generated from the `requirements-app.txt` in order to pin
-versions of all nested dependencies. If `requirements-app.txt` has been changed (or
-we want to update the unpinned nested dependencies) `requirements.txt` should be
-regenerated with
-
-```
-make freeze-requirements
-```
-
-`requirements.txt` should be committed alongside `requirements-app.txt` changes.
+`requirements.txt` is generated from the `requirements.in` in order to pin versions of all nested dependencies. If `requirements.in` has been changed, run `make freeze-requirements` to regenerate it.
