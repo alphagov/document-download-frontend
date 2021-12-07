@@ -46,6 +46,19 @@ def test_status(client):
     assert response.get_data(as_text=True) == 'ok'
 
 
+@pytest.mark.parametrize('url', [
+    '/security.txt',
+    '/.well-known/security.txt',
+])
+def test_security_policy_redirects_to_policy(client, url):
+    response = client.get(
+        url
+    )
+
+    assert response.status_code == 302
+    assert response.location == "https://vdp.cabinetoffice.gov.uk/.well-known/security.txt"
+
+
 @pytest.mark.parametrize('view', ['main.landing', 'main.download_document'])
 def test_404_if_no_key_in_query_string(service_id, document_id, view, client):
     response = client.get(

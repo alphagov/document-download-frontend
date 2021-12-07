@@ -1,5 +1,5 @@
 import requests
-from flask import abort, current_app, render_template, request
+from flask import abort, current_app, redirect, render_template, request
 from notifications_python_client.errors import HTTPError
 
 from app import service_api_client
@@ -10,6 +10,14 @@ from app.utils import assess_contact_type
 @main.route('/_status')
 def status():
     return "ok", 200
+
+
+@main.route('/.well-known/security.txt', methods=['GET'])
+@main.route('/security.txt', methods=['GET'])
+def security_policy():
+    # See GDS Way security policy which this implements
+    # https://gds-way.cloudapps.digital/standards/vulnerability-disclosure.html#vulnerability-disclosure-and-security-txt
+    return redirect("https://vdp.cabinetoffice.gov.uk/.well-known/security.txt")
 
 
 @main.route('/d/<base64_uuid:service_id>/<base64_uuid:document_id>', methods=['GET'])
