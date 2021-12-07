@@ -41,12 +41,9 @@ flask==1.1.2
     # via
     #   -r requirements.in
     #   flask-redis
-    #   flask-wtf
     #   notifications-utils
 flask-redis==0.4.0
     # via notifications-utils
-flask-wtf==0.14.3
-    # via -r requirements.in
 geojson==2.5.0
     # via notifications-utils
 govuk-bank-holidays==0.10
@@ -62,7 +59,6 @@ idna==3.3
 itsdangerous==2.0.1
     # via
     #   flask
-    #   flask-wtf
     #   notifications-utils
 jinja2==3.0.2
     # via
@@ -74,9 +70,7 @@ jmespath==0.10.0
     #   boto3
     #   botocore
 markupsafe==2.0.1
-    # via
-    #   jinja2
-    #   wtforms
+    # via jinja2
 mistune==0.8.4
     # via notifications-utils
 notifications-python-client==6.1.0
@@ -147,8 +141,6 @@ werkzeug==2.0.2
     #   flask
 whitenoise==5.2.0
     # via -r requirements.in
-wtforms==2.3.3
-    # via flask-wtf
 
 # The following packages are considered to be unsafe in a requirements file:
 # setuptools

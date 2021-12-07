@@ -4,8 +4,6 @@ from functools import partial
 import jinja2
 from flask import current_app, make_response, render_template
 from flask.globals import _lookup_req_object
-from flask_wtf import CSRFProtect
-from flask_wtf.csrf import CSRFError
 from govuk_frontend_jinja.flask_ext import init_govuk_frontend
 from notifications_utils import logging, request_helper
 from notifications_utils.base64_uuid import base64_to_uuid, uuid_to_base64
@@ -17,8 +15,6 @@ from app.asset_fingerprinter import AssetFingerprinter
 from app.config import configs
 from app.notify_client.service_api_client import ServiceApiClient
 from app.utils import get_cdn_domain
-
-csrf = CSRFProtect()
 
 statsd_client = StatsdClient()
 asset_fingerprinter = AssetFingerprinter()
@@ -52,7 +48,6 @@ def create_app(application):
     init_jinja(application)
     statsd_client.init_app(application)
     logging.init_app(application, statsd_client)
-    csrf.init_app(application)
     request_helper.init_app(application)
 
     from app.main import main as main_blueprint
@@ -113,16 +108,6 @@ def register_errorhandlers(application):  # noqa (C901 too complex)
     @application.errorhandler(400)
     def handle_http_error(error):
         return _error_response(error.code)
-
-    @application.errorhandler(CSRFError)
-    def handle_csrf(reason):
-        application.logger.warning('csrf.error_message: {}'.format(reason))
-
-        resp = make_response(render_template(
-            "error/400.html",
-            message=['Something went wrong, please go back and try again.']
-        ), 400)
-        return useful_headers_after_request(resp)
 
     @application.errorhandler(500)
     @application.errorhandler(Exception)
