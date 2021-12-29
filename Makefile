@@ -18,7 +18,7 @@ run-flask:
 	FLASK_APP=application.py FLASK_ENV=development flask run -p 7001
 
 .PHONY: test
-test: test-requirements
+test:
 	flake8 .
 	isort --check-only ./app ./tests
 	npm test
@@ -32,17 +32,9 @@ bootstrap:
 	npm run build
 
 .PHONY: freeze-requirements
-freeze-requirements:
+freeze-requirements: ## create static requirements.txt
 	pip install --upgrade pip-tools
 	pip-compile requirements.in
-
-.PHONY: test-requirements
-test-requirements:
-	@diff requirements-app.txt requirements.txt | grep '<' \
-	    && { echo "requirements.txt doesn't match requirements-app.txt."; \
-	         echo "Run 'make freeze-requirements' to update."; exit 1; } \
-|| { echo "requirements.txt is up to date"; exit 0; }
-
 
 ## DEPLOYMENT
 
