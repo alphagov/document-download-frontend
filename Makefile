@@ -26,7 +26,7 @@ test: test-requirements
 
 .PHONY: bootstrap
 bootstrap:
-	pip3 install -r requirements-dev.txt
+	pip3 install -r requirements_for_test.txt
 	npm install
 	npm rebuild node-sass
 	npm run build
