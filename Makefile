@@ -27,7 +27,7 @@ test:
 .PHONY: bootstrap
 bootstrap:
 	pip3 install -r requirements_for_test.txt
-	npm install
+	$(if $(shell which n), n auto && npm ci, npm install)
 	npm rebuild node-sass
 	npm run build
 
