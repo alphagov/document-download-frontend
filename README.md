@@ -8,19 +8,21 @@ GOV.UK Notify frontend for downloading documents uploaded via [Document Download
 
 Check the version in [runtime.txt](runtime.txt).
 
-### NPM packages
+### NodeJS version
+
+If you don't have NodeJS on your system, install it with homebrew.
 
 ```shell
 brew install node
 ```
 
-[NPM](npmjs.org) is Node's package management tool. `n` is a tool for managing different versions of Node.
+`nvm` is a tool for managing different versions of NodeJS. Follow [the guidance on nvm's github repository](https://github.com/nvm-sh/nvm#installing-and-updating) to install it.
 
-The following installs `n` and installs the version of Node specified in `package.json` `engines` property. This will also install the NPM version packaged with that version of Node.
+Once installed, run the following to switch to the version of NodeJS for this project. If you don't
+have that version, it should tell you how to install it.
 
 ```shell
-npm install -g n
-n auto
+nvm use
 ```
 
 ## To run the application
