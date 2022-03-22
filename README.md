@@ -56,11 +56,11 @@ npm run watch
 
 ### Updating the Node version for frontend builds
 
-Edit the respective `node` version specified in the `engines` property in the `package.json` file.
+Edit the respective `node` version specified in the `.nvmrc` file.
 
-Run `n auto` to install the new Node version.
+Run `nvm install` to install the new Node version.
 
-The version specified in `engines` is also used to select the Node version used in CI builds:
+The version specified in the `.nvmrc` file is also used to select the Node version used in CI builds:
 
  - Creating a PR with an updated version will build the PR using that version
  - Merging a version change will build and deploy the frontend assets using the new version
