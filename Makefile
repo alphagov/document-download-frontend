@@ -21,16 +21,13 @@ run-flask:
 test:
 	flake8 .
 	isort --check-only ./app ./tests
-	npm test
+	source $(HOME)/.nvm/nvm.sh && npm test
 	pytest
 
 .PHONY: bootstrap
 bootstrap:
 	pip3 install -r requirements_for_test.txt
-	source $(HOME)/.nvm/nvm.sh && nvm install
-	npm ci
-	npm rebuild node-sass
-	npm run build
+	source $(HOME)/.nvm/nvm.sh && nvm install && npm ci && npm rebuild node-sass && npm run build
 
 .PHONY: freeze-requirements
 freeze-requirements: ## create static requirements.txt
