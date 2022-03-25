@@ -27,7 +27,8 @@ test:
 .PHONY: bootstrap
 bootstrap:
 	pip3 install -r requirements_for_test.txt
-	npm install
+	source $(HOME)/.nvm/nvm.sh && nvm install
+	npm ci
 	npm rebuild node-sass
 	npm run build
 

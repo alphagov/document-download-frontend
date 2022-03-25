@@ -2,9 +2,6 @@
   "name": "document-download-frontend",
   "version": "0.0.1",
   "description": "Front end for GOV.UK Document Download",
-  "engines": {
-    "node": "12.14.1"
-  },
   "scripts": {
     "test": "gulp lint",
     "build": "gulp",
