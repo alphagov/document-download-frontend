@@ -5,9 +5,7 @@
 #    pip-compile requirements.in
 #
 awscli==1.21.5
-    # via
-    #   awscli-cwlogs
-    #   notifications-utils
+    # via awscli-cwlogs
 awscli-cwlogs==1.4.6
     # via -r requirements.in
 bleach==4.1.0
@@ -22,7 +20,9 @@ botocore==1.22.5
 cachetools==4.2.4
     # via notifications-utils
 certifi==2021.10.8
-    # via requests
+    # via
+    #   pyproj
+    #   requests
 charset-normalizer==2.0.7
     # via requests
 click==8.0.3
@@ -75,7 +75,7 @@ mistune==0.8.4
     # via notifications-utils
 notifications-python-client==6.1.0
     # via -r requirements.in
-notifications-utils @ git+https://github.com/alphagov/notifications-utils.git@47.0.1
+notifications-utils @ git+https://github.com/alphagov/notifications-utils.git@55.1.4
     # via -r requirements.in
 orderedset==2.0.3
     # via notifications-utils
@@ -90,6 +90,8 @@ pyjwt==2.3.0
 pyparsing==3.0.3
     # via packaging
 pypdf2==1.26.0
+    # via notifications-utils
+pyproj==3.3.0
     # via notifications-utils
 python-dateutil==2.8.2
     # via
