@@ -4,7 +4,6 @@ from functools import partial
 import jinja2
 from flask import current_app, make_response, render_template
 from flask.globals import _lookup_req_object
-from govuk_frontend_jinja.flask_ext import init_govuk_frontend
 from notifications_utils import logging, request_helper
 from notifications_utils.base64_uuid import base64_to_uuid, uuid_to_base64
 from notifications_utils.clients.statsd.statsd_client import StatsdClient
@@ -44,7 +43,6 @@ def create_app(application):
     application.url_map.converters['base64_uuid'] = Base64UUIDConverter
 
     init_app(application)
-    init_govuk_frontend(application)
     init_jinja(application)
     statsd_client.init_app(application)
     logging.init_app(application, statsd_client)
@@ -122,8 +120,10 @@ def register_errorhandlers(application):  # noqa (C901 too complex)
 def init_jinja(application):
     repo_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
     template_folders = [
-        os.path.join(repo_root, 'app/templates'),
-        os.path.join(repo_root, 'app/templates/vendor/govuk_frontend'),
+        os.path.join(repo_root, 'app/templates')
     ]
-    jinja_loader = jinja2.FileSystemLoader(template_folders)
+    jinja_loader = jinja2.ChoiceLoader([
+        jinja2.FileSystemLoader(template_folders),
+        jinja2.PrefixLoader({"govuk_frontend_jinja": jinja2.PackageLoader("govuk_frontend_jinja")})
+    ])
     application.jinja_loader = jinja_loader
