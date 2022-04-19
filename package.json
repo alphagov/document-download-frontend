@@ -12,7 +12,7 @@
   "dependencies": {
     "@rollup/plugin-commonjs": "11.0.1",
     "@rollup/plugin-node-resolve": "7.0.0",
-    "govuk-frontend": "3.5.0",
+    "govuk-frontend": "4.0.1",
     "gulp": "4.0.2",
     "gulp-add-src": "1.0.0",
     "gulp-better-rollup": "4.0.1",
