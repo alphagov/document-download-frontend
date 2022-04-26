@@ -21,17 +21,20 @@ function initAll (options) {
   var scope = typeof options.scope !== 'undefined' ? options.scope : document
 
   // Find all buttons with [role=button] on the scope to enhance.
-  new Button(scope).init()
+  var buttons = scope.querySelectorAll('[data-module="govuk-button"]')
+  nodeListForEach(buttons, function (button) {
+    new Button(button).init()
+  });
 
-  var skipLinks = document.querySelectorAll('[data-module="govuk-skip-link"]')
+  // There will only ever be one skip-link per page
+  var skipLink = scope.querySelector('[data-module="govuk-skip-link"]')
 
-  nodeListForEach(skipLinks, function (skipLink) {
-    new SkipLink(skipLink).init()
-  })
+  new SkipLink(skipLink).init()
 }
 
 var Frontend = {
   "Button": Button,
+  "SkipLink": SkipLink,
   "initAll": initAll
 }
 
