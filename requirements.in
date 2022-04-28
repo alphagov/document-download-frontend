@@ -1,7 +1,7 @@
 # Run `make freeze-requirements` to update requirements.txt
 # with package version changes made in requirements-app.txt
 
-Flask==1.1.2
+Flask==2.1.1
 
 gunicorn==20.1.0
 whitenoise==5.2.0  #manages static assets
