@@ -6,7 +6,9 @@
 //
 // Exported items will be added to the window.GOVUK namespace.
 // For example, `export { Frontend }` will assign `Frontend` to `window.Frontend`
-import Button from 'govuk-frontend/govuk/components/button/button';
+import { nodeListForEach } from 'govuk-frontend/govuk/common'
+import Button from 'govuk-frontend/govuk/components/button/button'
+import SkipLink from 'govuk-frontend/govuk/components/skip-link/skip-link'
 
 // Copy of the initAll function from https://github.com/alphagov/govuk-frontend/blob/v3.5.0/src/govuk/all.js
 // except it only includes, and initialises, the components used by this application.
@@ -19,11 +21,20 @@ function initAll (options) {
   var scope = typeof options.scope !== 'undefined' ? options.scope : document
 
   // Find all buttons with [role=button] on the scope to enhance.
-  new Button(scope).init()
+  var buttons = scope.querySelectorAll('[data-module="govuk-button"]')
+  nodeListForEach(buttons, function (button) {
+    new Button(button).init()
+  });
+
+  // There will only ever be one skip-link per page
+  var skipLink = scope.querySelector('[data-module="govuk-skip-link"]')
+
+  new SkipLink(skipLink).init()
 }
 
 var Frontend = {
   "Button": Button,
+  "SkipLink": SkipLink,
   "initAll": initAll
 }
 

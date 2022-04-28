@@ -8,8 +8,10 @@
 const { src, pipe, dest, series, parallel } = require('gulp');
 const oldie = require('oldie');
 const postcss = require('gulp-postcss');
+const rollup = require('rollup');
 const rollupPluginCommonjs = require('@rollup/plugin-commonjs');
 const rollupPluginNodeResolve = require('@rollup/plugin-node-resolve');
+const rollupPluginTerser = require('rollup-plugin-terser').terser;
 const stylish = require('jshint-stylish');
 
 const plugins = {};
@@ -19,7 +21,6 @@ plugins.cssUrlAdjuster = require('gulp-css-url-adjuster');
 plugins.jshint = require('gulp-jshint');
 plugins.prettyerror = require('gulp-prettyerror');
 plugins.replace = require('gulp-replace');
-plugins.rollup = require('gulp-better-rollup');
 plugins.sass = require('gulp-sass')(require('sass'));
 plugins.sassLint = require('gulp-sass-lint');
 plugins.uglify = require('gulp-uglify');
@@ -45,13 +46,6 @@ const copy = {
     fonts: () => {
       return src(paths.govuk_frontend + 'assets/fonts/**/*')
         .pipe(dest(paths.dist + 'fonts/'));
-    },
-    templates: (cb) => {
-      src(paths.govuk_frontend + '**/*.njk')
-      .pipe(
-        dest(paths.templates + 'vendor/govuk_frontend')
-        .on('end', () => cb())
-      )
     }
   },
   js: () => {
@@ -64,33 +58,37 @@ const copy = {
 const javascripts = () => {
   // JS from third-party sources
   // We assume none of it will need to pass through Babel
-  return src(paths.src + 'javascripts/main.mjs')
-    // Use Rollup to combine all JS in JS module format into a Immediately Invoked Function
-    // Expression (IIFE) to:
-    // - deliver it in one bundle
-    // - allow it to run in browsers without support for JS Modules
-    .pipe(plugins.rollup(
-      {
-        plugins: [
-          // determine module entry points from either 'module' or 'main' fields in package.json
-          rollupPluginNodeResolve({
-            mainFields: ['module', 'main']
-          }),
-          // gulp rollup runs on nodeJS so reads modules in commonJS format
-          // this adds node_modules to the require path so it can find the GOVUK Frontend modules
-          rollupPluginCommonjs({
-            include: 'node_modules/**'
-          })
-        ]
-      },
-      {
-        file: 'main.js',
-        format: 'iife',
-        name: 'GOVUK'
-      }
-    ))
-    .pipe(plugins.uglify())
-    .pipe(dest(paths.dist + 'javascripts/'))
+  //  
+  // Use Rollup to combine all JS in JS module format into a Immediately Invoked Function
+  // Expression (IIFE) to:
+  // - deliver it in one bundle
+  // - allow it to run in browsers without support for JS Modules
+  return rollup.rollup({
+    input: {
+      main: paths.src + 'javascripts/main.mjs'
+    },
+    plugins: [
+      // determine module entry points from either 'module' or 'main' fields in package.json
+      rollupPluginNodeResolve.nodeResolve({
+        mainFields: ['module', 'main']
+      }),
+      // gulp rollup runs on nodeJS so reads modules in commonJS format
+      // this adds node_modules to the require path so it can find the GOVUK Frontend modules
+      rollupPluginCommonjs({
+        include: 'node_modules/**'
+      }),
+      // Terser is a replacement for UglifyJS
+      rollupPluginTerser({'ie8': true})
+    ]
+  }).then(bundle => {
+    return bundle.write({
+      dir: paths.dist + 'javascripts/',
+      entryFileNames: '[name].js',
+      format: 'iife',
+      name: 'GOVUK',
+      sourcemap: true
+    });
+  });
 };
 
 
@@ -164,7 +162,6 @@ const lint = {
 const defaultTask = parallel(
   series(
     parallel(
-      copy.govuk_frontend.templates,
       copy.govuk_frontend.fonts,
       copy.js,
       images
