@@ -5,7 +5,8 @@
   "scripts": {
     "test": "gulp lint",
     "build": "gulp",
-    "watch": "gulp watch"
+    "watch": "gulp watch",
+    "audit": "better-npm-audit audit --production --level high"
   },
   "author": "Government Digital Service",
   "license": "MIT",
@@ -30,5 +31,8 @@
     "rollup": "2.67.2",
     "rollup-plugin-terser": "7.0.2",
     "sass": "1.32.7"
+  },
+  "devDependencies": {
+    "better-npm-audit": "^3.7.3"
   }
 }
