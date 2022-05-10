@@ -29,6 +29,10 @@ bootstrap:
 	pip3 install -r requirements_for_test.txt
 	source $(HOME)/.nvm/nvm.sh && nvm install && npm ci --no-audit && npm rebuild node-sass && npm run build
 
+.PHONY: npm-audit
+npm-audit:
+	source $(HOME)/.nvm/nvm.sh && npm run audit
+
 .PHONY: freeze-requirements
 freeze-requirements: ## create static requirements.txt
 	pip install --upgrade pip-tools
