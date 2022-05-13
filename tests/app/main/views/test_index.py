@@ -296,7 +296,6 @@ def test_landing_page_has_supplier_contact_info(
     document_has_metadata,
     client,
     mocker,
-    sample_service,
     contact_info,
     type,
     expected_result
@@ -316,6 +315,6 @@ def test_landing_page_has_supplier_contact_info(
     assert response.status_code == 200
     page = BeautifulSoup(response.data.decode('utf-8'), 'html.parser')
     if type == 'number':
-        assert page.findAll(text=re.compile(expected_result))
+        assert page.find_all(string=re.compile(expected_result))
     else:
-        assert page.findAll(attrs={'href': expected_result})
+        assert page.find_all(attrs={'href': expected_result})
