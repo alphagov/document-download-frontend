@@ -258,7 +258,7 @@ def test_download_document_shows_contact_information(
 
 
 @pytest.mark.parametrize('view', ['main.landing', 'main.download_document'])
-def test_pages_are_not_indexed(
+def test_pages_contain_key_security_headers(
     view,
     service_id,
     document_id,
@@ -281,6 +281,7 @@ def test_pages_are_not_indexed(
 
     assert response.status_code == 200
     assert response.headers['X-Robots-Tag'] == 'noindex, nofollow'
+    assert response.headers['Referrer-Policy'] == 'no-referrer'
 
 
 @pytest.mark.parametrize('contact_info,type,expected_result', [
