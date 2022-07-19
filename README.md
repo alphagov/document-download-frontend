@@ -69,6 +69,8 @@ Ensure that an [LTS Node version](https://nodejs.org/en/about/releases/) is spec
 
 ### Updating GOV.UK Frontend
 
+#### Keeping GOV.UK Frontend versions in sync
+
 We have GOV.UK Frontend as a dependency in two places:
 
 * In python, our requirements.in specifies a version of [govuk-frontend-jinja](https://github.com/LandRegistry/govuk-frontend-jinja) for our jinja templates
@@ -81,6 +83,11 @@ If you're bumping either library, make sure the version of the python library su
 of govuk-frontend defined in our package.json, as referred to in the
 [govuk-frontend-jinja compatibility table](https://github.com/LandRegistry/govuk-frontend-jinja#compatibility).
 
+#### Keeping the HTML footer up to date
+
+We override the [govuk-frontend footer](./app/templates/components/footer/macro.html).
+If you bump the version of govuk-frontend-jinja, you should ensure that the footer HTML stays up to date with the
+version of govuk-frontend-jinja. See the comment in that file for more details.
 
 ## Further documentation
 

@@ -1,4 +1,5 @@
 {% extends "govuk_frontend_jinja/template.html" %}
+{% from "components/footer/macro.html" import govukFooterWithoutExternalLinks -%}
 
 {% block headIcons %}
   <link rel="shortcut icon" sizes="16x16 32x32 48x48" href="{{ asset_url('images/favicon.ico') }}" type="image/x-icon" />
@@ -48,6 +49,10 @@
       {% block main_content %}{% endblock %}
     </div>
   </div>
+{% endblock %}
+
+{% block footer %}
+  {{ govukFooterWithoutExternalLinks({}) }}
 {% endblock %}
 
 {% block bodyEnd %}
