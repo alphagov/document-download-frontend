@@ -319,3 +319,30 @@ def test_landing_page_has_supplier_contact_info(
         assert page.find_all(string=re.compile(expected_result))
     else:
         assert page.find_all(attrs={'href': expected_result})
+
+
+def test_footer_doesnt_link_to_national_archives(
+    service_id,
+    document_id,
+    key,
+    document_has_metadata,
+    client,
+    mocker,
+):
+    service = {'name': 'Sample Service', 'contact_link': 'blah blah blah'}
+    mocker.patch('app.service_api_client.get_service', return_value={'data': service})
+
+    response = client.get(
+        url_for(
+            'main.landing',
+            service_id=service_id,
+            document_id=document_id,
+            key=key,
+        )
+    )
+
+    assert response.status_code == 200
+    page = BeautifulSoup(response.data.decode('utf-8'), 'html.parser')
+
+    links = page.find_all('a')
+    assert not any('nationalarchives.gov.uk' in a.attrs['href'] for a in links)
