@@ -56,8 +56,6 @@ gunicorn @ git+https://github.com/benoitc/gunicorn.git@1299ea9e967a61ae2edebe191
     # via -r requirements.in
 idna==3.3
     # via requests
-importlib-metadata==4.11.3
-    # via flask
 itsdangerous==2.0.1
     # via
     #   flask
@@ -87,7 +85,7 @@ phonenumbers==8.12.36
     # via notifications-utils
 pyasn1==0.4.8
     # via rsa
-pyjwt==2.3.0
+pyjwt==2.4.0
     # via notifications-python-client
 pyparsing==3.0.3
     # via packaging
@@ -145,8 +143,6 @@ werkzeug==2.1.1
     #   flask
 whitenoise==6.0.0
     # via -r requirements.in
-zipp==3.8.0
-    # via importlib-metadata
 
 # The following packages are considered to be unsafe in a requirements file:
 # setuptools
