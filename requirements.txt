@@ -79,7 +79,7 @@ mistune==0.8.4
     # via notifications-utils
 notifications-python-client==6.3.0
     # via -r requirements.in
-notifications-utils @ git+https://github.com/alphagov/notifications-utils.git@55.1.6
+notifications-utils @ git+https://github.com/alphagov/notifications-utils.git@56.0.3
     # via -r requirements.in
 orderedset==2.0.3
     # via notifications-utils
@@ -93,7 +93,7 @@ pyjwt==2.4.0
     # via notifications-python-client
 pyparsing==3.0.3
     # via packaging
-pypdf2==1.27.9
+pypdf2==2.10.3
     # via notifications-utils
 pyproj==3.3.0
     # via notifications-utils
@@ -135,6 +135,8 @@ smartypants==2.0.1
     # via notifications-utils
 statsd==3.3.0
     # via notifications-utils
+typing-extensions==4.3.0
+    # via pypdf2
 urllib3==1.26.7
     # via
     #   botocore
