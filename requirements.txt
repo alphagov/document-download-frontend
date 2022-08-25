@@ -41,9 +41,12 @@ flask==2.1.1
     # via
     #   -r requirements.in
     #   flask-redis
+    #   flask-wtf
     #   notifications-utils
 flask-redis==0.4.0
     # via notifications-utils
+flask-wtf==1.0.1
+    # via -r requirements.in
 geojson==2.5.0
     # via notifications-utils
 govuk-bank-holidays==0.10
@@ -61,6 +64,7 @@ importlib-metadata==4.12.0
 itsdangerous==2.0.1
     # via
     #   flask
+    #   flask-wtf
     #   notifications-utils
 jinja2==3.0.2
     # via
@@ -75,6 +79,7 @@ markupsafe==2.1.1
     # via
     #   jinja2
     #   werkzeug
+    #   wtforms
 mistune==0.8.4
     # via notifications-utils
 notifications-python-client==6.3.0
@@ -149,6 +154,8 @@ werkzeug==2.2.2
     #   flask
 whitenoise==6.2.0
     # via -r requirements.in
+wtforms==3.0.1
+    # via flask-wtf
 zipp==3.8.1
     # via importlib-metadata
 
