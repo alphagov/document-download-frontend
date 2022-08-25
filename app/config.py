@@ -40,6 +40,7 @@ class Development(Config):
 
 class Test(Development):
     TESTING = True
+    WTF_CSRF_ENABLED = False
 
     # used during tests as a domain name
     SERVER_NAME = 'document-download-frontend.gov'
