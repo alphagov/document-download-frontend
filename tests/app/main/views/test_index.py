@@ -9,36 +9,6 @@ from notifications_python_client.errors import HTTPError
 from tests import normalize_spaces
 
 
-@pytest.fixture
-def service_id():
-    return uuid4()
-
-
-@pytest.fixture
-def document_id():
-    return uuid4()
-
-
-@pytest.fixture
-def key():
-    return '1234'
-
-
-@pytest.fixture
-def document_has_metadata(service_id, document_id, key, rmock, client):
-    json_response = {"document": {"direct_file_url": "url"}}
-
-    rmock.get(
-        '{}/services/{}/documents/{}/check?key={}'.format(
-            current_app.config['DOCUMENT_DOWNLOAD_API_HOST_NAME'],
-            service_id,
-            document_id,
-            key
-        ),
-        json=json_response
-    )
-
-
 def test_status(client):
     response = client.get(url_for('main.status'))
     assert response.status_code == 200

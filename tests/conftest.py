@@ -1,6 +1,8 @@
+from uuid import uuid4
+
 import pytest
 import requests_mock
-from flask import Flask
+from flask import Flask, current_app
 
 from app import create_app
 
@@ -33,3 +35,33 @@ def sample_service():
 def rmock():
     with requests_mock.mock() as rmock:
         yield rmock
+
+
+@pytest.fixture
+def service_id():
+    return uuid4()
+
+
+@pytest.fixture
+def document_id():
+    return uuid4()
+
+
+@pytest.fixture
+def key():
+    return '1234'
+
+
+@pytest.fixture
+def document_has_metadata(service_id, document_id, key, rmock, client):
+    json_response = {"document": {"direct_file_url": "url"}}
+
+    rmock.get(
+        '{}/services/{}/documents/{}/check?key={}'.format(
+            current_app.config['DOCUMENT_DOWNLOAD_API_HOST_NAME'],
+            service_id,
+            document_id,
+            key
+        ),
+        json=json_response
+    )
