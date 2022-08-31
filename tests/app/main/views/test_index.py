@@ -1,6 +1,5 @@
 import re
 from unittest.mock import Mock
-from uuid import uuid4
 
 import pytest
 from bs4 import BeautifulSoup
@@ -59,14 +58,20 @@ def test_security_policy_redirects_to_policy(client, url):
     assert response.location == "https://vdp.cabinetoffice.gov.uk/.well-known/security.txt"
 
 
-@pytest.mark.parametrize('view', ['main.landing', 'main.download_document'])
-def test_404_if_no_key_in_query_string(service_id, document_id, view, client):
-    response = client.get(
+@pytest.mark.parametrize('view, method', [
+    ('main.landing', 'get'),
+    ('main.download_document', 'get'),
+    ('main.confirm_email_address', 'get'),
+    ('main.confirm_email_address', 'post'),
+])
+def test_404_if_no_key_in_query_string(service_id, document_id, view, method, client):
+    response = client.open(
         url_for(
             view,
             service_id=service_id,
             document_id=document_id,
-        )
+        ),
+        method=method,
     )
     page = BeautifulSoup(response.data.decode('utf-8'), 'html.parser')
     assert response.status_code == 404
@@ -74,9 +79,15 @@ def test_404_if_no_key_in_query_string(service_id, document_id, view, client):
     assert normalize_spaces(page.h1.text) == 'Page not found'
 
 
-@pytest.mark.parametrize('view', ['main.landing', 'main.download_document'])
+@pytest.mark.parametrize('view, method', [
+    ('main.landing', 'get'),
+    ('main.download_document', 'get'),
+    ('main.confirm_email_address', 'get'),
+    ('main.confirm_email_address', 'post'),
+])
 def test_notifications_api_error(
     view,
+    method,
     service_id,
     document_id,
     client,
@@ -85,21 +96,29 @@ def test_notifications_api_error(
 ):
     mocker.patch('app.service_api_client.get_service', return_value={'data': sample_service})
     mocker.patch('app.service_api_client.get_service', side_effect=HTTPError(response=Mock(status_code=404)))
-    response = client.get(
+
+    response = client.open(
         url_for(
             view,
-            service_id=uuid4(),
-            document_id=uuid4(),
+            service_id=service_id,
+            document_id=document_id,
             key='1234'
-        )
+        ),
+        method=method,
     )
 
     assert response.status_code == 404
 
 
-@pytest.mark.parametrize('view', ['main.landing', 'main.download_document'])
+@pytest.mark.parametrize('view, method', [
+    ('main.landing', 'get'),
+    ('main.download_document', 'get'),
+    ('main.confirm_email_address', 'get'),
+    ('main.confirm_email_address', 'post'),
+])
 def test_when_document_is_unavailable(
     view,
+    method,
     service_id,
     document_id,
     key,
@@ -109,13 +128,14 @@ def test_when_document_is_unavailable(
 ):
     mocker.patch('app.service_api_client.get_service', return_value={'data': sample_service})
     mocker.patch('app.main.views.index._get_document_metadata', return_value=None)
-    response = client.get(
+    response = client.open(
         url_for(
             view,
             service_id=service_id,
             document_id=document_id,
             key=key,
-        )
+        ),
+        method=method,
     )
 
     assert response.status_code == 200
@@ -127,9 +147,11 @@ def test_when_document_is_unavailable(
     assert contact_link['href'] == 'https://sample-service.gov.uk'
 
 
-@pytest.mark.parametrize('view', [
-    'main.landing',
-    'main.download_document',
+@pytest.mark.parametrize('view, method', [
+    ('main.landing', 'get'),
+    ('main.download_document', 'get'),
+    ('main.confirm_email_address', 'get'),
+    ('main.confirm_email_address', 'post'),
 ])
 @pytest.mark.parametrize('json_response', [
     {"error": "Missing decryption key"},
@@ -138,6 +160,7 @@ def test_when_document_is_unavailable(
 ])
 def test_404_hides_incorrect_credentials(
     view,
+    method,
     client,
     service_id,
     document_id,
@@ -159,13 +182,14 @@ def test_404_hides_incorrect_credentials(
         status_code=400,
         json=json_response
     )
-    response = client.get(
+    response = client.open(
         url_for(
-            'main.landing',
+            view,
             service_id=service_id,
             document_id=document_id,
             key=key
-        )
+        ),
+        method=method,
     )
     assert response.status_code == 404
 
@@ -200,6 +224,98 @@ def test_landing_page_creates_link_for_document(
         document_id=document_id,
         key='1234'
     )
+
+
+def test_confirm_email_address_page_show_email_address_form(
+    service_id,
+    document_id,
+    key,
+    document_has_metadata,
+    client,
+    mocker,
+    sample_service,
+):
+    mocker.patch('app.service_api_client.get_service', return_value={'data': sample_service})
+
+    response = client.get(
+        url_for(
+            'main.confirm_email_address',
+            service_id=service_id,
+            document_id=document_id,
+            key=key,
+        )
+    )
+    assert response.status_code == 200
+
+    page = BeautifulSoup(response.data.decode('utf-8'), 'html.parser')
+    assert normalize_spaces(page.title.text) == 'Confirm your email address – GOV.UK'
+    assert normalize_spaces(page.h1.text) == 'Confirm your email address'
+    assert page.select_one('form')
+    assert not page.select('.govuk-error-summary')
+
+
+def test_confirm_email_address_page_redirects_to_download_document_page(
+    service_id,
+    document_id,
+    key,
+    document_has_metadata,
+    client,
+    mocker,
+    sample_service,
+):
+    mocker.patch('app.service_api_client.get_service', return_value={'data': sample_service})
+
+    response = client.post(
+        url_for(
+            'main.confirm_email_address',
+            service_id=service_id,
+            document_id=document_id,
+            key=key,
+        ),
+        data={'email_address': 'me@example.com'}
+    )
+    assert response.status_code == 302
+
+    assert response.location == url_for(
+        'main.download_document',
+        service_id=service_id,
+        document_id=document_id,
+        key=key,
+    )
+
+
+def test_confirm_email_address_page_shows_an_error_if_the_email_address_is_invalid(
+    service_id,
+    document_id,
+    key,
+    document_has_metadata,
+    client,
+    mocker,
+    sample_service,
+):
+    mocker.patch('app.service_api_client.get_service', return_value={'data': sample_service})
+
+    response = client.post(
+        url_for(
+            'main.confirm_email_address',
+            service_id=service_id,
+            document_id=document_id,
+            key=key,
+        ),
+        data={'email_address': 'fake address'}
+    )
+    assert response.status_code == 200
+
+    page = BeautifulSoup(response.data.decode('utf-8'), 'html.parser')
+    assert normalize_spaces(page.title.text) == 'Error: Confirm your email address – GOV.UK'
+    assert normalize_spaces(page.h1.text) == 'Confirm your email address'
+
+    # Error summary in banner at the top of the page
+    assert normalize_spaces(page.select_one('.govuk-error-summary__title').text) == 'There is a problem'
+    assert normalize_spaces(page.select_one('.govuk-error-summary__list').text) == 'Not a valid email address'
+
+    # Error above the form input
+    assert normalize_spaces(page.select_one('#email-address-input-error').text) == 'Error: Not a valid email address'
 
 
 def test_download_document_creates_link_to_actual_doc_from_api(
@@ -257,9 +373,15 @@ def test_download_document_shows_contact_information(
     assert contact_link['href'] == 'https://sample-service.gov.uk'
 
 
-@pytest.mark.parametrize('view', ['main.landing', 'main.download_document'])
+@pytest.mark.parametrize('view, method', [
+    ('main.landing', 'get'),
+    ('main.download_document', 'get'),
+    ('main.confirm_email_address', 'get'),
+    ('main.confirm_email_address', 'post'),
+])
 def test_pages_contain_key_security_headers(
     view,
+    method,
     service_id,
     document_id,
     key,
@@ -270,13 +392,14 @@ def test_pages_contain_key_security_headers(
 ):
     mocker.patch('app.service_api_client.get_service', return_value={'data': sample_service})
 
-    response = client.get(
+    response = client.open(
         url_for(
             view,
             service_id=service_id,
             document_id=document_id,
             key=key
-        )
+        ),
+        method=method,
     )
 
     assert response.status_code == 200

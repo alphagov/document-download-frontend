@@ -1,0 +1,42 @@
+{% extends "document_download_template.html" %}
+{%- from "govuk_frontend_jinja/components/button/macro.html" import govukButton -%}
+{%- from "govuk_frontend_jinja/components/error-summary/macro.html" import govukErrorSummary -%}
+
+
+{% block per_page_title %}
+  {% if error_summary %}Error: {% endif %}Confirm your email address
+{% endblock %}
+
+{% block content %}
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      {% if error_summary %}
+        {{ govukErrorSummary({
+          "titleText": "There is a problem",
+          "errorList": [
+            {
+              "text": error_summary,
+              "href": "#email-address-input"
+            },
+          ]
+        }) }}
+      {% endif %}
+
+      <h1 class="govuk-heading-l">Confirm your email address</h1>
+
+      <p class="govuk-body">
+        For security, we need to confirm the email address the file was sent to before you can download it.
+      </p>
+
+      <form method="post" novalidate>
+        {{ form.csrf_token }}
+        {{ form.email_address }}
+
+        {{ govukButton({
+          "text": "Continue",
+          "type": "submit"
+        }) }}
+      </form>
+    </div>
+  </div>
+{% endblock %}
