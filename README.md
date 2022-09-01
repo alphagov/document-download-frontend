@@ -25,6 +25,12 @@ have that version, it should tell you how to install it.
 nvm use
 ```
 
+### Pre-commit
+
+We use [pre-commit](https://pre-commit.com/) to ensure that committed code meets basic standards for formatting, and will make basic fixes for you to save time and aggravation.
+
+Install pre-commit system-wide with, eg `brew install pre-commit`. Then, install the hooks in this repository with `pre-commit install --install-hooks`.
+
 ## To run the application
 
 ```shell
