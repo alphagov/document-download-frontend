@@ -285,7 +285,7 @@ def test_confirm_email_address_page_shows_an_error_if_the_email_address_is_inval
     assert normalize_spaces(page.select_one('.govuk-error-summary__list').text) == 'Not a valid email address'
 
     # Error above the form input
-    assert normalize_spaces(page.select_one('#email-address-input-error').text) == 'Error: Not a valid email address'
+    assert normalize_spaces(page.select_one('#email_address-error').text) == 'Error: Not a valid email address'
 
 
 def test_download_document_creates_link_to_actual_doc_from_api(

@@ -1,26 +1,16 @@
 {% extends "document_download_template.html" %}
 {%- from "govuk_frontend_jinja/components/button/macro.html" import govukButton -%}
-{%- from "govuk_frontend_jinja/components/error-summary/macro.html" import govukErrorSummary -%}
+{%- from "macros/error_summary.html" import render_error_summary -%}
 
 
 {% block per_page_title %}
-  {% if error_summary %}Error: {% endif %}Confirm your email address
+  {% if form.errors %}Error: {% endif %}Confirm your email address
 {% endblock %}
 
 {% block content %}
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
-      {% if error_summary %}
-        {{ govukErrorSummary({
-          "titleText": "There is a problem",
-          "errorList": [
-            {
-              "text": error_summary,
-              "href": "#email-address-input"
-            },
-          ]
-        }) }}
-      {% endif %}
+      {{ render_error_summary(form) }}
 
       <h1 class="govuk-heading-l">Confirm your email address</h1>
 

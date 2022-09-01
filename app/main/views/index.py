@@ -78,18 +78,13 @@ def confirm_email_address(service_id, document_id):
         )
 
     form = EmailAddressForm()
-    error_summary = None
 
     if form.validate_on_submit():
         return redirect(url_for('.download_document', service_id=service_id, document_id=document_id, key=key))
 
-    if form.email_address.errors:
-        error_summary = form.email_address.errors[0]
-
     return render_template(
         'views/confirm_email_address.html',
         form=form,
-        error_summary=error_summary,
         service_id=service_id,
         document_id=document_id,
         key=key,

@@ -1,0 +1,19 @@
+{%- from "govuk_frontend_jinja/components/error-summary/macro.html" import govukErrorSummary -%}
+
+{% macro render_error_summary(form) %}
+  {% if form.errors %}
+    {% set errors = [] %}
+    {% for field_id in form.errors %}
+      {% if field_id %}
+        {% set _ = errors.append({"href": "#" + field_id, "text": form.errors[field_id][0]}) %}
+      {% else %}
+        {% set _ = errors.append({"text": form.errors[field_id][0]}) %}
+      {% endif %}
+    {% endfor %}
+
+    {{ govukErrorSummary({
+      "titleText": "There is a problem",
+      "errorList": errors
+    }) }}
+  {% endif %}
+{% endmacro %}
