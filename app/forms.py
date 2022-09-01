@@ -30,13 +30,13 @@ class EmailAddressField(StringField):
             error_message = None
 
         params = {
-            "id": "email-address-input",
-            "name": "email_address",
+            "id": self.id,
+            "name": self.name,
             "type": "email",
             "errorMessage": error_message,
             "label": {
                 "text": "Email address",
-                "for": "email-address-input",
+                "for": self.id,
             },
             "spellcheck": False,
             "autocomplete": "email",

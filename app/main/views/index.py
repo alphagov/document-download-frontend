@@ -7,6 +7,7 @@ from flask import (
     request,
     url_for,
 )
+from markupsafe import Markup
 from notifications_python_client.errors import HTTPError
 
 from app import service_api_client
@@ -78,18 +79,23 @@ def confirm_email_address(service_id, document_id):
         )
 
     form = EmailAddressForm()
-    error_summary = None
 
     if form.validate_on_submit():
-        return redirect(url_for('.download_document', service_id=service_id, document_id=document_id, key=key))
+        if 'email_address_wrong':
+            form.form_errors.append(
+                Markup(
+                    "This is not the email address the file was sent to."
+                    "<br><br>"
+                    "To confirm the file was meant for you, enter the email address ((service name)) sent the file to."
+                )
+            )
 
-    if form.email_address.errors:
-        error_summary = form.email_address.errors[0]
+        else:
+            return redirect(url_for('.download_document', service_id=service_id, document_id=document_id, key=key))
 
     return render_template(
         'views/confirm_email_address.html',
         form=form,
-        error_summary=error_summary,
         service_id=service_id,
         document_id=document_id,
         key=key,
