@@ -1,8 +1,16 @@
 import requests
-from flask import abort, current_app, redirect, render_template, request
+from flask import (
+    abort,
+    current_app,
+    redirect,
+    render_template,
+    request,
+    url_for,
+)
 from notifications_python_client.errors import HTTPError
 
 from app import service_api_client
+from app.forms import EmailAddressForm
 from app.main import main
 from app.utils import assess_contact_type
 
@@ -26,10 +34,7 @@ def landing(service_id, document_id):
     if not key:
         abort(404)
 
-    try:
-        service = service_api_client.get_service(service_id)
-    except HTTPError as e:
-        abort(e.status_code)
+    service = _get_service_or_raise_error(service_id)
 
     service_contact_info = service['data']['contact_link']
     contact_info_type = assess_contact_type(service_contact_info)
@@ -53,16 +58,46 @@ def landing(service_id, document_id):
     )
 
 
+@main.route('/d/<base64_uuid:service_id>/<base64_uuid:document_id>/confirm-email-address', methods=['GET', 'POST'])
+def confirm_email_address(service_id, document_id):
+    key = request.args.get('key')
+    if not key:
+        abort(404)
+
+    service = _get_service_or_raise_error(service_id)
+
+    service_contact_info = service['data']['contact_link']
+    contact_info_type = assess_contact_type(service_contact_info)
+
+    if not _get_document_metadata(service_id, document_id, key):
+        return render_template(
+            'views/file_unavailable.html',
+            service_name=service['data']['name'],
+            service_contact_info=service_contact_info,
+            contact_info_type=contact_info_type,
+        )
+
+    form = EmailAddressForm()
+
+    if form.validate_on_submit():
+        return redirect(url_for('.download_document', service_id=service_id, document_id=document_id, key=key))
+
+    return render_template(
+        'views/confirm_email_address.html',
+        form=form,
+        service_id=service_id,
+        document_id=document_id,
+        key=key,
+    )
+
+
 @main.route('/d/<base64_uuid:service_id>/<base64_uuid:document_id>/download', methods=['GET'])
 def download_document(service_id, document_id):
     key = request.args.get('key', None)
     if not key:
         abort(404)
 
-    try:
-        service = service_api_client.get_service(service_id)
-    except HTTPError as e:
-        abort(e.status_code)
+    service = _get_service_or_raise_error(service_id)
 
     metadata = _get_document_metadata(service_id, document_id, key)
     service_contact_info = service['data']['contact_link']
@@ -83,6 +118,13 @@ def download_document(service_id, document_id):
         service_contact_info=service_contact_info,
         contact_info_type=contact_info_type,
     )
+
+
+def _get_service_or_raise_error(service_id):
+    try:
+        return service_api_client.get_service(service_id)
+    except HTTPError as e:
+        abort(e.status_code)
 
 
 def _get_document_metadata(service_id, document_id, key):

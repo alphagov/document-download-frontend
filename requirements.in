@@ -2,6 +2,7 @@
 # with package version changes made in requirements-app.txt
 
 Flask==2.1.1
+Flask-WTF==1.0.1
 
 # Should be pinned until a new gunicorn release greater than 20.1.0 comes out. (Due to eventlet v0.33 compatibility issues)
 git+https://github.com/benoitc/gunicorn.git@1299ea9e967a61ae2edebe191082fd169b864c64#egg=gunicorn[eventlet]==20.1.0

@@ -8,6 +8,7 @@
 // For example, `export { Frontend }` will assign `Frontend` to `window.Frontend`
 import { nodeListForEach } from 'govuk-frontend/govuk/common'
 import Button from 'govuk-frontend/govuk/components/button/button'
+import ErrorSummary from 'govuk-frontend/govuk/components/error-summary/error-summary'
 import SkipLink from 'govuk-frontend/govuk/components/skip-link/skip-link'
 
 // Copy of the initAll function from https://github.com/alphagov/govuk-frontend/blob/v3.5.0/src/govuk/all.js
@@ -26,6 +27,10 @@ function initAll (options) {
     new Button(button).init()
   });
 
+  // Find first error summary module to enhance.
+  var $errorSummary = scope.querySelector('[data-module="govuk-error-summary"]')
+  new ErrorSummary($errorSummary).init()
+
   // There will only ever be one skip-link per page
   var skipLink = scope.querySelector('[data-module="govuk-skip-link"]')
 
@@ -34,6 +39,7 @@ function initAll (options) {
 
 var Frontend = {
   "Button": Button,
+  "ErrorSummary": ErrorSummary,
   "SkipLink": SkipLink,
   "initAll": initAll
 }

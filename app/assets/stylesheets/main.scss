@@ -11,6 +11,7 @@ $govuk-assets-path: "/static/";
 @import "settings/all";
 @import "tools/all";
 @import "helpers/all";
+@import "utilities/all";
 
 @import "core/all";
 @import "objects/all";
@@ -19,4 +20,7 @@ $govuk-assets-path: "/static/";
 @import 'components/header/header';
 @import 'components/footer/footer';
 @import 'components/button/button';
+@import 'components/input/input';
+@import 'components/error-message/error-message';
+@import 'components/error-summary/error-summary';
 

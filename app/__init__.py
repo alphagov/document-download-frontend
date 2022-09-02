@@ -4,6 +4,7 @@ from functools import partial
 import jinja2
 from flask import current_app, make_response, render_template
 from flask.globals import _lookup_req_object
+from flask_wtf.csrf import CSRFError
 from notifications_utils import logging, request_helper
 from notifications_utils.base64_uuid import base64_to_uuid, uuid_to_base64
 from notifications_utils.clients.statsd.statsd_client import StatsdClient
@@ -97,8 +98,11 @@ def useful_headers_after_request(response):
 
 
 def register_errorhandlers(application):  # noqa (C901 too complex)
-    def _error_response(error_code):
-        return make_response(render_template("error/{0}.html".format(error_code)), error_code)
+    def _error_response(error_code, error_page_template=None):
+        if not error_page_template:
+            error_page_template = error_code
+
+        return make_response(render_template(f"error/{error_page_template}.html"), error_code)
 
     @application.errorhandler(410)
     @application.errorhandler(404)
@@ -116,6 +120,12 @@ def register_errorhandlers(application):  # noqa (C901 too complex)
         if current_app.config.get('DEBUG', None):
             raise error
         return _error_response(500)
+
+    @application.errorhandler(CSRFError)
+    def handle_csrf(reason):
+        application.logger.warning(f'CSRF error message: {reason}')
+
+        return _error_response(400, error_page_template=500)
 
 
 def init_jinja(application):
