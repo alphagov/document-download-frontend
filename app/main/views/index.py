@@ -38,14 +38,21 @@ def landing(service_id, document_id):
 
     service_contact_info = service['data']['contact_link']
     contact_info_type = assess_contact_type(service_contact_info)
+    metadata = _get_document_metadata(service_id, document_id, key)
 
-    if not _get_document_metadata(service_id, document_id, key):
+    if not metadata:
         return render_template(
             'views/file_unavailable.html',
             service_name=service['data']['name'],
             service_contact_info=service_contact_info,
             contact_info_type=contact_info_type,
         )
+
+    if metadata['verify_email'] is True:
+        continue_url = url_for('main.confirm_email_address', service_id=service_id, document_id=document_id, key=key)
+
+    else:
+        continue_url = url_for('main.download_document', service_id=service_id, document_id=document_id, key=key)
 
     return render_template(
         'views/index.html',
@@ -54,7 +61,8 @@ def landing(service_id, document_id):
         service_contact_info=service_contact_info,
         contact_info_type=contact_info_type,
         document_id=document_id,
-        key=key
+        key=key,
+        continue_url=continue_url,
     )
 
 
