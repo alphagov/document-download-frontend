@@ -1,3 +1,6 @@
+from typing import Optional
+from urllib import parse
+
 import requests
 from flask import (
     abort,
@@ -7,6 +10,7 @@ from flask import (
     request,
     url_for,
 )
+from jinja2 import Markup
 from notifications_python_client.errors import HTTPError
 
 from app import service_api_client
@@ -79,21 +83,43 @@ def confirm_email_address(service_id, document_id):
 
     service = _get_service_or_raise_error(service_id)
 
+    metadata = _get_document_metadata(service_id, document_id, key)
     service_contact_info = service['data']['contact_link']
+    service_name = service['data']['name']
     contact_info_type = assess_contact_type(service_contact_info)
 
-    if not _get_document_metadata(service_id, document_id, key):
+    if not metadata:
         return render_template(
             'views/file_unavailable.html',
-            service_name=service['data']['name'],
+            service_name=service_name,
             service_contact_info=service_contact_info,
             contact_info_type=contact_info_type,
         )
 
+    if metadata['verify_email'] is False:
+        return redirect(url_for('.download_document', service_id=service_id, document_id=document_id, key=key))
+
     form = EmailAddressForm()
 
     if form.validate_on_submit():
-        return redirect(url_for('.download_document', service_id=service_id, document_id=document_id, key=key))
+        authentication_data = _authenticate_access_to_document(service_id, document_id, key, form.email_address.data)
+        if authentication_data:
+            response = redirect(url_for('.download_document', service_id=service_id, document_id=document_id, key=key))
+            response.set_cookie(
+                key='document_access_signed_data',
+                value=authentication_data['signed_data'],
+                path=authentication_data['cookie_path'],
+                secure=current_app.config['HTTP_PROTOCOL'] == 'https',
+                httponly=True,
+            )
+            return response
+
+        form.form_errors.append(
+            Markup(
+                "This is not the email address the file was sent to.<br><br>"
+                f"To confirm the file was meant for you, enter the email address {service_name} sent the file to."
+            )
+        )
 
     return render_template(
         'views/confirm_email_address.html',
@@ -101,7 +127,7 @@ def confirm_email_address(service_id, document_id):
         service_id=service_id,
         document_id=document_id,
         key=key,
-    )
+    ), 400 if form.errors else 200
 
 
 @main.route('/d/<base64_uuid:service_id>/<base64_uuid:document_id>/download', methods=['GET'])
@@ -161,3 +187,26 @@ def _get_document_metadata(service_id, document_id, key):
     response.raise_for_status()
 
     return response.json().get('document')
+
+
+def _authenticate_access_to_document(service_id, document_id, key, email_address) -> Optional[dict]:
+    auth_file_url = '{}/services/{}/documents/{}/authenticate'.format(
+        current_app.config['DOCUMENT_DOWNLOAD_API_HOST_NAME'],
+        service_id,
+        document_id,
+    )
+    response = requests.post(auth_file_url, json={'key': key, 'email_address': email_address})
+    data = response.json()
+
+    if response.status_code in {400, 403}:
+        return None
+
+    # Let the `500` error handler handle unexpected errors from doc-download-api
+    response.raise_for_status()
+
+    cookie_path = parse.urlsplit(data['direct_file_url']).path
+
+    return {
+        'signed_data': data['signed_data'],
+        'cookie_path': cookie_path,
+    }

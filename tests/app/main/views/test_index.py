@@ -1,6 +1,7 @@
 import re
 from unittest.mock import Mock
 
+import freezegun as freezegun
 import pytest
 from bs4 import BeautifulSoup
 from flask import current_app, url_for
@@ -232,7 +233,7 @@ def test_confirm_email_address_page_show_email_address_form(
     service_id,
     document_id,
     key,
-    document_has_metadata,
+    document_has_metadata_requires_verification,
     client,
     mocker,
     sample_service,
@@ -256,7 +257,7 @@ def test_confirm_email_address_page_show_email_address_form(
     assert not page.select('.govuk-error-summary')
 
 
-def test_confirm_email_address_page_redirects_to_download_document_page(
+def test_confirm_email_address_page_redirects_to_download_page_if_verification_not_required(
     service_id,
     document_id,
     key,
@@ -267,17 +268,15 @@ def test_confirm_email_address_page_redirects_to_download_document_page(
 ):
     mocker.patch('app.service_api_client.get_service', return_value={'data': sample_service})
 
-    response = client.post(
+    response = client.get(
         url_for(
             'main.confirm_email_address',
             service_id=service_id,
             document_id=document_id,
             key=key,
         ),
-        data={'email_address': 'me@example.com'}
     )
     assert response.status_code == 302
-
     assert response.location == url_for(
         'main.download_document',
         service_id=service_id,
@@ -290,7 +289,7 @@ def test_confirm_email_address_page_shows_an_error_if_the_email_address_is_inval
     service_id,
     document_id,
     key,
-    document_has_metadata,
+    document_has_metadata_requires_verification,
     client,
     mocker,
     sample_service,
@@ -306,7 +305,7 @@ def test_confirm_email_address_page_shows_an_error_if_the_email_address_is_inval
         ),
         data={'email_address': 'fake address'}
     )
-    assert response.status_code == 200
+    assert response.status_code == 400
 
     page = BeautifulSoup(response.data.decode('utf-8'), 'html.parser')
     assert normalize_spaces(page.title.text) == 'Error: Confirm your email address – GOV.UK'
@@ -318,6 +317,102 @@ def test_confirm_email_address_page_shows_an_error_if_the_email_address_is_inval
 
     # Error above the form input
     assert normalize_spaces(page.select_one('#email_address-error').text) == 'Error: Not a valid email address'
+
+
+def test_confirm_email_address_page_shows_error_if_wrong_email_address(
+    service_id,
+    document_id,
+    key,
+    document_has_metadata_requires_verification,
+    client,
+    mocker,
+    sample_service,
+    rmock,
+):
+    mocker.patch('app.service_api_client.get_service', return_value={'data': sample_service})
+
+    rmock.post(
+        '{}/services/{}/documents/{}/authenticate'.format(
+            current_app.config['DOCUMENT_DOWNLOAD_API_HOST_NAME'],
+            service_id,
+            document_id,
+        ),
+        status_code=400,
+        json={'error': 'Authentication failure'}
+    )
+
+    response = client.post(
+        url_for(
+            'main.confirm_email_address',
+            service_id=service_id,
+            document_id=document_id,
+            key=key,
+        ),
+        data={'email_address': 'me@example.com'}
+    )
+    assert response.status_code == 400
+
+    page = BeautifulSoup(response.data.decode('utf-8'), 'html.parser')
+    assert normalize_spaces(page.title.text) == 'Error: Confirm your email address – GOV.UK'
+    assert normalize_spaces(page.h1.text) == 'Confirm your email address'
+
+    # Error summary in banner at the top of the page
+    assert normalize_spaces(page.select_one('.govuk-error-summary__title').text) == 'There is a problem'
+    assert normalize_spaces(page.select_one('.govuk-error-summary__list').text) == (
+        "This is not the email address the file was sent to."
+        "To confirm the file was meant for you, enter the email address Sample Service sent the file to."
+    )
+
+    # Error above the form input
+    assert not page.select_one('#email_address-error')
+
+
+@freezegun.freeze_time('2000-01-01T12:34:56Z')
+def test_confirm_email_address_page_redirects_and_sets_cookie_on_success(
+    service_id,
+    document_id,
+    key,
+    document_has_metadata_requires_verification,
+    client,
+    mocker,
+    sample_service,
+    rmock,
+):
+    mocker.patch('app.service_api_client.get_service', return_value={'data': sample_service})
+
+    rmock.post(
+        '{}/services/{}/documents/{}/authenticate'.format(
+            current_app.config['DOCUMENT_DOWNLOAD_API_HOST_NAME'],
+            service_id,
+            document_id,
+        ),
+        status_code=200,
+        json={'signed_data': 'blah', 'direct_file_url': 'http://test-doc-download-api.com/my/file/path?key=foo'}
+    )
+
+    response = client.post(
+        url_for(
+            'main.confirm_email_address',
+            service_id=service_id,
+            document_id=document_id,
+            key=key,
+        ),
+        data={'email_address': 'me@example.com'}
+    )
+    assert response.status_code == 302
+    assert response.location == url_for(
+        'main.download_document',
+        service_id=service_id,
+        document_id=document_id,
+        key=key
+    )
+    assert any(
+        header == (
+            'Set-Cookie',
+            'document_access_signed_data=blah; Expires=Sun, 02 Jan 2000 12:34:56 GMT; HttpOnly; Path=/my/file/path'
+        )
+        for header in response.headers
+    )
 
 
 def test_download_document_creates_link_to_actual_doc_from_api(
@@ -375,33 +470,26 @@ def test_download_document_shows_contact_information(
     assert contact_link['href'] == 'https://sample-service.gov.uk'
 
 
-@pytest.mark.parametrize('view, method', [
-    ('main.landing', 'get'),
-    ('main.download_document', 'get'),
-    ('main.confirm_email_address', 'get'),
-    ('main.confirm_email_address', 'post'),
-])
+@pytest.mark.parametrize('view', ['main.landing', 'main.download_document', 'main.confirm_email_address'])
 def test_pages_contain_key_security_headers(
     view,
-    method,
     service_id,
     document_id,
     key,
-    document_has_metadata,
+    document_has_metadata_requires_verification,
     client,
     mocker,
     sample_service
 ):
     mocker.patch('app.service_api_client.get_service', return_value={'data': sample_service})
 
-    response = client.open(
+    response = client.get(
         url_for(
             view,
             service_id=service_id,
             document_id=document_id,
             key=key
         ),
-        method=method,
     )
 
     assert response.status_code == 200
