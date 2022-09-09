@@ -48,7 +48,12 @@ def landing(service_id, document_id):
             contact_info_type=contact_info_type,
         )
 
-    if metadata['verify_email'] is True:
+    if 'verify_email' not in metadata:
+        current_app.logger.info(
+            f'Metadata for {service_id}/{document_id} does not contain `verify_email` key: {metadata}'
+        )
+
+    if metadata.get('verify_email', False) is True:
         continue_url = url_for('main.confirm_email_address', service_id=service_id, document_id=document_id, key=key)
 
     else:
