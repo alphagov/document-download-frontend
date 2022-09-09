@@ -54,7 +54,22 @@ def key():
 
 @pytest.fixture
 def document_has_metadata(service_id, document_id, key, rmock, client):
-    json_response = {"document": {"direct_file_url": "url"}}
+    json_response = {"document": {"direct_file_url": "url", "verify_email": False}}
+
+    rmock.get(
+        '{}/services/{}/documents/{}/check?key={}'.format(
+            current_app.config['DOCUMENT_DOWNLOAD_API_HOST_NAME'],
+            service_id,
+            document_id,
+            key
+        ),
+        json=json_response
+    )
+
+
+@pytest.fixture
+def document_has_metadata_requires_verification(service_id, document_id, key, rmock, client):
+    json_response = {"document": {"direct_file_url": "url", "verify_email": True}}
 
     rmock.get(
         '{}/services/{}/documents/{}/check?key={}'.format(

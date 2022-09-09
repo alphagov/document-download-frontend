@@ -196,6 +196,38 @@ def test_landing_page_creates_link_for_document(
     )
 
 
+def test_landing_page_creates_link_to_confirm_email_address(
+    service_id,
+    document_id,
+    key,
+    document_has_metadata_requires_verification,
+    client,
+    mocker,
+    sample_service
+):
+    mocker.patch('app.service_api_client.get_service', return_value={'data': sample_service})
+
+    response = client.get(
+        url_for(
+            'main.landing',
+            service_id=service_id,
+            document_id=document_id,
+            key=key,
+        )
+    )
+
+    assert response.status_code == 200
+    page = BeautifulSoup(response.data.decode('utf-8'), 'html.parser')
+    assert normalize_spaces(page.title.text) == 'You have a file to download – GOV.UK'
+    assert normalize_spaces(page.h1.text) == 'You have a file to download'
+    assert page.find('a', string=re.compile("Continue"))['href'] == url_for(
+        'main.confirm_email_address',
+        service_id=service_id,
+        document_id=document_id,
+        key='1234'
+    )
+
+
 def test_confirm_email_address_page_show_email_address_form(
     service_id,
     document_id,

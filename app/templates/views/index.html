@@ -20,7 +20,7 @@
   </p>
   <p class="govuk-body">
     {{ govukButton({
-      "href": url_for('main.download_document', service_id=service_id, document_id=document_id, key=key),
+      "href": continue_url,
       "text": "Continue",
       "element": "a",
     }) }}
