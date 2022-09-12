@@ -53,7 +53,7 @@ def key():
 
 
 @pytest.fixture
-def document_has_metadata(service_id, document_id, key, rmock, client):
+def document_has_metadata_no_verification(service_id, document_id, key, rmock, client):
     json_response = {"document": {"direct_file_url": "url", "verify_email": False}}
 
     rmock.get(

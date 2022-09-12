@@ -169,7 +169,7 @@ def test_landing_page_creates_link_for_document(
     service_id,
     document_id,
     key,
-    document_has_metadata,
+    document_has_metadata_no_verification,
     client,
     mocker,
     sample_service
@@ -261,7 +261,7 @@ def test_confirm_email_address_page_redirects_to_download_page_if_verification_n
     service_id,
     document_id,
     key,
-    document_has_metadata,
+    document_has_metadata_no_verification,
     client,
     mocker,
     sample_service,
@@ -409,7 +409,7 @@ def test_confirm_email_address_page_redirects_and_sets_cookie_on_success(
     assert any(
         header == (
             'Set-Cookie',
-            'document_access_signed_data=blah; Expires=Sun, 02 Jan 2000 12:34:56 GMT; HttpOnly; Path=/my/file/path'
+            'document_access_signed_data=blah; HttpOnly; Path=/my/file/path'
         )
         for header in response.headers
     )
@@ -419,7 +419,7 @@ def test_download_document_creates_link_to_actual_doc_from_api(
     service_id,
     document_id,
     key,
-    document_has_metadata,
+    document_has_metadata_no_verification,
     client,
     mocker,
     sample_service
@@ -446,7 +446,7 @@ def test_download_document_shows_contact_information(
     service_id,
     document_id,
     key,
-    document_has_metadata,
+    document_has_metadata_no_verification,
     client,
     mocker,
     sample_service
@@ -507,7 +507,7 @@ def test_landing_page_has_supplier_contact_info(
     service_id,
     document_id,
     key,
-    document_has_metadata,
+    document_has_metadata_no_verification,
     client,
     mocker,
     contact_info,
@@ -538,7 +538,7 @@ def test_footer_doesnt_link_to_national_archives(
     service_id,
     document_id,
     key,
-    document_has_metadata,
+    document_has_metadata_no_verification,
     client,
     mocker,
 ):

@@ -16,7 +16,7 @@ def test_csrf_error_returns_400_status_code_and_500_error_page(
     service_id,
     document_id,
     key,
-    document_has_metadata,
+    document_has_metadata_no_verification,
     client,
     mocker,
     sample_service,
