@@ -12,6 +12,7 @@ $govuk-assets-path: "/static/";
 @import "tools/all";
 @import "helpers/all";
 @import "utilities/all";
+@import "overrides/spacing";
 
 @import "core/all";
 @import "objects/all";
