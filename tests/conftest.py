@@ -54,7 +54,7 @@ def key():
 
 @pytest.fixture
 def document_has_metadata_no_verification(service_id, document_id, key, rmock, client):
-    json_response = {"document": {"direct_file_url": "url", "verify_email": False}}
+    json_response = {"document": {"direct_file_url": "url", "verify_email": False, "size_in_bytes": 712099}}
 
     rmock.get(
         '{}/services/{}/documents/{}/check?key={}'.format(
@@ -69,7 +69,7 @@ def document_has_metadata_no_verification(service_id, document_id, key, rmock, c
 
 @pytest.fixture
 def document_has_metadata_requires_verification(service_id, document_id, key, rmock, client):
-    json_response = {"document": {"direct_file_url": "url", "verify_email": True}}
+    json_response = {"document": {"direct_file_url": "url", "verify_email": True, "size_in_bytes": 1923823}}
 
     rmock.get(
         '{}/services/{}/documents/{}/check?key={}'.format(
