@@ -8,9 +8,7 @@ $govuk-assets-path: "/static/";
 // Dependencies from GOV.UK Frontend
 // https://github.com/alphagov/govuk-frontend
 
-@import "settings/all";
-@import "tools/all";
-@import "helpers/all";
+@import "base";
 @import "utilities/all";
 @import "overrides/spacing";
 
@@ -24,4 +22,3 @@ $govuk-assets-path: "/static/";
 @import 'components/input/input';
 @import 'components/error-message/error-message';
 @import 'components/error-summary/error-summary';
-
