@@ -9,16 +9,17 @@ $govuk-assets-path: "/static/";
 // https://github.com/alphagov/govuk-frontend
 
 @import "base";
-@import "utilities/all";
-@import "overrides/spacing";
 
 @import "core/all";
 @import "objects/all";
 
-@import 'components/skip-link/skip-link';
-@import 'components/header/header';
-@import 'components/footer/footer';
 @import 'components/button/button';
-@import 'components/input/input';
 @import 'components/error-message/error-message';
 @import 'components/error-summary/error-summary';
+@import 'components/footer/footer';
+@import 'components/header/header';
+@import 'components/input/input';
+@import 'components/skip-link/skip-link';
+
+@import "utilities/all";
+@import "overrides/spacing";
