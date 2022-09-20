@@ -8,20 +8,18 @@ $govuk-assets-path: "/static/";
 // Dependencies from GOV.UK Frontend
 // https://github.com/alphagov/govuk-frontend
 
-@import "settings/all";
-@import "tools/all";
-@import "helpers/all";
-@import "utilities/all";
-@import "overrides/spacing";
+@import "base";
 
 @import "core/all";
 @import "objects/all";
 
-@import 'components/skip-link/skip-link';
-@import 'components/header/header';
-@import 'components/footer/footer';
 @import 'components/button/button';
-@import 'components/input/input';
 @import 'components/error-message/error-message';
 @import 'components/error-summary/error-summary';
+@import 'components/footer/footer';
+@import 'components/header/header';
+@import 'components/input/input';
+@import 'components/skip-link/skip-link';
 
+@import "utilities/all";
+@import "overrides/spacing";
