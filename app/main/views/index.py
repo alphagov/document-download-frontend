@@ -16,7 +16,7 @@ from notifications_python_client.errors import HTTPError
 from app import service_api_client
 from app.forms import EmailAddressForm
 from app.main import main
-from app.utils import assess_contact_type
+from app.utils import assess_contact_type, bytes_to_pretty_file_size
 
 
 @main.route('/_status')
@@ -153,6 +153,7 @@ def download_document(service_id, document_id):
     return render_template(
         'views/download.html',
         download_link=metadata['direct_file_url'],
+        file_size=bytes_to_pretty_file_size(metadata['size_in_bytes']),
         service_name=service['data']['name'],
         service_contact_info=service_contact_info,
         contact_info_type=contact_info_type,

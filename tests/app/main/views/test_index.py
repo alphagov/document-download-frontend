@@ -440,6 +440,7 @@ def test_download_document_creates_link_to_actual_doc_from_api(
     assert normalize_spaces(page.title.text) == 'Download your file – GOV.UK'
     assert normalize_spaces(page.h1.text) == 'Download your file'
     assert page.select('main a')[0]['href'] == 'url'
+    assert page.select('main a')[0].text == 'Download this file (0.7MB) to your device'
 
 
 def test_download_document_shows_contact_information(
