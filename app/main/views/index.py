@@ -53,12 +53,12 @@ def landing(service_id, document_id):
             contact_info_type=contact_info_type,
         )
 
-    if 'verify_email' not in metadata:
+    if 'confirm_email' not in metadata:
         current_app.logger.info(
-            f'Metadata for {service_id}/{document_id} does not contain `verify_email` key: {metadata}'
+            f'Metadata for {service_id}/{document_id} does not contain `confirm_email` key: {metadata}'
         )
 
-    if metadata.get('verify_email', False) is True:
+    if metadata.get('confirm_email', False) is True:
         continue_url = url_for('main.confirm_email_address', service_id=service_id, document_id=document_id, key=key)
 
     else:
@@ -97,7 +97,7 @@ def confirm_email_address(service_id, document_id):
             contact_info_type=contact_info_type,
         )
 
-    if metadata['verify_email'] is False:
+    if metadata['confirm_email'] is False:
         return redirect(url_for('.download_document', service_id=service_id, document_id=document_id, key=key))
 
     form = EmailAddressForm()
