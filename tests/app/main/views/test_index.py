@@ -6,6 +6,7 @@ import pytest
 from bs4 import BeautifulSoup
 from flask import current_app, url_for
 from notifications_python_client.errors import HTTPError
+from notifications_utils.base64_uuid import uuid_to_base64
 
 from tests import normalize_spaces
 
@@ -365,6 +366,51 @@ def test_confirm_email_address_page_shows_error_if_wrong_email_address(
 
     # Error above the form input
     assert not page.select_one('#email_address-error')
+
+
+def test_confirm_email_address_page_shows_429_error_page_if_auth_rate_limited(
+    service_id,
+    document_id,
+    key,
+    document_has_metadata_requires_verification,
+    client,
+    mocker,
+    sample_service,
+    rmock,
+):
+    mocker.patch('app.service_api_client.get_service', return_value={'data': sample_service})
+
+    rmock.post(
+        '{}/services/{}/documents/{}/authenticate'.format(
+            current_app.config['DOCUMENT_DOWNLOAD_API_HOST_NAME'],
+            service_id,
+            document_id,
+        ),
+        status_code=429,
+        json={'error': 'Too many requests'}
+    )
+
+    response = client.post(
+        url_for(
+            'main.confirm_email_address',
+            service_id=service_id,
+            document_id=document_id,
+            key=key,
+        ),
+        data={'email_address': 'me@example.com'}
+    )
+    assert response.status_code == 429
+
+    page = BeautifulSoup(response.data.decode('utf-8'), 'html.parser')
+    assert normalize_spaces(page.title.text) == 'Cannot access document – GOV.UK'
+    assert normalize_spaces(page.h1.text) == 'Cannot access document'
+
+    assert page.find('a', text='Go back to confirm your email address').get('href') == (
+        'http://document-download-frontend.gov/'
+        f'd/{uuid_to_base64(service_id)}/{uuid_to_base64(document_id)}/confirm-email-address?key=1234'
+    )
+
+    assert 'notify-support@digital.cabinet-office.gov.uk' in page.text
 
 
 @freezegun.freeze_time('2000-01-01T12:34:56Z')

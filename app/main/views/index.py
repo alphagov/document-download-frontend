@@ -12,6 +12,7 @@ from flask import (
 )
 from jinja2 import Markup
 from notifications_python_client.errors import HTTPError
+from werkzeug.exceptions import TooManyRequests
 
 from app import service_api_client
 from app.forms import EmailAddressForm
@@ -102,7 +103,18 @@ def confirm_email_address(service_id, document_id):
     form = EmailAddressForm()
 
     if form.validate_on_submit():
-        authentication_data = _authenticate_access_to_document(service_id, document_id, key, form.email_address.data)
+        try:
+            authentication_data = _authenticate_access_to_document(
+                service_id, document_id, key, form.email_address.data
+            )
+
+        except TooManyRequests:
+            return render_template(
+                'error/429.html',
+                go_back_link=request.url,
+                page_name='confirm your email address'
+            ), 429
+
         if authentication_data:
             response = redirect(url_for('.download_document', service_id=service_id, document_id=document_id, key=key))
             response.set_cookie(
@@ -196,11 +208,16 @@ def _authenticate_access_to_document(service_id, document_id, key, email_address
         service_id,
         document_id,
     )
-    response = requests.post(auth_file_url, json={'key': key, 'email_address': email_address})
-    data = response.json()
 
-    if response.status_code in {400, 403}:
+    response = requests.post(auth_file_url, json={'key': key, 'email_address': email_address})
+
+    if response.status_code == 429:
+        raise TooManyRequests()
+
+    elif response.status_code in {400, 403}:
         return None
+
+    data = response.json()
 
     # Let the `500` error handler handle unexpected errors from doc-download-api
     response.raise_for_status()
