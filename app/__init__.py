@@ -21,7 +21,7 @@ asset_fingerprinter = AssetFingerprinter()
 service_api_client = ServiceApiClient()
 
 # The current service attached to the request stack.
-current_service = LocalProxy(partial(_lookup_req_object, 'service'))
+current_service = LocalProxy(partial(_lookup_req_object, "service"))
 
 
 class Base64UUIDConverter(BaseConverter):
@@ -41,7 +41,7 @@ class Base64UUIDConverter(BaseConverter):
 def create_app(application):
     application.config.from_object(configs[application.env])
 
-    application.url_map.converters['base64_uuid'] = Base64UUIDConverter
+    application.url_map.converters["base64_uuid"] = Base64UUIDConverter
 
     init_app(application)
     init_jinja(application)
@@ -50,6 +50,7 @@ def create_app(application):
     request_helper.init_app(application)
 
     from app.main import main as main_blueprint
+
     application.register_blueprint(main_blueprint)
 
     # from .status import status as status_blueprint
@@ -68,32 +69,34 @@ def init_app(application):
     @application.context_processor
     def inject_global_template_variables():
         return {
-            'asset_path': '/static/',
-            'header_colour': application.config['HEADER_COLOUR'],
-            'asset_url': asset_fingerprinter.get_url
+            "asset_path": "/static/",
+            "header_colour": application.config["HEADER_COLOUR"],
+            "asset_url": asset_fingerprinter.get_url,
         }
 
 
 #  https://www.owasp.org/index.php/List_of_useful_HTTP_headers
 def useful_headers_after_request(response):
-    response.headers.add('X-Robots-Tag', 'noindex, nofollow')
-    response.headers.add('X-Frame-Options', 'deny')
-    response.headers.add('X-Content-Type-Options', 'nosniff')
-    response.headers.add('X-XSS-Protection', '1; mode=block')
-    response.headers.add('Referrer-Policy', 'no-referrer')
-    response.headers.add('Content-Security-Policy', (
-        "default-src 'self' 'unsafe-inline';"
-        "script-src 'self' *.google-analytics.com 'unsafe-inline' 'unsafe-eval' data:;"
-        "connect-src 'self' *.google-analytics.com;"
-        "object-src 'self';"
-        "font-src 'self' data:;"
-        "img-src 'self' *.google-analytics.com *.notifications.service.gov.uk {} data:;"
-        "frame-src www.youtube.com;".format(get_cdn_domain())
-    ))
-    if 'Cache-Control' in response.headers:
-        del response.headers['Cache-Control']
+    response.headers.add("X-Robots-Tag", "noindex, nofollow")
+    response.headers.add("X-Frame-Options", "deny")
+    response.headers.add("X-Content-Type-Options", "nosniff")
+    response.headers.add("X-XSS-Protection", "1; mode=block")
+    response.headers.add("Referrer-Policy", "no-referrer")
     response.headers.add(
-        'Cache-Control', 'no-store, no-cache, private, must-revalidate')
+        "Content-Security-Policy",
+        (
+            "default-src 'self' 'unsafe-inline';"
+            "script-src 'self' *.google-analytics.com 'unsafe-inline' 'unsafe-eval' data:;"
+            "connect-src 'self' *.google-analytics.com;"
+            "object-src 'self';"
+            "font-src 'self' data:;"
+            "img-src 'self' *.google-analytics.com *.notifications.service.gov.uk {} data:;"
+            "frame-src www.youtube.com;".format(get_cdn_domain())
+        ),
+    )
+    if "Cache-Control" in response.headers:
+        del response.headers["Cache-Control"]
+    response.headers.add("Cache-Control", "no-store, no-cache, private, must-revalidate")
     return response
 
 
@@ -117,24 +120,24 @@ def register_errorhandlers(application):  # noqa (C901 too complex)
     def handle_bad_request(error):
         current_app.logger.exception(error)
         # We want the Flask in browser stacktrace
-        if current_app.config.get('DEBUG', None):
+        if current_app.config.get("DEBUG", None):
             raise error
         return _error_response(500)
 
     @application.errorhandler(CSRFError)
     def handle_csrf(reason):
-        application.logger.warning(f'CSRF error message: {reason}')
+        application.logger.warning(f"CSRF error message: {reason}")
 
         return _error_response(400, error_page_template=500)
 
 
 def init_jinja(application):
-    repo_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
-    template_folders = [
-        os.path.join(repo_root, 'app/templates')
-    ]
-    jinja_loader = jinja2.ChoiceLoader([
-        jinja2.FileSystemLoader(template_folders),
-        jinja2.PrefixLoader({"govuk_frontend_jinja": jinja2.PackageLoader("govuk_frontend_jinja")})
-    ])
+    repo_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+    template_folders = [os.path.join(repo_root, "app/templates")]
+    jinja_loader = jinja2.ChoiceLoader(
+        [
+            jinja2.FileSystemLoader(template_folders),
+            jinja2.PrefixLoader({"govuk_frontend_jinja": jinja2.PackageLoader("govuk_frontend_jinja")}),
+        ]
+    )
     application.jinja_loader = jinja_loader
