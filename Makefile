@@ -21,6 +21,7 @@ run-flask:
 test:
 	flake8 .
 	isort --check-only ./app ./tests
+	black --check .
 	source $(HOME)/.nvm/nvm.sh && npm test
 	pytest
 
