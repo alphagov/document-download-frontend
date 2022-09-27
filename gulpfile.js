@@ -58,7 +58,7 @@ const copy = {
 const javascripts = () => {
   // JS from third-party sources
   // We assume none of it will need to pass through Babel
-  //  
+  //
   // Use Rollup to combine all JS in JS module format into a Immediately Invoked Function
   // Expression (IIFE) to:
   // - deliver it in one bundle
@@ -155,7 +155,7 @@ const lint = {
       .pipe(plugins.jshint())
       .pipe(plugins.jshint.reporter(stylish))
       .pipe(plugins.jshint.reporter('fail'))
-  } 
+  }
 };
 
 // Default: compile everything

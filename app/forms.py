@@ -1,16 +1,13 @@
 from flask import Markup, render_template
 from flask_wtf import FlaskForm as Form
 from notifications_utils.formatters import strip_all_whitespace
-from notifications_utils.recipients import (
-    InvalidEmailError,
-    validate_email_address,
-)
+from notifications_utils.recipients import InvalidEmailError, validate_email_address
 from wtforms import StringField, ValidationError
 from wtforms.validators import DataRequired
 
 
 class ValidEmail:
-    message = 'Not a valid email address'
+    message = "Not a valid email address"
 
     def __call__(self, form, field):
         if not field.data:
@@ -40,14 +37,14 @@ class EmailAddressField(StringField):
             },
             "spellcheck": False,
             "autocomplete": "email",
-            "value": field.data
+            "value": field.data,
         }
         return Markup(render_template("components/govuk_input.html", params=params))
 
 
 class EmailAddressForm(Form):
     email_address = EmailAddressField(
-        'Email address',
-        validators=[DataRequired('Enter your email address'), ValidEmail()],
+        "Email address",
+        validators=[DataRequired("Enter your email address"), ValidEmail()],
         filters=[strip_all_whitespace],
     )

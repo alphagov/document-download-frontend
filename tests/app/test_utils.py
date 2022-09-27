@@ -1,22 +1,18 @@
 import pytest
 
-from app.utils import (
-    assess_contact_type,
-    bytes_to_pretty_file_size,
-    get_cdn_domain,
-)
+from app.utils import assess_contact_type, bytes_to_pretty_file_size, get_cdn_domain
 
 
 def test_get_cdn_domain_on_localhost(client, mocker):
-    mocker.patch.dict('app.current_app.config', values={'ADMIN_BASE_URL': 'http://localhost:6012'})
+    mocker.patch.dict("app.current_app.config", values={"ADMIN_BASE_URL": "http://localhost:6012"})
     domain = get_cdn_domain()
-    assert domain == 'static-logos.notify.tools'
+    assert domain == "static-logos.notify.tools"
 
 
 def test_get_cdn_domain_on_non_localhost(client, mocker):
-    mocker.patch.dict('app.current_app.config', values={'ADMIN_BASE_URL': 'https://some.admintest.com'})
+    mocker.patch.dict("app.current_app.config", values={"ADMIN_BASE_URL": "https://some.admintest.com"})
     domain = get_cdn_domain()
-    assert domain == 'static-logos.admintest.com'
+    assert domain == "static-logos.admintest.com"
 
 
 @pytest.mark.parametrize(
@@ -29,8 +25,8 @@ def test_get_cdn_domain_on_non_localhost(client, mocker):
         ("http://homeworld.gem/contact-us", "link"),
         ("www.homeworld.gem", "other"),
         ("homeworld.gem", "other"),
-        ("pinkdiamond", "other")
-    ]
+        ("pinkdiamond", "other"),
+    ],
 )
 def test_assess_contact_type_recognises_email_phone_and_link(contact_info, expected_result):
     assert assess_contact_type(contact_info) == expected_result
@@ -55,7 +51,7 @@ def test_assess_contact_type_recognises_email_phone_and_link(contact_info, expec
         (2023751, "1.9MB"),
         (2097151, "2MB"),
         (2097152, "2MB"),  # exactly 2MB
-    ]
+    ],
 )
 def test_bytes_to_pretty_file_size(bytes, expected_result):
     assert bytes_to_pretty_file_size(bytes) == expected_result

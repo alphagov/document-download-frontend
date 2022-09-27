@@ -1,4 +1,5 @@
 import os
+
 import gunicorn
 
 bind = "0.0.0.0:{}".format(os.getenv("PORT"))
@@ -9,4 +10,4 @@ worker_class = "eventlet"
 worker_connections = 1000
 
 errorlog = "/home/vcap/logs/gunicorn_error.log"
-gunicorn.SERVER_SOFTWARE = 'None'
+gunicorn.SERVER_SOFTWARE = "None"
