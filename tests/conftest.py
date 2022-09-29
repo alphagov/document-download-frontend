@@ -54,7 +54,9 @@ def key():
 
 @pytest.fixture
 def document_has_metadata_no_confirmation(service_id, document_id, key, rmock, client):
-    json_response = {"document": {"direct_file_url": "url", "confirm_email": False, "size_in_bytes": 712099}}
+    json_response = {
+        "document": {"direct_file_url": "url", "confirm_email": False, "size_in_bytes": 712099, "file_extension": "txt"}
+    }
 
     rmock.get(
         "{}/services/{}/documents/{}/check?key={}".format(
@@ -66,7 +68,9 @@ def document_has_metadata_no_confirmation(service_id, document_id, key, rmock, c
 
 @pytest.fixture
 def document_has_metadata_requires_confirmation(service_id, document_id, key, rmock, client):
-    json_response = {"document": {"direct_file_url": "url", "confirm_email": True, "size_in_bytes": 1923823}}
+    json_response = {
+        "document": {"direct_file_url": "url", "confirm_email": True, "size_in_bytes": 1923823, "file_extension": "pdf"}
+    }
 
     rmock.get(
         "{}/services/{}/documents/{}/check?key={}".format(

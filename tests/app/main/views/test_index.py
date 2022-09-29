@@ -435,7 +435,30 @@ def test_download_document_creates_link_to_actual_doc_from_api(
     assert normalize_spaces(page.title.text) == "Download your file – GOV.UK"
     assert normalize_spaces(page.h1.text) == "Download your file"
     assert page.select("main a")[0]["href"] == "url"
-    assert page.select("main a")[0].text == "Download this file (0.7MB) to your device"
+    assert page.select("main a")[0].text == "Download this text file (0.7MB) to your device"
+
+
+@pytest.mark.parametrize(
+    "file_extension,expected_pretty_file_type",
+    [("pdf", "PDF"), ("txt", "text file"), ("docx", "Microsoft Word document")],
+)
+def test_download_document_shows_pretty_file_type(
+    service_id, document_id, key, client, mocker, sample_service, file_extension, expected_pretty_file_type
+):
+    mocker.patch("app.service_api_client.get_service", return_value={"data": sample_service})
+    mocked_metadata = {
+        "direct_file_url": "url",
+        "confirm_email": False,
+        "size_in_bytes": 712099,
+        "file_extension": file_extension,
+    }
+    mocker.patch("app.main.views.index._get_document_metadata", return_value=mocked_metadata)
+
+    response = client.get(url_for("main.download_document", service_id=service_id, document_id=document_id, key=key))
+
+    assert response.status_code == 200
+    page = BeautifulSoup(response.data.decode("utf-8"), "html.parser")
+    assert page.select("main a")[0].text == f"Download this {expected_pretty_file_type} (0.7MB) to your device"
 
 
 def test_download_document_shows_contact_information(
