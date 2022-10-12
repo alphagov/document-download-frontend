@@ -10,11 +10,11 @@
   </p>
 
   <p class="govuk-body">
-    Check the email that {{ service_name or '[SERVICE_NAME]'}} sent you for more information.
+    <a href="{{download_link}}" download class="govuk-link" rel="noreferrer">Download this {{ file_type }} ({{ file_size }}) to your device</a>
   </p>
 
   <p class="govuk-body">
-    <a href="{{download_link}}" download class="govuk-link" rel="noreferrer">Download this {{ file_type }} ({{ file_size }}) to your device</a>
+    This file is available until {{file_expiry_date}}.
   </p>
 
   <p class="govuk-body">

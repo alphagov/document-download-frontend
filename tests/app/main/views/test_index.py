@@ -1,10 +1,11 @@
 import re
+from datetime import date, timedelta
 from unittest.mock import Mock
 
-import freezegun as freezegun
 import pytest
 from bs4 import BeautifulSoup
 from flask import current_app, url_for
+from freezegun import freeze_time
 from notifications_python_client.errors import HTTPError
 from notifications_utils.base64_uuid import uuid_to_base64
 
@@ -381,7 +382,7 @@ def test_confirm_email_address_page_shows_429_error_page_if_auth_rate_limited(
     assert "notify-support@digital.cabinet-office.gov.uk" in page.text
 
 
-@freezegun.freeze_time("2000-01-01T12:34:56Z")
+@freeze_time("2000-01-01T12:34:56Z")
 def test_confirm_email_address_page_redirects_and_sets_cookie_on_success(
     service_id,
     document_id,
@@ -451,6 +452,7 @@ def test_download_document_shows_pretty_file_type(
         "confirm_email": False,
         "size_in_bytes": 712099,
         "file_extension": file_extension,
+        "available_until": str(date.today() + timedelta(days=5)),
     }
     mocker.patch("app.main.views.index._get_document_metadata", return_value=mocked_metadata)
 
@@ -474,6 +476,34 @@ def test_download_document_shows_contact_information(
     contact_link = page.select("main a")[1]
     assert contact_link.text.strip() == "contact Sample Service"
     assert contact_link["href"] == "https://sample-service.gov.uk"
+
+
+@freeze_time("2022-10-12 13:30")
+@pytest.mark.parametrize(
+    "days_till_expiry,expected_content", [(30, "Friday 11 November 2022"), (31, "12 November 2022")]
+)
+def test_download_document_shows_expiry_date(
+    service_id, document_id, key, client, mocker, sample_service, days_till_expiry, expected_content
+):
+    mocker.patch("app.service_api_client.get_service", return_value={"data": sample_service})
+
+    mocked_metadata = {
+        "direct_file_url": "url",
+        "confirm_email": False,
+        "size_in_bytes": 712099,
+        "file_extension": "pdf",
+        "available_until": str(date.today() + timedelta(days=days_till_expiry)),
+    }
+    mocker.patch("app.main.views.index._get_document_metadata", return_value=mocked_metadata)
+
+    response = client.get(url_for("main.download_document", service_id=service_id, document_id=document_id, key=key))
+
+    assert response.status_code == 200
+
+    page = BeautifulSoup(response.data.decode("utf-8"), "html.parser")
+    content_about_expiry_date = page.select("main p")[2]
+
+    assert f"This file is available until {expected_content}." in content_about_expiry_date.text
 
 
 @pytest.mark.parametrize("view", ["main.landing", "main.download_document", "main.confirm_email_address"])
