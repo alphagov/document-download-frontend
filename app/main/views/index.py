@@ -170,6 +170,13 @@ def download_document(service_id, document_id):
             contact_info_type=contact_info_type,
         )
 
+    file_expiry_date = parser.parse(metadata["available_until"]).date()
+
+    # if expiry date passed, even if file is still available, we do not return it to respect data retention period
+    # set by the service
+    if file_expiry_date < date.today():
+        abort(404)
+
     return render_template(
         "views/download.html",
         download_link=metadata["direct_file_url"],
@@ -178,12 +185,11 @@ def download_document(service_id, document_id):
         service_name=service["data"]["name"],
         service_contact_info=service_contact_info,
         contact_info_type=contact_info_type,
-        file_expiry_date=_format_file_expiry_date(metadata["available_until"]),
+        file_expiry_date=_format_file_expiry_date(file_expiry_date),
     )
 
 
-def _format_file_expiry_date(expiry_date_as_str: str) -> str:
-    file_expiry_date = (parser.parse(expiry_date_as_str)).date()
+def _format_file_expiry_date(file_expiry_date: date) -> str:
     # only show day of the week if file expiry date within a month from today
     if file_expiry_date - date.today() <= timedelta(days=30):
         return file_expiry_date.strftime("%A %d %B %Y")
