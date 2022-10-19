@@ -1,3 +1,4 @@
+from datetime import date, timedelta
 from uuid import uuid4
 
 import pytest
@@ -55,7 +56,13 @@ def key():
 @pytest.fixture
 def document_has_metadata_no_confirmation(service_id, document_id, key, rmock, client):
     json_response = {
-        "document": {"direct_file_url": "url", "confirm_email": False, "size_in_bytes": 712099, "file_extension": "txt"}
+        "document": {
+            "direct_file_url": "url",
+            "confirm_email": False,
+            "size_in_bytes": 712099,
+            "file_extension": "txt",
+            "available_until": str(date.today() + timedelta(days=5)),
+        }
     }
 
     rmock.get(
@@ -69,7 +76,13 @@ def document_has_metadata_no_confirmation(service_id, document_id, key, rmock, c
 @pytest.fixture
 def document_has_metadata_requires_confirmation(service_id, document_id, key, rmock, client):
     json_response = {
-        "document": {"direct_file_url": "url", "confirm_email": True, "size_in_bytes": 1923823, "file_extension": "pdf"}
+        "document": {
+            "direct_file_url": "url",
+            "confirm_email": True,
+            "size_in_bytes": 1923823,
+            "file_extension": "pdf",
+            "available_until": str(date.today() + timedelta(days=5)),
+        }
     }
 
     rmock.get(
