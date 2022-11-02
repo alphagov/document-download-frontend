@@ -1,6 +1,8 @@
 import re
+from datetime import date
 from urllib.parse import urlparse
 
+from dateutil import parser
 from flask import current_app
 from notifications_utils.recipients import EMAIL_REGEX_PATTERN
 
@@ -39,3 +41,14 @@ def bytes_to_pretty_file_size(bytes):
     else:
         mb_to_1dp = round(bytes / (1024**2), 1)
         return str(mb_to_1dp).rstrip(".0") + "MB"
+
+
+def document_has_expired(available_until):
+    file_expiry_date = parser.parse(available_until).date()
+
+    # if expiry date passed, even if file is still available, we do not return it to respect data retention period
+    # set by the service
+    if file_expiry_date < date.today():
+        return True
+
+    return False
