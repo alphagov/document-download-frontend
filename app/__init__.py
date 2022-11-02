@@ -1,5 +1,7 @@
 import os
+import re
 from functools import partial
+from logging import Filter
 
 import jinja2
 from flask import current_app, make_response, render_template
@@ -24,6 +26,26 @@ service_api_client = ServiceApiClient()
 current_service = LocalProxy(partial(_lookup_req_object, "service"))
 
 
+class RedactingFilter(Filter):
+    def __init__(self, patterns: dict[re.Pattern, str]):
+        super(RedactingFilter, self).__init__()
+        self._patterns = patterns
+
+    def filter(self, record):
+        record.msg = self.redact(record.msg)
+        if isinstance(record.args, dict):
+            for k in record.args.keys():
+                record.args[k] = self.redact(record.args[k])
+        else:
+            record.args = tuple(self.redact(arg) for arg in record.args)
+        return True
+
+    def redact(self, msg):
+        for pattern, replace_string in self._patterns.items():
+            msg = pattern.sub(replace_string, msg)
+        return msg
+
+
 class Base64UUIDConverter(BaseConverter):
     def to_python(self, value):
         try:
@@ -46,7 +68,11 @@ def create_app(application):
     init_app(application)
     init_jinja(application)
     statsd_client.init_app(application)
-    logging.init_app(application, statsd_client)
+    logging.init_app(
+        application,
+        statsd_client,
+        extra_filters=[RedactingFilter(patterns={re.compile("(key=)([A-Za-z0-9]+)"): r"\1<redacted>"})],
+    )
     request_helper.init_app(application)
 
     from app.main import main as main_blueprint
