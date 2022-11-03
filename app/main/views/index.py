@@ -12,7 +12,11 @@ from werkzeug.exceptions import TooManyRequests
 from app import service_api_client
 from app.forms import EmailAddressForm
 from app.main import main
-from app.utils import assess_contact_type, bytes_to_pretty_file_size
+from app.utils import (
+    assess_contact_type,
+    bytes_to_pretty_file_size,
+    document_has_expired,
+)
 
 FILE_EXTENSION_TO_PRETTY_FILE_TYPE = {
     "csv": "CSV file",
@@ -59,6 +63,9 @@ def landing(service_id, document_id):
             contact_info_type=contact_info_type,
         )
 
+    if document_has_expired(metadata["available_until"]):
+        abort(404)
+
     if "confirm_email" not in metadata:
         current_app.logger.info(
             f"Metadata for {service_id}/{document_id} does not contain `confirm_email` key: {metadata}"
@@ -102,6 +109,9 @@ def confirm_email_address(service_id, document_id):
             service_contact_info=service_contact_info,
             contact_info_type=contact_info_type,
         )
+
+    if document_has_expired(metadata["available_until"]):
+        abort(404)
 
     if metadata["confirm_email"] is False:
         return redirect(url_for(".download_document", service_id=service_id, document_id=document_id, key=key))
@@ -170,11 +180,7 @@ def download_document(service_id, document_id):
             contact_info_type=contact_info_type,
         )
 
-    file_expiry_date = parser.parse(metadata["available_until"]).date()
-
-    # if expiry date passed, even if file is still available, we do not return it to respect data retention period
-    # set by the service
-    if file_expiry_date < date.today():
+    if document_has_expired(metadata["available_until"]):
         abort(404)
 
     return render_template(
@@ -185,11 +191,13 @@ def download_document(service_id, document_id):
         service_name=service["data"]["name"],
         service_contact_info=service_contact_info,
         contact_info_type=contact_info_type,
-        file_expiry_date=_format_file_expiry_date(file_expiry_date),
+        file_expiry_date=_format_file_expiry_date(metadata["available_until"]),
     )
 
 
-def _format_file_expiry_date(file_expiry_date: date) -> str:
+def _format_file_expiry_date(available_until: str) -> str:
+    file_expiry_date = parser.parse(available_until).date()
+
     # only show day of the week if file expiry date within a month from today
     if file_expiry_date - date.today() <= timedelta(days=30):
         return file_expiry_date.strftime("%A %d %B %Y")

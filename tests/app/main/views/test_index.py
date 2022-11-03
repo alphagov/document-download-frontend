@@ -506,8 +506,9 @@ def test_download_document_shows_expiry_date(
     assert f"This file is available until {expected_content}." in content_about_expiry_date.text
 
 
+@pytest.mark.parametrize("view", ("main.landing", "main.confirm_email_address", "main.download_document"))
 def test_download_document_returns_404_if_file_past_expiry_date(
-    service_id, document_id, key, client, mocker, sample_service
+    service_id, document_id, key, client, mocker, sample_service, view
 ):
     mocker.patch("app.service_api_client.get_service", return_value={"data": sample_service})
 
@@ -520,7 +521,7 @@ def test_download_document_returns_404_if_file_past_expiry_date(
     }
     mocker.patch("app.main.views.index._get_document_metadata", return_value=mocked_metadata)
 
-    response = client.get(url_for("main.download_document", service_id=service_id, document_id=document_id, key=key))
+    response = client.get(url_for(view, service_id=service_id, document_id=document_id, key=key))
 
     assert response.status_code == 404
 
