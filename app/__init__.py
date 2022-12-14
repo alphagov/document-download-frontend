@@ -39,7 +39,7 @@ class Base64UUIDConverter(BaseConverter):
 
 
 def create_app(application):
-    application.config.from_object(configs[application.env])
+    application.config.from_object(configs[os.environ["NOTIFY_ENVIRONMENT"]])
 
     application.url_map.converters["base64_uuid"] = Base64UUIDConverter
 
