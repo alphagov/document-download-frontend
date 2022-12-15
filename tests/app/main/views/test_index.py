@@ -108,6 +108,32 @@ def test_when_document_is_unavailable(view, method, service_id, document_id, key
     assert contact_link["href"] == "https://sample-service.gov.uk"
 
 
+@pytest.mark.parametrize("view", ("main.landing", "main.confirm_email_address", "main.download_document"))
+def test_download_document_returns_file_unavailable_if_file_past_expiry_date(
+    service_id, document_id, key, client, mocker, sample_service, view
+):
+    mocker.patch("app.service_api_client.get_service", return_value={"data": sample_service})
+
+    mocked_metadata = {
+        "direct_file_url": "url",
+        "confirm_email": False,
+        "size_in_bytes": 712099,
+        "file_extension": "pdf",
+        "available_until": str(date.today() - timedelta(days=1)),
+    }
+    mocker.patch("app.main.views.index._get_document_metadata", return_value=mocked_metadata)
+
+    response = client.get(url_for(view, service_id=service_id, document_id=document_id, key=key))
+
+    assert response.status_code == 200
+    page = BeautifulSoup(response.data.decode("utf-8"), "html.parser")
+    assert normalize_spaces(page.h1.text) == "No longer available"
+
+    contact_link = page.select("main a")[0]
+    assert normalize_spaces(contact_link.text) == "contact Sample Service"
+    assert contact_link["href"] == "https://sample-service.gov.uk"
+
+
 @pytest.mark.parametrize(
     "view, method",
     [
@@ -504,26 +530,6 @@ def test_download_document_shows_expiry_date(
     content_about_expiry_date = page.select("main p")[2]
 
     assert f"This file is available until {expected_content}." in content_about_expiry_date.text
-
-
-@pytest.mark.parametrize("view", ("main.landing", "main.confirm_email_address", "main.download_document"))
-def test_download_document_returns_404_if_file_past_expiry_date(
-    service_id, document_id, key, client, mocker, sample_service, view
-):
-    mocker.patch("app.service_api_client.get_service", return_value={"data": sample_service})
-
-    mocked_metadata = {
-        "direct_file_url": "url",
-        "confirm_email": False,
-        "size_in_bytes": 712099,
-        "file_extension": "pdf",
-        "available_until": str(date.today() - timedelta(days=1)),
-    }
-    mocker.patch("app.main.views.index._get_document_metadata", return_value=mocked_metadata)
-
-    response = client.get(url_for(view, service_id=service_id, document_id=document_id, key=key))
-
-    assert response.status_code == 404
 
 
 @pytest.mark.parametrize("view", ["main.landing", "main.download_document", "main.confirm_email_address"])
