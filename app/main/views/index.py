@@ -55,16 +55,13 @@ def landing(service_id, document_id):
     contact_info_type = assess_contact_type(service_contact_info)
     metadata = _get_document_metadata(service_id, document_id, key)
 
-    if not metadata:
+    if not metadata or document_has_expired(metadata["available_until"]):
         return render_template(
             "views/file_unavailable.html",
             service_name=service["data"]["name"],
             service_contact_info=service_contact_info,
             contact_info_type=contact_info_type,
         )
-
-    if document_has_expired(metadata["available_until"]):
-        abort(404)
 
     if "confirm_email" not in metadata:
         current_app.logger.info(
@@ -102,16 +99,13 @@ def confirm_email_address(service_id, document_id):
     service_name = service["data"]["name"]
     contact_info_type = assess_contact_type(service_contact_info)
 
-    if not metadata:
+    if not metadata or document_has_expired(metadata["available_until"]):
         return render_template(
             "views/file_unavailable.html",
             service_name=service_name,
             service_contact_info=service_contact_info,
             contact_info_type=contact_info_type,
         )
-
-    if document_has_expired(metadata["available_until"]):
-        abort(404)
 
     if metadata["confirm_email"] is False:
         return redirect(url_for(".download_document", service_id=service_id, document_id=document_id, key=key))
@@ -172,16 +166,13 @@ def download_document(service_id, document_id):
     service_contact_info = service["data"]["contact_link"]
     contact_info_type = assess_contact_type(service_contact_info)
 
-    if not metadata:
+    if not metadata or document_has_expired(metadata["available_until"]):
         return render_template(
             "views/file_unavailable.html",
             service_name=service["data"]["name"],
             service_contact_info=service_contact_info,
             contact_info_type=contact_info_type,
         )
-
-    if document_has_expired(metadata["available_until"]):
-        abort(404)
 
     return render_template(
         "views/download.html",
