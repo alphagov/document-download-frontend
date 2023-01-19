@@ -17,6 +17,10 @@ help:
 run-flask:
 	FLASK_APP=application.py FLASK_DEBUG=1 flask run -p 7001
 
+.PHONY: run-flask-with-docker
+run-flask-with-docker: ## Run flask with docker
+	./scripts/run_locally_with_docker.sh
+
 .PHONY: test
 test:
 	flake8 .
@@ -33,6 +37,10 @@ bootstrap:
 .PHONY: npm-audit
 npm-audit:
 	source $(HOME)/.nvm/nvm.sh && npm run audit
+
+.PHONY: bootstrap-with-docker
+bootstrap-with-docker:
+	docker build -f docker/Dockerfile -t document-download-frontend .
 
 .PHONY: freeze-requirements
 freeze-requirements: ## create static requirements.txt
