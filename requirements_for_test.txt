@@ -1,8 +1,8 @@
 -r requirements.txt
 
-black==22.8.0
-flake8==5.0.4
-isort==5.10.1
+black==22.8.0  # Also update `.pre-commit-config.yaml` if this changes
+flake8==5.0.4  # Also update `.pre-commit-config.yaml` if this changes
+isort==5.12.0  # Also update `.pre-commit-config.yaml` if this changes
 
 pytest==7.1.2
 pytest-mock==3.8.2
