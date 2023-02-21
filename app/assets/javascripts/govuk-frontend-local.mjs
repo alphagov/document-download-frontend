@@ -6,10 +6,22 @@
 //
 // Exported items will be added to the window.GOVUK namespace.
 // For example, `export { Frontend }` will assign `Frontend` to `window.Frontend`
-import { nodeListForEach } from 'govuk-frontend/govuk/common'
-import Button from 'govuk-frontend/govuk/components/button/button'
-import ErrorSummary from 'govuk-frontend/govuk/components/error-summary/error-summary'
-import SkipLink from 'govuk-frontend/govuk/components/skip-link/skip-link'
+import { Button, ErrorSummary, SkipLink } from 'govuk-frontend'
+
+// Copied from GOVUK Frontend manually as the 'govuk-frontend' package doesn't export it
+//
+// TODO: Ideally this would be a NodeList.prototype.forEach polyfill
+// This seems to fail in IE8, requires more investigation.
+// See: https://github.com/imagitama/nodelist-foreach-polyfill
+//
+function nodeListForEach (nodes, callback) {
+  if (window.NodeList.prototype.forEach) {
+    return nodes.forEach(callback)
+  }
+  for (var i = 0; i < nodes.length; i++) {
+    callback.call(window, nodes[i], i, nodes);
+  }
+}
 
 // Copy of the initAll function from https://github.com/alphagov/govuk-frontend/blob/v3.5.0/src/govuk/all.js
 // except it only includes, and initialises, the components used by this application.
