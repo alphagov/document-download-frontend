@@ -23,7 +23,7 @@ class Config(object):
     ROUTE_SECRET_KEY_1 = os.environ.get("ROUTE_SECRET_KEY_1", "")
 
     # needs to refer to notify for utils
-    NOTIFY_LOG_PATH = "/home/vcap/logs/app.log"
+    NOTIFY_LOG_PATH = os.getenv("NOTIFY_LOG_PATH")
 
 
 class Development(Config):
