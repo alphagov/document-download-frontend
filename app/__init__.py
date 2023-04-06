@@ -28,14 +28,14 @@ class Base64UUIDConverter(BaseConverter):
     def to_python(self, value):
         try:
             return base64_to_uuid(value)
-        except ValueError:
-            raise ValidationError()
+        except ValueError as e:
+            raise ValidationError() from e
 
     def to_url(self, value):
         try:
             return uuid_to_base64(value)
-        except Exception:
-            raise ValidationError()
+        except Exception as e:
+            raise ValidationError() from e
 
 
 def create_app(application):
