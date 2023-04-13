@@ -3,7 +3,6 @@ import os
 
 class Config(object):
     # if we're not on cloudfoundry, we can get to this app from localhost. but on cloudfoundry its different
-    ADMIN_BASE_URL = os.environ.get("ADMIN_BASE_URL", "http://localhost:6012")
     ADMIN_CLIENT_SECRET = os.environ.get("ADMIN_CLIENT_SECRET")
     ADMIN_CLIENT_USER_NAME = "notify-admin"
     SECRET_KEY = os.environ.get("SECRET_KEY")
@@ -29,7 +28,6 @@ class Config(object):
 
 class Development(Config):
     API_HOST_NAME = os.environ.get("API_HOST_NAME", "http://localhost:6011")
-    ADMIN_BASE_URL = os.environ.get("ADMIN_BASE_URL", "http://localhost:6012")
     DOCUMENT_DOWNLOAD_API_HOST_NAME = os.environ.get("DOCUMENT_DOWNLOAD_API_HOST_NAME", "http://localhost:7000")
 
     ADMIN_CLIENT_SECRET = "dev-notify-secret-key"
@@ -47,7 +45,6 @@ class Test(Development):
     SERVER_NAME = "document-download-frontend.gov"
 
     API_HOST_NAME = "http://test-notify-api"
-    ADMIN_BASE_URL = "http://test-notify-admin"
     DOCUMENT_DOWNLOAD_API_HOST_NAME = "http://test-doc-download-api"
 
 

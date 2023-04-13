@@ -14,7 +14,6 @@ from werkzeug.routing import BaseConverter, ValidationError
 from app.asset_fingerprinter import AssetFingerprinter
 from app.config import configs
 from app.notify_client.service_api_client import ServiceApiClient
-from app.utils import get_cdn_domain
 
 statsd_client = StatsdClient()
 asset_fingerprinter = AssetFingerprinter()
@@ -90,7 +89,7 @@ def useful_headers_after_request(response):
             "connect-src 'self';"
             "object-src 'self';"
             "font-src 'self' data:;"
-            "img-src 'self' *.notifications.service.gov.uk {} data:;".format(get_cdn_domain())
+            "img-src 'self' data:;"
         ),
     )
     if "Cache-Control" in response.headers:
