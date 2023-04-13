@@ -5,7 +5,7 @@ from urllib import parse
 import requests
 from dateutil import parser
 from flask import abort, current_app, redirect, render_template, request, url_for
-from jinja2 import Markup
+from markupsafe import Markup
 from notifications_python_client.errors import HTTPError
 from werkzeug.exceptions import TooManyRequests
 
