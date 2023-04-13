@@ -86,12 +86,11 @@ def useful_headers_after_request(response):
         "Content-Security-Policy",
         (
             "default-src 'self' 'unsafe-inline';"
-            "script-src 'self' *.google-analytics.com 'unsafe-inline' 'unsafe-eval' data:;"
-            "connect-src 'self' *.google-analytics.com;"
+            "script-src 'self' 'unsafe-inline' 'unsafe-eval' data:;"
+            "connect-src 'self';"
             "object-src 'self';"
             "font-src 'self' data:;"
-            "img-src 'self' *.google-analytics.com *.notifications.service.gov.uk {} data:;"
-            "frame-src www.youtube.com;".format(get_cdn_domain())
+            "img-src 'self' *.notifications.service.gov.uk {} data:;".format(get_cdn_domain())
         ),
     )
     if "Cache-Control" in response.headers:
