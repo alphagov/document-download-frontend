@@ -90,6 +90,7 @@ def useful_headers_after_request(response):
             "object-src 'self';"
             "font-src 'self' data:;"
             "img-src 'self' data:;"
+            "frame-src 'none'"
         ),
     )
     if "Cache-Control" in response.headers:
