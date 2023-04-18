@@ -14,7 +14,6 @@ from werkzeug.routing import BaseConverter, ValidationError
 from app.asset_fingerprinter import AssetFingerprinter
 from app.config import configs
 from app.notify_client.service_api_client import ServiceApiClient
-from app.utils import get_cdn_domain
 
 statsd_client = StatsdClient()
 asset_fingerprinter = AssetFingerprinter()
@@ -86,12 +85,12 @@ def useful_headers_after_request(response):
         "Content-Security-Policy",
         (
             "default-src 'self' 'unsafe-inline';"
-            "script-src 'self' *.google-analytics.com 'unsafe-inline' 'unsafe-eval' data:;"
-            "connect-src 'self' *.google-analytics.com;"
+            "script-src 'self' 'unsafe-inline' 'unsafe-eval' data:;"
+            "connect-src 'self';"
             "object-src 'self';"
             "font-src 'self' data:;"
-            "img-src 'self' *.google-analytics.com *.notifications.service.gov.uk {} data:;"
-            "frame-src www.youtube.com;".format(get_cdn_domain())
+            "img-src 'self' data:;"
+            "frame-src 'none'"
         ),
     )
     if "Cache-Control" in response.headers:

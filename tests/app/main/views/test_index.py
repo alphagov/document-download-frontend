@@ -400,7 +400,7 @@ def test_confirm_email_address_page_shows_429_error_page_if_auth_rate_limited(
     assert normalize_spaces(page.title.text) == "Cannot access document – GOV.UK"
     assert normalize_spaces(page.h1.text) == "Cannot access document"
 
-    assert page.find("a", text="Go back to confirm your email address").get("href") == (
+    assert page.find("a", string="Go back to confirm your email address").get("href") == (
         "http://document-download-frontend.gov/"
         f"d/{uuid_to_base64(service_id)}/{uuid_to_base64(document_id)}/confirm-email-address?key=1234"
     )
