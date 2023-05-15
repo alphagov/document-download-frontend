@@ -1,4 +1,10 @@
 SHELL := /bin/bash
+DATE = $(shell date +%Y-%m-%d:%H:%M:%S)
+
+APP_VERSION_FILE = app/version.py
+
+GIT_BRANCH ?= $(shell git symbolic-ref --short HEAD 2> /dev/null || echo "detached")
+GIT_COMMIT ?= $(shell git rev-parse HEAD)
 
 CF_API ?= api.cloud.service.gov.uk
 NOTIFY_CREDENTIALS ?= ~/.notify-credentials
@@ -29,7 +35,7 @@ test:
 	pytest
 
 .PHONY: bootstrap
-bootstrap:
+bootstrap: generate-version-file
 	pip3 install -r requirements_for_test.txt
 	source $(HOME)/.nvm/nvm.sh && nvm install && npm ci --no-audit && npm rebuild node-sass && npm run build
 
@@ -38,7 +44,7 @@ npm-audit:
 	source $(HOME)/.nvm/nvm.sh && npm run audit
 
 .PHONY: bootstrap-with-docker
-bootstrap-with-docker:
+bootstrap-with-docker: generate-version-file
 	docker build -f docker/Dockerfile -t document-download-frontend .
 
 .PHONY: freeze-requirements
@@ -109,3 +115,7 @@ cf-create-cdn-route:
 	$(if ${CF_SPACE},,$(error Must specify CF_SPACE))
 	$(if ${DNS_NAME},,$(error Must specify DNS_NAME))
 	cf create-service cdn-route cdn-route document-download-cdn-route -c '{"domain": "${DNS_NAME}"}'
+
+.PHONY: generate-version-file
+generate-version-file: ## Generates the app version file
+	@echo -e "__git_commit__ = \"${GIT_COMMIT}\"\n__time__ = \"${DATE}\"" > ${APP_VERSION_FILE}
