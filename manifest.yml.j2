@@ -32,7 +32,12 @@ applications:
 
     NOTIFY_APP_NAME: document-download-frontend
     FLASK_APP: application.py
+    {% if environment == "preview" %}
+    DOCUMENT_DOWNLOAD_API_HOST_NAME: https://download.{{ hostname }}
+    {% else %}
     DOCUMENT_DOWNLOAD_API_HOST_NAME: https://{{ hostname }}
+    {% endif %}
+
     NOTIFY_ENVIRONMENT: {{ environment }}
     AWS_ACCESS_KEY_ID: {{ DOCUMENT_DOWNLOAD_AWS_ACCESS_KEY_ID }}
     AWS_SECRET_ACCESS_KEY: {{ DOCUMENT_DOWNLOAD_AWS_SECRET_ACCESS_KEY }}
