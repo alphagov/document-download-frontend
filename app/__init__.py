@@ -125,7 +125,7 @@ def register_errorhandlers(application):  # noqa (C901 too complex)
 
     @application.errorhandler(CSRFError)
     def handle_csrf(reason):
-        application.logger.warning(f"CSRF error message: {reason}")
+        application.logger.warning("CSRF error message: %s", reason)
 
         return _error_response(400, error_page_template=500)
 
