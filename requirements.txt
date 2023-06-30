@@ -61,7 +61,7 @@ gunicorn @ git+https://github.com/benoitc/gunicorn.git@1299ea9e967a61ae2edebe191
     # via -r requirements.in
 idna==3.3
     # via requests
-importlib-metadata==4.12.0
+importlib-metadata==6.8.0
     # via flask
 itsdangerous==2.0.1
     # via
@@ -114,7 +114,7 @@ pyyaml==5.4.1
     #   notifications-utils
 redis==3.5.3
     # via flask-redis
-requests==2.26.0
+requests==2.31.0
     # via
     #   awscli-cwlogs
     #   govuk-bank-holidays
@@ -139,7 +139,7 @@ smartypants==2.0.1
     # via notifications-utils
 statsd==3.3.0
     # via notifications-utils
-typing-extensions==4.3.0
+typing-extensions==4.7.1
     # via pypdf2
 urllib3==1.26.15
     # via
@@ -154,7 +154,7 @@ whitenoise==6.2.0
     # via -r requirements.in
 wtforms==3.0.1
     # via flask-wtf
-zipp==3.8.1
+zipp==3.16.1
     # via importlib-metadata
 
 # The following packages are considered to be unsafe in a requirements file:
