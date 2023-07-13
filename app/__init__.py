@@ -1,14 +1,11 @@
 import os
-from functools import partial
 
 import jinja2
 from flask import current_app, make_response, render_template
-from flask.globals import _lookup_req_object
 from flask_wtf.csrf import CSRFError
 from notifications_utils import logging, request_helper
 from notifications_utils.base64_uuid import base64_to_uuid, uuid_to_base64
 from notifications_utils.clients.statsd.statsd_client import StatsdClient
-from werkzeug.local import LocalProxy
 from werkzeug.routing import BaseConverter, ValidationError
 
 from app.asset_fingerprinter import AssetFingerprinter
@@ -18,9 +15,6 @@ from app.notify_client.service_api_client import ServiceApiClient
 statsd_client = StatsdClient()
 asset_fingerprinter = AssetFingerprinter()
 service_api_client = ServiceApiClient()
-
-# The current service attached to the request stack.
-current_service = LocalProxy(partial(_lookup_req_object, "service"))
 
 
 class Base64UUIDConverter(BaseConverter):
