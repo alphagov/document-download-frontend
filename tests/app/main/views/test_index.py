@@ -33,6 +33,24 @@ def test_security_policy_redirects_to_policy(client, url):
 
 
 @pytest.mark.parametrize(
+    "url",
+    [
+        "/services/_status",
+        "/services/11111111-1111-4111-1111-111111111111/documents/22222222-2222-4222-2222-222222222222",
+        "/services/11111111-1111-4111-1111-111111111111/documents/22222222-2222-4222-2222-222222222222.pdf",
+        "/services/11111111-1111-4111-1111-111111111111/documents/22222222-2222-4222-2222-222222222222/check",
+        "/services/11111111-1111-4111-1111-111111111111/documents/22222222-2222-4222-2222-222222222222/check?key=123456",
+        "/services/11111111-1111-4111-1111-111111111111/documents/22222222-2222-4222-2222-222222222222/check?random_parameter=xyz",
+    ],
+)
+def test_services_view_redirects_to_api(client, url):
+    response = client.get(url)
+
+    assert response.status_code == 301
+    assert response.location == f"http://test-doc-download-api{url}"
+
+
+@pytest.mark.parametrize(
     "view, method",
     [
         ("main.landing", "get"),

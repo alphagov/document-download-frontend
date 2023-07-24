@@ -35,6 +35,20 @@ def status():
     return "ok", 200
 
 
+@main.route("/services/_status")
+@main.route("/services/<uuid:service_id>/documents/<uuid:document_id>", methods=["GET"])
+@main.route("/services/<uuid:service_id>/documents/<uuid:document_id>.<extension>", methods=["GET"])
+@main.route("/services/<uuid:service_id>/documents/<uuid:document_id>/check", methods=["GET"])
+def services(service_id=None, document_id=None, extension=None):
+    api_host = current_app.config["DOCUMENT_DOWNLOAD_API_HOST_NAME"]
+    path = request.path
+    query_string = request.query_string.decode("utf-8")
+    if len(query_string) > 1:
+        return redirect(f"{api_host}{path}?{query_string}", 301)
+    else:
+        return redirect(f"{api_host}{path}", 301)
+
+
 @main.route("/.well-known/security.txt", methods=["GET"])
 @main.route("/security.txt", methods=["GET"])
 def security_policy():
