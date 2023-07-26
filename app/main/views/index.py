@@ -153,7 +153,7 @@ def confirm_email_address(service_id, document_id):
             # but when we're in a subdomain, we need to allow the cookie to be sent to subdomains too
             # docs: https://developer.mozilla.org/en-US/docs/Web/HTTP/Cookies#domain_attribute
             if current_app.config["DOCUMENT_DOWNLOAD_API_HOST_NAME"].startswith("https://download."):
-                cookie_domain = current_app.config["DOCUMENT_DOWNLOAD_API_HOST_NAME"].replace("https://download.", ".")
+                cookie_domain = current_app.config["DOCUMENT_DOWNLOAD_API_HOST_NAME"].replace("https://download.", "")
                 set_cookie_values["domain"] = cookie_domain
 
             response = redirect(url_for(".download_document", service_id=service_id, document_id=document_id, key=key))

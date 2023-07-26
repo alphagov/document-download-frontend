@@ -464,7 +464,7 @@ def test_confirm_email_address_page_redirects_and_sets_cookie_on_success(
     )
     assert (
         response.headers["Set-Cookie"]
-        == "document_access_signed_data=blah; Domain=.test-doc-download-api.gov.uk; HttpOnly; Path=/my/file/path"
+        == "document_access_signed_data=blah; Domain=test-doc-download-api.gov.uk; HttpOnly; Path=/my/file/path"
     )
 
 
