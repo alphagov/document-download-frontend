@@ -47,7 +47,7 @@ def test_services_view_redirects_to_api(client, url):
     response = client.get(url)
 
     assert response.status_code == 301
-    assert response.location == f"http://test-doc-download-api{url}"
+    assert response.location == f"https://download.test-doc-download-api.gov.uk{url}"
 
 
 @pytest.mark.parametrize(
@@ -462,9 +462,9 @@ def test_confirm_email_address_page_redirects_and_sets_cookie_on_success(
     assert response.location == url_for(
         "main.download_document", service_id=service_id, document_id=document_id, key=key
     )
-    assert any(
-        header == ("Set-Cookie", "document_access_signed_data=blah; HttpOnly; Path=/my/file/path")
-        for header in response.headers
+    assert (
+        response.headers["Set-Cookie"]
+        == "document_access_signed_data=blah; Domain=.test-doc-download-api.gov.uk; HttpOnly; Path=/my/file/path"
     )
 
 

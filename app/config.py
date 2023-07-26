@@ -46,7 +46,7 @@ class Test(Development):
     SERVER_NAME = "document-download-frontend.gov"
 
     API_HOST_NAME = "http://test-notify-api"
-    DOCUMENT_DOWNLOAD_API_HOST_NAME = "http://test-doc-download-api"
+    DOCUMENT_DOWNLOAD_API_HOST_NAME = "https://download.test-doc-download-api.gov.uk"
 
 
 class Preview(Config):
