@@ -33,6 +33,24 @@ def test_security_policy_redirects_to_policy(client, url):
 
 
 @pytest.mark.parametrize(
+    "url",
+    [
+        "/services/_status",
+        "/services/11111111-1111-4111-1111-111111111111/documents/22222222-2222-4222-2222-222222222222",
+        "/services/11111111-1111-4111-1111-111111111111/documents/22222222-2222-4222-2222-222222222222.pdf",
+        "/services/11111111-1111-4111-1111-111111111111/documents/22222222-2222-4222-2222-222222222222/check",
+        "/services/11111111-1111-4111-1111-111111111111/documents/22222222-2222-4222-2222-222222222222/check?key=123456",
+        "/services/11111111-1111-4111-1111-111111111111/documents/22222222-2222-4222-2222-222222222222/check?random_parameter=xyz",
+    ],
+)
+def test_services_view_redirects_to_api(client, url):
+    response = client.get(url)
+
+    assert response.status_code == 301
+    assert response.location == f"https://download.test-doc-download-api.gov.uk{url}"
+
+
+@pytest.mark.parametrize(
     "view, method",
     [
         ("main.landing", "get"),
@@ -444,9 +462,9 @@ def test_confirm_email_address_page_redirects_and_sets_cookie_on_success(
     assert response.location == url_for(
         "main.download_document", service_id=service_id, document_id=document_id, key=key
     )
-    assert any(
-        header == ("Set-Cookie", "document_access_signed_data=blah; HttpOnly; Path=/my/file/path")
-        for header in response.headers
+    assert (
+        response.headers["Set-Cookie"]
+        == "document_access_signed_data=blah; Domain=test-doc-download-api.gov.uk; HttpOnly; Path=/my/file/path"
     )
 
 
