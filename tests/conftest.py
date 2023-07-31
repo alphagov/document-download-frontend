@@ -67,7 +67,7 @@ def document_has_metadata_no_confirmation(service_id, document_id, key, rmock, c
 
     rmock.get(
         "{}/services/{}/documents/{}/check?key={}".format(
-            current_app.config["DOCUMENT_DOWNLOAD_API_HOST_NAME"], service_id, document_id, key
+            current_app.config["DOCUMENT_DOWNLOAD_API_HOST_NAME_INTERNAL"], service_id, document_id, key
         ),
         json=json_response,
     )
@@ -87,7 +87,7 @@ def document_has_metadata_requires_confirmation(service_id, document_id, key, rm
 
     rmock.get(
         "{}/services/{}/documents/{}/check?key={}".format(
-            current_app.config["DOCUMENT_DOWNLOAD_API_HOST_NAME"], service_id, document_id, key
+            current_app.config["DOCUMENT_DOWNLOAD_API_HOST_NAME_INTERNAL"], service_id, document_id, key
         ),
         json=json_response,
     )

@@ -185,7 +185,7 @@ def test_404_hides_incorrect_credentials(
 
     rmock.get(
         "{}/services/{}/documents/{}/check?key={}".format(
-            current_app.config["DOCUMENT_DOWNLOAD_API_HOST_NAME"], service_id, document_id, key
+            current_app.config["DOCUMENT_DOWNLOAD_API_HOST_NAME_INTERNAL"], service_id, document_id, key
         ),
         status_code=400,
         json=json_response,
@@ -347,7 +347,7 @@ def test_confirm_email_address_page_shows_error_if_wrong_email_address(
 
     rmock.post(
         "{}/services/{}/documents/{}/authenticate".format(
-            current_app.config["DOCUMENT_DOWNLOAD_API_HOST_NAME"],
+            current_app.config["DOCUMENT_DOWNLOAD_API_HOST_NAME_INTERNAL"],
             service_id,
             document_id,
         ),
@@ -395,7 +395,7 @@ def test_confirm_email_address_page_shows_429_error_page_if_auth_rate_limited(
 
     rmock.post(
         "{}/services/{}/documents/{}/authenticate".format(
-            current_app.config["DOCUMENT_DOWNLOAD_API_HOST_NAME"],
+            current_app.config["DOCUMENT_DOWNLOAD_API_HOST_NAME_INTERNAL"],
             service_id,
             document_id,
         ),
@@ -441,7 +441,7 @@ def test_confirm_email_address_page_redirects_and_sets_cookie_on_success(
 
     rmock.post(
         "{}/services/{}/documents/{}/authenticate".format(
-            current_app.config["DOCUMENT_DOWNLOAD_API_HOST_NAME"],
+            current_app.config["DOCUMENT_DOWNLOAD_API_HOST_NAME_INTERNAL"],
             service_id,
             document_id,
         ),
