@@ -33,6 +33,7 @@ applications:
     NOTIFY_APP_NAME: document-download-frontend
     FLASK_APP: application.py
     DOCUMENT_DOWNLOAD_API_HOST_NAME: https://download.{{ hostname }}
+    DOCUMENT_DOWNLOAD_API_HOST_NAME_INTERNAL: https://download.{{ hostname }}
 
     NOTIFY_ENVIRONMENT: {{ environment }}
     AWS_ACCESS_KEY_ID: {{ DOCUMENT_DOWNLOAD_AWS_ACCESS_KEY_ID }}

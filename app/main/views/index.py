@@ -229,7 +229,7 @@ def _get_service_or_raise_error(service_id):
 
 def _get_document_metadata(service_id, document_id, key):
     check_file_url = "{}/services/{}/documents/{}/check?key={}".format(
-        current_app.config["DOCUMENT_DOWNLOAD_API_HOST_NAME"], service_id, document_id, key
+        current_app.config["DOCUMENT_DOWNLOAD_API_HOST_NAME_INTERNAL"], service_id, document_id, key
     )
     response = requests.get(check_file_url)
 
@@ -249,7 +249,7 @@ def _get_document_metadata(service_id, document_id, key):
 
 def _authenticate_access_to_document(service_id, document_id, key, email_address) -> Optional[dict]:
     auth_file_url = "{}/services/{}/documents/{}/authenticate".format(
-        current_app.config["DOCUMENT_DOWNLOAD_API_HOST_NAME"],
+        current_app.config["DOCUMENT_DOWNLOAD_API_HOST_NAME_INTERNAL"],
         service_id,
         document_id,
     )
