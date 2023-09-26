@@ -26,6 +26,7 @@ FILE_EXTENSION_TO_PRETTY_FILE_TYPE = {
     "pdf": "PDF",
     "rtf": "text file",
     "txt": "text file",
+    "json": "JSON file",
     "xlsx": "Microsoft Excel spreadsheet",
 }
 

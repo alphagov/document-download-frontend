@@ -485,7 +485,12 @@ def test_download_document_creates_link_to_actual_doc_from_api(
 
 @pytest.mark.parametrize(
     "file_extension,expected_pretty_file_type",
-    [("pdf", "PDF"), ("txt", "text file"), ("docx", "Microsoft Word document")],
+    [
+        ("pdf", "PDF"),
+        ("txt", "text file"),
+        ("docx", "Microsoft Word document"),
+        ("json", "JSON file"),
+    ],
 )
 def test_download_document_shows_pretty_file_type(
     service_id, document_id, key, client, mocker, sample_service, file_extension, expected_pretty_file_type
