@@ -80,6 +80,7 @@ jmespath==0.10.0
 markupsafe==2.1.1
     # via
     #   jinja2
+    #   sentry-sdk
     #   werkzeug
     #   wtforms
 mistune==0.8.4
@@ -130,7 +131,7 @@ s3transfer==0.6.1
     #   boto3
 segno==1.5.2
     # via notifications-utils
-sentry-sdk[flask]==1.21.1
+sentry-sdk[flask]==1.32.0
     # via -r requirements.in
 shapely==1.8.0
     # via notifications-utils
