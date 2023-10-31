@@ -1,12 +1,12 @@
 # Run `make freeze-requirements` to update requirements.txt
 # with package version changes made in requirements-app.txt
 
-Flask==2.2.5
-Flask-WTF==1.0.1
+Flask==3.0.0
+Flask-WTF==1.2.1
 
 gunicorn[eventlet]>=21.2.0
 whitenoise==6.2.0  #manages static assets
-werkzeug==2.2.3
+werkzeug==3.0.1
 
 notifications-python-client==8.0.1
 

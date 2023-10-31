@@ -9,7 +9,9 @@ awscli==1.29.5
 awscli-cwlogs==1.4.6
     # via -r requirements.in
 blinker==1.6.2
-    # via sentry-sdk
+    # via
+    #   flask
+    #   sentry-sdk
 boto3==1.28.5
     # via notifications-utils
 botocore==1.31.5
@@ -26,7 +28,7 @@ certifi==2023.7.22
     #   sentry-sdk
 charset-normalizer==2.0.7
     # via requests
-click==8.0.3
+click==8.1.7
     # via flask
 colorama==0.4.3
     # via awscli
@@ -38,7 +40,7 @@ docutils==0.15.2
     # via awscli
 eventlet==0.33.0
     # via gunicorn
-flask==2.2.5
+flask==3.0.0
     # via
     #   -r requirements.in
     #   flask-redis
@@ -47,7 +49,7 @@ flask==2.2.5
     #   sentry-sdk
 flask-redis==0.4.0
     # via notifications-utils
-flask-wtf==1.0.1
+flask-wtf==1.2.1
     # via -r requirements.in
 geojson==2.5.0
     # via notifications-utils
@@ -58,17 +60,19 @@ govuk-frontend-jinja==2.1.0
 greenlet==1.1.2
     # via eventlet
 gunicorn[eventlet]==21.2.0
-    # via -r requirements.in
+    # via
+    #   -r requirements.in
+    #   gunicorn
 idna==3.3
     # via requests
 importlib-metadata==6.8.0
     # via flask
-itsdangerous==2.0.1
+itsdangerous==2.1.2
     # via
     #   flask
     #   flask-wtf
     #   notifications-utils
-jinja2==3.0.2
+jinja2==3.1.2
     # via
     #   flask
     #   govuk-frontend-jinja
@@ -132,7 +136,9 @@ s3transfer==0.6.1
 segno==1.5.2
     # via notifications-utils
 sentry-sdk[flask]==1.32.0
-    # via -r requirements.in
+    # via
+    #   -r requirements.in
+    #   sentry-sdk
 shapely==1.8.0
     # via notifications-utils
 six==1.16.0
@@ -146,12 +152,12 @@ statsd==3.3.0
     # via notifications-utils
 typing-extensions==4.7.1
     # via pypdf
-urllib3==1.26.15
+urllib3==1.26.18
     # via
     #   botocore
     #   requests
     #   sentry-sdk
-werkzeug==2.2.3
+werkzeug==3.0.1
     # via
     #   -r requirements.in
     #   flask
