@@ -41,7 +41,9 @@ function initAll (options) {
 
   // Find first error summary module to enhance.
   var $errorSummary = scope.querySelector('[data-module="govuk-error-summary"]')
-  new ErrorSummary($errorSummary)
+  if ($errorSummary !== null) {
+    new ErrorSummary($errorSummary)
+  }
 
   // There will only ever be one skip-link per page
   var skipLink = scope.querySelector('[data-module="govuk-skip-link"]')
