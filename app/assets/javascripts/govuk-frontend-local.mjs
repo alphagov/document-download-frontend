@@ -36,17 +36,17 @@ function initAll (options) {
   // Find all buttons with [role=button] on the scope to enhance.
   var buttons = scope.querySelectorAll('[data-module="govuk-button"]')
   nodeListForEach(buttons, function (button) {
-    new Button(button).init()
+    new Button(button)
   });
 
   // Find first error summary module to enhance.
   var $errorSummary = scope.querySelector('[data-module="govuk-error-summary"]')
-  new ErrorSummary($errorSummary).init()
+  new ErrorSummary($errorSummary)
 
   // There will only ever be one skip-link per page
   var skipLink = scope.querySelector('[data-module="govuk-skip-link"]')
 
-  new SkipLink(skipLink).init()
+  new SkipLink(skipLink)
 }
 
 var Frontend = {
