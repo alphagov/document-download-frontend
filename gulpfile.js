@@ -33,7 +33,7 @@ const paths = {
     dist: 'app/static/',
     templates: 'app/templates/',
     npm: 'node_modules/',
-    govuk_frontend: 'node_modules/govuk-frontend/govuk/'
+    govuk_frontend: 'node_modules/govuk-frontend/dist/govuk/'
 };
 
 // 3. TASKS
