@@ -55,12 +55,14 @@ geojson==2.5.0
     # via notifications-utils
 govuk-bank-holidays==0.10
     # via notifications-utils
-govuk-frontend-jinja==2.1.0
+govuk-frontend-jinja @ git+https://github.com/LandRegistry/govuk-frontend-jinja.git@3a651afb76806a96d0fc2402c95f2dccf8c55899
     # via -r requirements.in
 greenlet==1.1.2
     # via eventlet
 gunicorn[eventlet]==21.2.0
-    # via -r requirements.in
+    # via
+    #   -r requirements.in
+    #   gunicorn
 idna==3.3
     # via requests
 importlib-metadata==6.8.0
@@ -134,7 +136,9 @@ s3transfer==0.6.1
 segno==1.5.2
     # via notifications-utils
 sentry-sdk[flask]==1.32.0
-    # via -r requirements.in
+    # via
+    #   -r requirements.in
+    #   sentry-sdk
 shapely==1.8.0
     # via notifications-utils
 six==1.16.0

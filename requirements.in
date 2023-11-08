@@ -14,5 +14,5 @@ notifications-python-client==8.0.1
 awscli-cwlogs>=1.4,<1.5
 
 notifications-utils @ git+https://github.com/alphagov/notifications-utils.git@66.0.0
-govuk-frontend-jinja==2.1.0
+govuk-frontend-jinja @ git+https://github.com/LandRegistry/govuk-frontend-jinja.git@3a651afb76806a96d0fc2402c95f2dccf8c55899
 sentry_sdk[flask]>=1.0.0,<2.0.0
