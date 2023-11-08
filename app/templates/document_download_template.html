@@ -11,18 +11,10 @@
 {% endblock %}
 
 {% block head %}
-  <!--[if !IE 8]><!-->
     <link rel="stylesheet" media="screen" href="{{ asset_url('stylesheets/main.css') }}" />
-  <!--<![endif]-->
-  <!--[if IE 8]>
-    <link rel="stylesheet" media="screen" href="{{ asset_url('stylesheets/main-ie8.css') }}">
-  <![endif]-->
   <style>
       .govuk-header__container { border-bottom-color: {{header_colour}} }
   </style>
-  <!--[if lt IE 9]>
-    <script src="{{ asset_url('javascripts/html5shiv.min.js') }}"></script>
-  <![endif]-->
   {% block meta %}
   <meta name="referrer" content="never">
   {% endblock %}
@@ -41,6 +33,10 @@
     "assetsPath": "/static/images/",
     "homepageUrl": "https://www.gov.uk"
   }) }}
+{% endblock %}
+
+{% block bodyStart %}
+<script>document.body.className += ('noModule' in HTMLScriptElement.prototype ? ' govuk-frontend-supported' : '');</script>
 {% endblock %}
 
 {% block content %}
