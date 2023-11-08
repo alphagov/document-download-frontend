@@ -6,7 +6,6 @@
 // 1. LIBRARIES
 // - - - - - - - - - - - - - - -
 const { src, pipe, dest, series, parallel, watch } = require('gulp');
-const oldie = require('oldie');
 const postcss = require('gulp-postcss');
 const rollup = require('rollup');
 const rollupPluginCommonjs = require('@rollup/plugin-commonjs');
@@ -47,10 +46,6 @@ const copy = {
       return src(paths.govuk_frontend + 'assets/fonts/**/*')
         .pipe(dest(paths.dist + 'fonts/'));
     }
-  },
-  js: () => {
-    return src(paths.src + 'javascripts/html5shiv.min.js')
-      .pipe(dest(paths.dist + 'javascripts/'));
   }
 };
 
@@ -78,7 +73,7 @@ const javascripts = () => {
         include: 'node_modules/**'
       }),
       // Terser is a replacement for UglifyJS
-      rollupPluginTerser({'ie8': true})
+      rollupPluginTerser()
     ]
   }).then(bundle => {
     return bundle.write({
@@ -101,20 +96,6 @@ const sass = () => {
         paths.govuk_frontend
       ]
     }))
-    .pipe(dest(paths.dist + 'stylesheets/'))
-};
-
-
-const ieSass = () => {
-  return src(paths.src + '/stylesheets/main-ie*.scss')
-    .pipe(plugins.prettyerror())
-    .pipe(plugins.sass({
-      outputStyle: 'compressed',
-      includePaths: [
-        paths.govuk_frontend
-      ]
-    }))
-    .pipe(postcss(oldie))
     .pipe(dest(paths.dist + 'stylesheets/'))
 };
 
@@ -157,8 +138,7 @@ const lint = {
   },
   'js': (cb) => {
     return src([
-        paths.src + 'javascripts/**/*.js',
-        '!' + paths.src + 'javascripts/**/html5shiv.min.js'
+        paths.src + 'javascripts/**/*.js'
       ])
       .pipe(plugins.jshint())
       .pipe(plugins.jshint.reporter(stylish))
@@ -171,13 +151,9 @@ const defaultTask = parallel(
   series(
     parallel(
       copy.govuk_frontend.fonts,
-      copy.js,
       images
     ),
-    parallel(
-      sass,
-      ieSass
-    )
+    sass
   ),
   javascripts
 );
