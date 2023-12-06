@@ -89,13 +89,13 @@ mistune==0.8.4
     # via notifications-utils
 notifications-python-client==8.0.1
     # via -r requirements.in
-notifications-utils @ git+https://github.com/alphagov/notifications-utils.git@66.0.0
+notifications-utils @ git+https://github.com/alphagov/notifications-utils.git@73.1.0
     # via -r requirements.in
 orderedset==2.0.3
     # via notifications-utils
 packaging==23.1
     # via gunicorn
-phonenumbers==8.12.36
+phonenumbers==8.13.26
     # via notifications-utils
 pyasn1==0.4.8
     # via rsa
