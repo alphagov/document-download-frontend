@@ -23,7 +23,6 @@ cachetools==4.2.4
     # via notifications-utils
 certifi==2023.7.22
     # via
-    #   pyproj
     #   requests
     #   sentry-sdk
 charset-normalizer==2.0.7
@@ -89,9 +88,9 @@ mistune==0.8.4
     # via notifications-utils
 notifications-python-client==8.0.1
     # via -r requirements.in
-notifications-utils @ git+https://github.com/alphagov/notifications-utils.git@73.1.0
+notifications-utils @ git+https://github.com/alphagov/notifications-utils.git@74.0.0
     # via -r requirements.in
-orderedset==2.0.3
+ordered-set==4.1.0
     # via notifications-utils
 packaging==23.1
     # via gunicorn
@@ -102,8 +101,6 @@ pyasn1==0.4.8
 pyjwt==2.4.0
     # via notifications-python-client
 pypdf==3.17.0
-    # via notifications-utils
-pyproj==3.6.0
     # via notifications-utils
 python-dateutil==2.8.2
     # via
@@ -135,8 +132,6 @@ segno==1.5.2
     # via notifications-utils
 sentry-sdk[flask]==1.32.0
     # via -r requirements.in
-shapely==1.8.0
-    # via notifications-utils
 six==1.16.0
     # via
     #   awscli-cwlogs
