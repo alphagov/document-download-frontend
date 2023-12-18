@@ -27,14 +27,17 @@ run-flask:
 
 .PHONY: run-flask-with-docker
 run-flask-with-docker: ## Run flask with docker
-	./scripts/run_locally_with_docker.sh
+	FLASK_APP=application.py FLASK_DEBUG=1 ./scripts/run_locally_with_docker.sh flask run --host 0.0.0.0 -p 7001
 
 .PHONY: test
 test:
 	ruff check .
 	black --check .
-	source $(HOME)/.nvm/nvm.sh && npm test
-	pytest
+	py.test tests/
+
+.PHONY: test-with-docker
+test-with-docker: ## Run tests in Docker container
+	FLASK_APP=application.py FLASK_DEBUG=1 ./scripts/run_locally_with_docker.sh make test
 
 .PHONY: bump-utils
 bump-utils:  # Bump notifications-utils package to latest version
@@ -45,13 +48,14 @@ bootstrap: generate-version-file
 	pip3 install -r requirements_for_test.txt
 	source $(HOME)/.nvm/nvm.sh && nvm install && npm ci --no-audit && npm rebuild node-sass && npm run build
 
+
 .PHONY: npm-audit
 npm-audit:
 	source $(HOME)/.nvm/nvm.sh && npm run audit
 
 .PHONY: bootstrap-with-docker
 bootstrap-with-docker: generate-version-file
-	docker build -f docker/Dockerfile -t document-download-frontend .
+	docker build -f docker/Dockerfile --target test -t document-download-frontend .
 
 .PHONY: freeze-requirements
 freeze-requirements: ## create static requirements.txt
