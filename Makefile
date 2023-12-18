@@ -58,6 +58,7 @@ freeze-requirements: ## create static requirements.txt
 	pip install --upgrade pip-tools
 	pip-compile requirements.in
 
+
 ## DEPLOYMENT
 
 .PHONY: preview
