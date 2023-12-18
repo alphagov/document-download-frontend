@@ -46,7 +46,7 @@ bump-utils:  # Bump notifications-utils package to latest version
 .PHONY: bootstrap
 bootstrap: generate-version-file
 	pip3 install -r requirements_for_test.txt
-	
+	source $(HOME)/.nvm/nvm.sh && nvm install && npm ci --no-audit && npm rebuild node-sass && npm run build
 
 
 .PHONY: npm-audit
