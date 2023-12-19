@@ -1,8 +1,7 @@
 import os
 
 
-class Config(object):
-    # if we're not on cloudfoundry, we can get to this app from localhost. but on cloudfoundry its different
+class Config:
     ADMIN_CLIENT_SECRET = os.environ.get("ADMIN_CLIENT_SECRET")
     ADMIN_CLIENT_USER_NAME = "notify-admin"
     SECRET_KEY = os.environ.get("SECRET_KEY")
@@ -29,7 +28,10 @@ class Config(object):
 
 class Development(Config):
     SERVER_NAME = os.getenv("SERVER_NAME")
+
     API_HOST_NAME = os.environ.get("API_HOST_NAME", "http://localhost:6011")
+
+    # we dont need to distinguish between internal and external when running locally/in docker
     DOCUMENT_DOWNLOAD_API_HOST_NAME = os.environ.get("DOCUMENT_DOWNLOAD_API_HOST_NAME", "http://localhost:7000")
     DOCUMENT_DOWNLOAD_API_HOST_NAME_INTERNAL = os.environ.get(
         "DOCUMENT_DOWNLOAD_API_HOST_NAME", "http://localhost:7000"
