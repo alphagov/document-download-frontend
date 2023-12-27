@@ -1,4 +1,4 @@
-FROM python:3.9-slim-bookworm AS base
+FROM python:3.11-slim-bookworm AS base
 
 ENV DEBIAN_FRONTEND=noninteractive \
     PYTHONUNBUFFERED=1
@@ -12,7 +12,7 @@ RUN apt-get update \
 WORKDIR /home/vcap/app
 
 ##### Frontend Build Image ###################################################
-FROM ghcr.io/alphagov/notify/unit-tests-image:python39-node16x-npm831 as frontend-build
+FROM ghcr.io/alphagov/notify/unit-tests-image:python311-node20 as frontend-build
 
 WORKDIR /usr/frontend
 COPY app app
@@ -67,8 +67,12 @@ USER notify
 ##### Test Image ##############################################################
 FROM production as test
 
+# If bumping this node version, also bump:
+#   `.nvmrc` in document-download-frontend
+#   `concourse/docker/unit-tests-image.Dockerfile` in notifications-aws
+# Keep NVM_VERSION in sync as well.
 ARG NVM_VERSION=0.39.5
-ARG NODE_VERSION=16.16.0
+ARG NODE_VERSION=20.10.0
 
 USER root
 
