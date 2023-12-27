@@ -6,13 +6,12 @@ Flask-WTF==1.2.1
 
 gunicorn[eventlet]>=21.2.0
 whitenoise==6.2.0  #manages static assets
-werkzeug==3.0.1
 
 notifications-python-client==8.0.1
 
 # PaaS
 awscli-cwlogs>=1.4,<1.5
 
-notifications-utils @ git+https://github.com/alphagov/notifications-utils.git@73.1.0
+notifications-utils @ git+https://github.com/alphagov/notifications-utils.git@74.0.0
 govuk-frontend-jinja==2.1.0
 sentry_sdk[flask]>=1.0.0,<2.0.0
