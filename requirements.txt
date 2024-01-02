@@ -50,8 +50,6 @@ flask-redis==0.4.0
     # via notifications-utils
 flask-wtf==1.2.1
     # via -r requirements.in
-geojson==2.5.0
-    # via notifications-utils
 govuk-bank-holidays==0.10
     # via notifications-utils
 govuk-frontend-jinja==2.1.0
@@ -59,9 +57,7 @@ govuk-frontend-jinja==2.1.0
 greenlet==3.0.3
     # via eventlet
 gunicorn[eventlet]==21.2.0
-    # via
-    #   -r requirements.in
-    #   gunicorn
+    # via -r requirements.in
 idna==3.3
     # via requests
 itsdangerous==2.1.2
@@ -88,7 +84,7 @@ mistune==0.8.4
     # via notifications-utils
 notifications-python-client==8.0.1
     # via -r requirements.in
-notifications-utils @ git+https://github.com/alphagov/notifications-utils.git@74.0.0
+notifications-utils @ git+https://github.com/alphagov/notifications-utils.git@74.2.0
     # via -r requirements.in
 ordered-set==4.1.0
     # via notifications-utils
@@ -131,9 +127,7 @@ s3transfer==0.6.1
 segno==1.5.2
     # via notifications-utils
 sentry-sdk[flask]==1.32.0
-    # via
-    #   -r requirements.in
-    #   sentry-sdk
+    # via -r requirements.in
 six==1.16.0
     # via
     #   awscli-cwlogs
