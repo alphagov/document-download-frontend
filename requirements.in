@@ -12,6 +12,6 @@ notifications-python-client==8.0.1
 # PaaS
 awscli-cwlogs>=1.4,<1.5
 
-notifications-utils @ git+https://github.com/alphagov/notifications-utils.git@74.0.0
+notifications-utils @ git+https://github.com/alphagov/notifications-utils.git@74.2.0
 govuk-frontend-jinja==2.1.0
 sentry_sdk[flask]>=1.0.0,<2.0.0
