@@ -53,7 +53,7 @@ class Config:
 
 
 class Development(Config):
-    SERVER_NAME = os.getenv("SERVER_NAME")
+    SERVER_NAME = os.getenv("DOCUMENT_DOWNLOAD_FRONTEND_HOST_NAME")
 
     API_HOST_NAME = os.environ.get("API_HOST_NAME", "http://localhost:6011")
 
