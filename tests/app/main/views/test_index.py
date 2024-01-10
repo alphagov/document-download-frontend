@@ -15,7 +15,7 @@ from tests import normalize_spaces
 def test_status(client):
     response = client.get(url_for("main.status"))
     assert response.status_code == 200
-    assert response.get_data(as_text=True) == "ok"
+    assert response.json == {"status": "ok", "platform": "test"}
 
 
 @pytest.mark.parametrize(

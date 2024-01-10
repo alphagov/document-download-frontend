@@ -41,6 +41,8 @@ class Development(Config):
     DEBUG = True
     NOTIFY_LOG_PATH = "application.log"
 
+    NOTIFY_RUNTIME_PLATFORM = "local"
+
 
 class Test(Development):
     TESTING = True
@@ -52,6 +54,8 @@ class Test(Development):
     API_HOST_NAME = "http://test-notify-api"
     DOCUMENT_DOWNLOAD_API_HOST_NAME = "https://download.test-doc-download-api.gov.uk"
     DOCUMENT_DOWNLOAD_API_HOST_NAME_INTERNAL = "https://download.test-doc-download-api-internal.gov.uk"
+
+    NOTIFY_RUNTIME_PLATFORM = "test"
 
 
 class Preview(Config):

@@ -33,7 +33,10 @@ FILE_EXTENSION_TO_PRETTY_FILE_TYPE = {
 
 @main.route("/_status")
 def status():
-    return "ok", 200
+    return {
+        "status": "ok",
+        "platform": current_app.config["NOTIFY_RUNTIME_PLATFORM"],
+    }, 200
 
 
 @main.route("/services/_status")
