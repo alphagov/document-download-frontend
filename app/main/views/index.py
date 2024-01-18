@@ -5,6 +5,7 @@ from urllib import parse
 import requests
 from dateutil import parser
 from flask import abort, current_app, redirect, render_template, request, url_for
+from flask.ctx import has_request_context
 from markupsafe import Markup
 from notifications_python_client.errors import HTTPError
 from werkzeug.exceptions import TooManyRequests
@@ -235,7 +236,11 @@ def _get_document_metadata(service_id, document_id, key):
     check_file_url = "{}/services/{}/documents/{}/check?key={}".format(
         current_app.config["DOCUMENT_DOWNLOAD_API_HOST_NAME_INTERNAL"], service_id, document_id, key
     )
-    response = requests.get(check_file_url)
+    headers = {}
+    if has_request_context() and hasattr(request, "get_onwards_request_headers"):
+        headers.update(request.get_onwards_request_headers())
+
+    response = requests.get(check_file_url, headers=headers)
 
     if response.status_code == 400:
         error_msg = response.json().get("error", "")
@@ -257,8 +262,15 @@ def _authenticate_access_to_document(service_id, document_id, key, email_address
         service_id,
         document_id,
     )
+    headers = {}
+    if has_request_context() and hasattr(request, "get_onwards_request_headers"):
+        headers.update(request.get_onwards_request_headers())
 
-    response = requests.post(auth_file_url, json={"key": key, "email_address": email_address})
+    response = requests.post(
+        auth_file_url,
+        json={"key": key, "email_address": email_address},
+        headers=headers,
+    )
 
     if response.status_code == 429:
         raise TooManyRequests()

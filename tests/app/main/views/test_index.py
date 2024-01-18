@@ -8,6 +8,7 @@ from flask import current_app, url_for
 from freezegun import freeze_time
 from notifications_python_client.errors import HTTPError
 from notifications_utils.base64_uuid import uuid_to_base64
+from notifications_utils.testing.comparisons import AnySupersetOf
 
 from tests import normalize_spaces
 
@@ -181,6 +182,10 @@ def test_404_hides_incorrect_credentials(
     json_response,
     sample_service,
 ):
+    mocker.patch(
+        "notifications_utils.request_helper.NotifyRequest.get_onwards_request_headers",
+        return_value={"some-onwards": "request-header"},
+    )
     mocker.patch("app.service_api_client.get_service", return_value={"data": sample_service})
 
     rmock.get(
@@ -195,6 +200,16 @@ def test_404_hides_incorrect_credentials(
         method=method,
     )
     assert response.status_code == 404
+
+    assert len(rmock.request_history) == 1
+    assert rmock.request_history[0].method == "GET"
+    assert rmock.request_history[0].url == "{}/services/{}/documents/{}/check?key={}".format(
+        current_app.config["DOCUMENT_DOWNLOAD_API_HOST_NAME_INTERNAL"],
+        service_id,
+        document_id,
+        key,
+    )
+    assert rmock.request_history[0].headers == AnySupersetOf({"some-onwards": "request-header"})
 
 
 def test_landing_page_creates_link_for_document(
@@ -437,6 +452,10 @@ def test_confirm_email_address_page_redirects_and_sets_cookie_on_success(
     sample_service,
     rmock,
 ):
+    mocker.patch(
+        "notifications_utils.request_helper.NotifyRequest.get_onwards_request_headers",
+        return_value={"some-onwards": "request-header"},
+    )
     mocker.patch("app.service_api_client.get_service", return_value={"data": sample_service})
 
     rmock.post(
@@ -466,6 +485,23 @@ def test_confirm_email_address_page_redirects_and_sets_cookie_on_success(
         response.headers["Set-Cookie"]
         == "document_access_signed_data=blah; Domain=test-doc-download-api.gov.uk; HttpOnly; Path=/my/file/path"
     )
+
+    assert len(rmock.request_history) == 2
+    assert rmock.request_history[0].method == "GET"
+    assert rmock.request_history[0].url == "{}/services/{}/documents/{}/check?key={}".format(
+        current_app.config["DOCUMENT_DOWNLOAD_API_HOST_NAME_INTERNAL"],
+        service_id,
+        document_id,
+        key,
+    )
+    assert rmock.request_history[0].headers == AnySupersetOf({"some-onwards": "request-header"})
+    assert rmock.request_history[1].method == "POST"
+    assert rmock.request_history[1].url == "{}/services/{}/documents/{}/authenticate".format(
+        current_app.config["DOCUMENT_DOWNLOAD_API_HOST_NAME_INTERNAL"],
+        service_id,
+        document_id,
+    )
+    assert rmock.request_history[1].headers == AnySupersetOf({"some-onwards": "request-header"})
 
 
 def test_download_document_creates_link_to_actual_doc_from_api(
