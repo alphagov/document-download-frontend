@@ -48,7 +48,7 @@ def test_services_view_redirects_to_api(client, url):
     response = client.get(url)
 
     assert response.status_code == 301
-    assert response.location == f"https://download.test-doc-download-api.gov.uk{url}"
+    assert response.location == f"https://api.test-doc-download-api.gov.uk{url}"
 
 
 @pytest.mark.parametrize(
