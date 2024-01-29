@@ -27,7 +27,7 @@ applications:
 
   env:
     ADMIN_CLIENT_SECRET: {{ ADMIN_CLIENT_SECRET }}
-    API_HOST_NAME: {{ API_HOST_NAME }}
+    API_HOST_NAME: {{ API_HOST_NAME_INTERNAL }}
     SECRET_KEY: '{{ DOCUMENT_DOWNLOAD_SECRET_KEY_FRONTEND }}'
     NOTIFY_LOG_PATH: /home/vcap/logs/app.log
 
@@ -35,6 +35,7 @@ applications:
     FLASK_APP: application.py
     DOCUMENT_DOWNLOAD_API_HOST_NAME: https://download.{{ hostname }}
     DOCUMENT_DOWNLOAD_API_HOST_NAME_INTERNAL: https://download.{{ hostname }}
+    ROUTE_SECRET_KEY_1: '{{ ROUTE_SECRET_KEY_1 }}'
 
     NOTIFY_ENVIRONMENT: {{ environment }}
     AWS_ACCESS_KEY_ID: {{ DOCUMENT_DOWNLOAD_AWS_ACCESS_KEY_ID }}

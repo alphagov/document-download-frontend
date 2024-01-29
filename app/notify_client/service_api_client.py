@@ -9,6 +9,8 @@ class OnwardsRequestNotificationsAPIClient(NotificationsAPIClient):
     def generate_headers(self, api_token):
         headers = super().generate_headers(api_token)
 
+        headers["X-Custom-Forwarder"] = self.route_secret
+
         if has_request_context() and hasattr(request, "get_onwards_request_headers"):
             headers = {
                 **request.get_onwards_request_headers(),
@@ -29,6 +31,7 @@ class ServiceApiClient:
         )
         self.api_client.service_id = application.config["ADMIN_CLIENT_USER_NAME"]
         self.api_client.api_key = application.config["ADMIN_CLIENT_SECRET"]
+        self.api_client.route_secret = application.config["ROUTE_SECRET_KEY_1"]
 
     def get_service(self, service_id):
         """
