@@ -34,7 +34,7 @@ applications:
     NOTIFY_APP_NAME: document-download-frontend
     FLASK_APP: application.py
     DOCUMENT_DOWNLOAD_API_HOST_NAME: https://download.{{ hostname }}
-    DOCUMENT_DOWNLOAD_API_HOST_NAME_INTERNAL: https://download.{{ hostname }}
+    DOCUMENT_DOWNLOAD_API_HOST_NAME_INTERNAL: https://document-download-api-{{ environment}}.cloudapps.digital
     ROUTE_SECRET_KEY_1: '{{ ROUTE_SECRET_KEY_1 }}'
 
     NOTIFY_ENVIRONMENT: {{ environment }}
