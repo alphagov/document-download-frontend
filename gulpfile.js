@@ -5,7 +5,7 @@
 
 // 1. LIBRARIES
 // - - - - - - - - - - - - - - -
-const { src, pipe, dest, series, parallel } = require('gulp');
+const { src, pipe, dest, series, parallel, watch } = require('gulp');
 const oldie = require('oldie');
 const postcss = require('gulp-postcss');
 const rollup = require('rollup');
@@ -113,7 +113,10 @@ const images = () => {
 
 // Watch for changes and re-run tasks
 const watchForChanges = () => {
-  return watch(paths.src + 'stylesheets/**/*', ['sass'])
+  return watch(paths.src + 'stylesheets/**/*', parallel(
+    sass,
+    javascripts
+  ))
 };
 
 const lint = {
