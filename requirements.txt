@@ -52,7 +52,7 @@ flask-wtf==1.2.1
     # via -r requirements.in
 govuk-bank-holidays==0.10
     # via notifications-utils
-govuk-frontend-jinja==2.1.0
+govuk-frontend-jinja==2.7.0
     # via -r requirements.in
 greenlet==3.0.3
     # via eventlet
