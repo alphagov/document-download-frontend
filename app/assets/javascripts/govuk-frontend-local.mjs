@@ -23,30 +23,32 @@ function nodeListForEach (nodes, callback) {
   }
 }
 
-// Copy of the initAll function from https://github.com/alphagov/govuk-frontend/blob/v3.5.0/src/govuk/all.js
+// Copy of the initAll function from https://github.com/alphagov/govuk-frontend/blob/v4.7.0/package/govuk-esm/common/index.mjs
 // except it only includes, and initialises, the components used by this application.
-function initAll (options) {
-  // Set the options to an empty object by default if no options are passed.
-  options = typeof options !== 'undefined' ? options : {}
+function initAll (config) {
+  // Set the config to an empty object by default if no config are passed.
+  config = typeof config !== 'undefined' ? config : {}
 
   // Allow the user to initialise GOV.UK Frontend in only certain sections of the page
   // Defaults to the entire document if nothing is set.
-  var scope = typeof options.scope !== 'undefined' ? options.scope : document
+  var $scope = config.scope instanceof HTMLElement ? config.scope : document;
 
-  // Find all buttons with [role=button] on the scope to enhance.
-  var buttons = scope.querySelectorAll('[data-module="govuk-button"]')
-  nodeListForEach(buttons, function (button) {
-    new Button(button).init()
-  });
+  var $buttons = $scope.querySelectorAll('[data-module="govuk-button"]')
+  nodeListForEach($buttons, function ($button) {
+    new Button($button, config.button).init()
+  })
 
   // Find first error summary module to enhance.
-  var $errorSummary = scope.querySelector('[data-module="govuk-error-summary"]')
-  new ErrorSummary($errorSummary).init()
+  var $errorSummary = $scope.querySelector('[data-module="govuk-error-summary"]')
+  if ($errorSummary) {
+    new ErrorSummary($errorSummary, config.errorSummary).init()
+  }
 
-  // There will only ever be one skip-link per page
-  var skipLink = scope.querySelector('[data-module="govuk-skip-link"]')
-
-  new SkipLink(skipLink).init()
+  // Find first skip link module to enhance.
+  var $skipLink = $scope.querySelector('[data-module="govuk-skip-link"]')
+  if ($skipLink) {
+    new SkipLink($skipLink).init()
+  }
 }
 
 var Frontend = {

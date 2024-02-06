@@ -11,18 +11,10 @@
 {% endblock %}
 
 {% block head %}
-  <!--[if !IE 8]><!-->
-    <link rel="stylesheet" media="screen" href="{{ asset_url('stylesheets/main.css') }}" />
-  <!--<![endif]-->
-  <!--[if IE 8]>
-    <link rel="stylesheet" media="screen" href="{{ asset_url('stylesheets/main-ie8.css') }}">
-  <![endif]-->
+  <link rel="stylesheet" media="screen" href="{{ asset_url('stylesheets/main.css') }}" />
   <style>
       .govuk-header__container { border-bottom-color: {{header_colour}} }
   </style>
-  <!--[if lt IE 9]>
-    <script src="{{ asset_url('javascripts/html5shiv.min.js') }}"></script>
-  <![endif]-->
   {% block meta %}
   <meta name="referrer" content="never">
   {% endblock %}
@@ -57,7 +49,5 @@
 {% endblock %}
 
 {% block bodyEnd %}
-  <!--[if gt IE 8]><!-->
   <script type="text/javascript" src="{{ asset_url('javascripts/main.js') }}"></script>
-  <!--<![endif]-->
 {% endblock %}

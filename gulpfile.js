@@ -5,7 +5,7 @@
 
 // 1. LIBRARIES
 // - - - - - - - - - - - - - - -
-const { src, pipe, dest, series, parallel } = require('gulp');
+const { src, pipe, dest, series, parallel, watch } = require('gulp');
 const oldie = require('oldie');
 const postcss = require('gulp-postcss');
 const rollup = require('rollup');
@@ -47,10 +47,6 @@ const copy = {
       return src(paths.govuk_frontend + 'assets/fonts/**/*')
         .pipe(dest(paths.dist + 'fonts/'));
     }
-  },
-  js: () => {
-    return src(paths.src + 'javascripts/html5shiv.min.js')
-      .pipe(dest(paths.dist + 'javascripts/'));
   }
 };
 
@@ -78,7 +74,7 @@ const javascripts = () => {
         include: 'node_modules/**'
       }),
       // Terser is a replacement for UglifyJS
-      rollupPluginTerser({'ie8': true})
+      rollupPluginTerser()
     ]
   }).then(bundle => {
     return bundle.write({
@@ -105,20 +101,6 @@ const sass = () => {
 };
 
 
-const ieSass = () => {
-  return src(paths.src + '/stylesheets/main-ie*.scss')
-    .pipe(plugins.prettyerror())
-    .pipe(plugins.sass({
-      outputStyle: 'compressed',
-      includePaths: [
-        paths.govuk_frontend
-      ]
-    }))
-    .pipe(postcss(oldie))
-    .pipe(dest(paths.dist + 'stylesheets/'))
-};
-
-
 // Copy images
 
 const images = () => {
@@ -131,7 +113,10 @@ const images = () => {
 
 // Watch for changes and re-run tasks
 const watchForChanges = () => {
-  return watch(paths.src + 'stylesheets/**/*', ['sass'])
+  return watch(paths.src + 'stylesheets/**/*', parallel(
+    sass,
+    javascripts
+  ))
 };
 
 const lint = {
@@ -163,13 +148,9 @@ const defaultTask = parallel(
   series(
     parallel(
       copy.govuk_frontend.fonts,
-      copy.js,
       images
     ),
-    parallel(
-      sass,
-      ieSass
-    )
+    sass
   ),
   javascripts
 );
