@@ -60,6 +60,14 @@ in a separate terminal from the app
 npm run watch
 ```
 
+You will need to restart the app after any changes to front end assets, so that they are served with
+the correct `Content-Length` header for their contents. If you are using
+[notifications-local](https://github.com/alphagov/notifications-local), you will need to run:
+
+```bash
+docker compose restart document-download-frontend
+```
+
 ### Updating the Node version for frontend builds
 
 Edit the respective `node` version specified in the `.nvmrc` file.
