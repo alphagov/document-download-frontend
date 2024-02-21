@@ -87,13 +87,13 @@ Ensure that an [LTS Node version](https://nodejs.org/en/about/releases/) is spec
 
 We have GOV.UK Frontend as a dependency in two places:
 
-* In python, our requirements.in specifies a version of [govuk-frontend-jinja](https://github.com/LandRegistry/govuk-frontend-jinja) for our jinja templates
-* In node, our package.json specifies a version of [govuk-frontend](https://github.com/alphagov/govuk-frontend) for our fonts, images and sass files
+* In Python, our requirements.in specifies a version of [govuk-frontend-jinja](https://github.com/LandRegistry/govuk-frontend-jinja) for our jinja templates
+* In Node, our package.json specifies a version of [govuk-frontend](https://github.com/alphagov/govuk-frontend) for our fonts, images and sass files
 
-We need to ensure that the version of govuk-frontend that the python library relies on always
+We need to ensure that the version of govuk-frontend that the Python library relies on always
 matches the version of govuk-frontend in our package.json exactly.
 
-If you're bumping either library, make sure the version of the python library supports the same version
+If you're bumping either library, make sure the version of the Python library supports the same version
 of govuk-frontend defined in our package.json, as referred to in the
 [govuk-frontend-jinja compatibility table](https://github.com/LandRegistry/govuk-frontend-jinja#compatibility).
 
