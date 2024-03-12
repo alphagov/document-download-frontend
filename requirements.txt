@@ -4,10 +4,6 @@
 #
 #    pip-compile requirements.in
 #
-awscli==1.29.5
-    # via awscli-cwlogs
-awscli-cwlogs==1.4.6
-    # via -r requirements.in
 blinker==1.6.2
     # via
     #   flask
@@ -16,7 +12,6 @@ boto3==1.28.5
     # via notifications-utils
 botocore==1.31.5
     # via
-    #   awscli
     #   boto3
     #   s3transfer
 cachetools==4.2.4
@@ -29,14 +24,10 @@ charset-normalizer==2.0.7
     # via requests
 click==8.1.7
     # via flask
-colorama==0.4.3
-    # via awscli
 dnspython==2.4.2
     # via eventlet
 docopt==0.6.2
     # via notifications-python-client
-docutils==0.15.2
-    # via awscli
 eventlet==0.34.2
     # via gunicorn
 flask==3.0.0
@@ -92,45 +83,35 @@ packaging==23.1
     # via gunicorn
 phonenumbers==8.13.26
     # via notifications-utils
-pyasn1==0.4.8
-    # via rsa
 pyjwt==2.4.0
     # via notifications-python-client
 pypdf==3.17.0
     # via notifications-utils
 python-dateutil==2.8.2
-    # via
-    #   awscli-cwlogs
-    #   botocore
+    # via botocore
 python-json-logger==2.0.2
     # via notifications-utils
 pytz==2021.3
     # via notifications-utils
 pyyaml==6.0.1
-    # via
-    #   awscli
-    #   notifications-utils
+    # via notifications-utils
 redis==3.5.3
     # via flask-redis
 requests==2.31.0
     # via
-    #   awscli-cwlogs
     #   govuk-bank-holidays
     #   notifications-python-client
     #   notifications-utils
-rsa==4.7.2
-    # via awscli
 s3transfer==0.6.1
-    # via
-    #   awscli
-    #   boto3
+    # via boto3
 segno==1.5.2
     # via notifications-utils
 sentry-sdk[flask]==1.32.0
-    # via -r requirements.in
+    # via
+    #   -r requirements.in
+    #   sentry-sdk
 six==1.16.0
     # via
-    #   awscli-cwlogs
     #   eventlet
     #   python-dateutil
 smartypants==2.0.1

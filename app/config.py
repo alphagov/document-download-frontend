@@ -8,7 +8,7 @@ class Config(object):
     SECRET_KEY = os.environ.get("SECRET_KEY")
 
     API_HOST_NAME = os.environ.get("API_HOST_NAME")
-    NOTIFY_RUNTIME_PLATFORM = os.environ.get("NOTIFY_RUNTIME_PLATFORM", "paas")
+    NOTIFY_RUNTIME_PLATFORM = os.environ.get("NOTIFY_RUNTIME_PLATFORM", "ecs")
 
     CHECK_PROXY_HEADER = False
 
