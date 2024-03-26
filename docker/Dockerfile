@@ -64,16 +64,6 @@ USER root
 RUN chown -R notify:notify /home/vcap/app
 USER notify
 
-##### Test Image ##############################################################
-FROM production as test
-
-# If bumping this node version, also bump:
-#   `.nvmrc` in document-download-frontend
-#   `concourse/docker/unit-tests-image.Dockerfile` in notifications-aws
-# Keep NVM_VERSION in sync as well.
-ARG NVM_VERSION=0.39.5
-ARG NODE_VERSION=20.10.0
-
 USER root
 
 RUN echo "Install OS dependencies for test build" \
@@ -87,6 +77,16 @@ RUN echo "Install OS dependencies for test build" \
 RUN usermod -aG sudo notify
 RUN echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 USER notify
+
+##### Test Image ##############################################################
+FROM production as test
+
+# If bumping this node version, also bump:
+#   `.nvmrc` in document-download-frontend
+#   `concourse/docker/unit-tests-image.Dockerfile` in notifications-aws
+# Keep NVM_VERSION in sync as well.
+ARG NVM_VERSION=0.39.5
+ARG NODE_VERSION=20.10.0
 
 ENV HOME=/home/vcap
 ENV NVM_DIR /home/vcap/.nvm
