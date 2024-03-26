@@ -78,6 +78,14 @@ RUN usermod -aG sudo notify
 RUN echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 USER notify
 
+ENV HOME=/home/vcap
+ENV NVM_DIR /home/vcap/.nvm
+ENV NODE_PATH $NVM_DIR/v$NODE_VERSION/lib/node_modules
+ENV PATH $NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH
+
+# Copying to overwrite is faster than RUN chown notify:notify ...
+COPY --from=python_build --chown=notify:notify /opt/venv /opt/venv
+
 ##### Test Image ##############################################################
 FROM production as test
 
@@ -87,14 +95,6 @@ FROM production as test
 # Keep NVM_VERSION in sync as well.
 ARG NVM_VERSION=0.39.5
 ARG NODE_VERSION=20.10.0
-
-ENV HOME=/home/vcap
-ENV NVM_DIR /home/vcap/.nvm
-ENV NODE_PATH $NVM_DIR/v$NODE_VERSION/lib/node_modules
-ENV PATH $NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH
-
-# Copying to overwrite is faster than RUN chown notify:notify ...
-COPY --from=python_build --chown=notify:notify /opt/venv /opt/venv
 
 COPY .nvmrc .nvmrc
 RUN echo "Installing nvm and NodeJS v${NODE_VERSION}" && \
