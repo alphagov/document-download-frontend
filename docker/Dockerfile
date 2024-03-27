@@ -46,6 +46,13 @@ RUN make generate-version-file # This file gets copied across
 ##### Production Image #######################################################
 FROM base AS production
 
+# If bumping this node version, also bump:
+#   `.nvmrc` in document-download-frontend
+#   `concourse/docker/unit-tests-image.Dockerfile` in notifications-aws
+# Keep NVM_VERSION in sync as well.
+ARG NVM_VERSION=0.39.5
+ARG NODE_VERSION=20.10.0
+
 RUN groupadd -r notify && useradd -r -g notify notify && chown -R notify:notify /home/vcap
 
 USER notify
@@ -63,16 +70,6 @@ COPY --from=python_build --chown=notify:notify /home/vcap/app/app/version.py app
 USER root
 RUN chown -R notify:notify /home/vcap/app
 USER notify
-
-##### Test Image ##############################################################
-FROM production as test
-
-# If bumping this node version, also bump:
-#   `.nvmrc` in document-download-frontend
-#   `concourse/docker/unit-tests-image.Dockerfile` in notifications-aws
-# Keep NVM_VERSION in sync as well.
-ARG NVM_VERSION=0.39.5
-ARG NODE_VERSION=20.10.0
 
 USER root
 
@@ -112,3 +109,6 @@ RUN make bootstrap
 # Copy from the real world, one dir up (project root) into the environment's current working directory
 # Docker will rebuild from here down every time.
 COPY --chown=notify:notify . .
+
+##### Test Image ##############################################################
+FROM production as test
