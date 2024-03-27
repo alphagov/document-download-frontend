@@ -99,9 +99,6 @@ RUN echo "Installing nvm and NodeJS v${NODE_VERSION}" && \
     . ${NVM_DIR}/nvm.sh && \
     nvm install
 
-##### Test Image ##############################################################
-FROM production as test
-
 # Make sure the app/ directory is there so that "make bootstrap" can create app/version.py
 RUN mkdir -p app
 
@@ -112,3 +109,6 @@ RUN make bootstrap
 # Copy from the real world, one dir up (project root) into the environment's current working directory
 # Docker will rebuild from here down every time.
 COPY --chown=notify:notify . .
+
+##### Test Image ##############################################################
+FROM production as test
