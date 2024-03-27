@@ -46,6 +46,13 @@ RUN make generate-version-file # This file gets copied across
 ##### Production Image #######################################################
 FROM base AS production
 
+# If bumping this node version, also bump:
+#   `.nvmrc` in document-download-frontend
+#   `concourse/docker/unit-tests-image.Dockerfile` in notifications-aws
+# Keep NVM_VERSION in sync as well.
+ARG NVM_VERSION=0.39.5
+ARG NODE_VERSION=20.10.0
+
 RUN groupadd -r notify && useradd -r -g notify notify && chown -R notify:notify /home/vcap
 
 USER notify
@@ -86,21 +93,14 @@ ENV PATH $NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH
 # Copying to overwrite is faster than RUN chown notify:notify ...
 COPY --from=python_build --chown=notify:notify /opt/venv /opt/venv
 
-##### Test Image ##############################################################
-FROM production as test
-
-# If bumping this node version, also bump:
-#   `.nvmrc` in document-download-frontend
-#   `concourse/docker/unit-tests-image.Dockerfile` in notifications-aws
-# Keep NVM_VERSION in sync as well.
-ARG NVM_VERSION=0.39.5
-ARG NODE_VERSION=20.10.0
-
 COPY .nvmrc .nvmrc
 RUN echo "Installing nvm and NodeJS v${NODE_VERSION}" && \
     curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v${NVM_VERSION}/install.sh | bash && \
     . ${NVM_DIR}/nvm.sh && \
     nvm install
+
+##### Test Image ##############################################################
+FROM production as test
 
 # Make sure the app/ directory is there so that "make bootstrap" can create app/version.py
 RUN mkdir -p app
