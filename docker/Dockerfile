@@ -62,6 +62,7 @@ COPY --from=frontend-build /usr/frontend/app/templates app/templates
 COPY --from=python_build --chown=notify:notify /home/vcap/app/app/version.py app/version.py
 USER root
 RUN chown -R notify:notify /home/vcap/app
+RUN ["sed", "-i", "/if pid [!]= 0/a\\            self.log.info('spawned pid %s', pid)", "/opt/venv/lib/python3.11/site-packages/gunicorn/arbiter.py"]
 USER notify
 
 ##### Test Image ##############################################################
