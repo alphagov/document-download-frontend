@@ -36,7 +36,6 @@ FILE_EXTENSION_TO_PRETTY_FILE_TYPE = {
 def status():
     return {
         "status": "ok",
-        "platform": current_app.config["NOTIFY_RUNTIME_PLATFORM"],
     }, 200
 
 
