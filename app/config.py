@@ -24,9 +24,6 @@ class Config(object):
 
     ROUTE_SECRET_KEY_1 = os.environ.get("ROUTE_SECRET_KEY_1", "")
 
-    # needs to refer to notify for utils
-    NOTIFY_LOG_PATH = os.getenv("NOTIFY_LOG_PATH")
-
 
 class Development(Config):
     SERVER_NAME = os.getenv("SERVER_NAME")
@@ -40,7 +37,6 @@ class Development(Config):
     SECRET_KEY = "dev-notify-secret-key"
 
     DEBUG = True
-    NOTIFY_LOG_PATH = "application.log"
 
 
 class Test(Development):
