@@ -4,10 +4,6 @@ GOV.UK Notify frontend for downloading documents uploaded via [Document Download
 
 ## Setting up
 
-### Python version
-
-Check the version in [runtime.txt](runtime.txt).
-
 ### NodeJS version
 
 If you don't have NodeJS on your system, install it with homebrew.
