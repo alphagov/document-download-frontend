@@ -48,7 +48,9 @@ govuk-frontend-jinja==2.8.0
 greenlet==3.0.3
     # via eventlet
 gunicorn[eventlet]==21.2.0
-    # via -r requirements.in
+    # via
+    #   -r requirements.in
+    #   notifications-utils
 idna==3.3
     # via requests
 itsdangerous==2.1.2
@@ -75,7 +77,7 @@ mistune==0.8.4
     # via notifications-utils
 notifications-python-client==8.0.1
     # via -r requirements.in
-notifications-utils @ git+https://github.com/alphagov/notifications-utils.git@74.11.0
+notifications-utils @ git+https://github.com/alphagov/notifications-utils.git@75.1.0
     # via -r requirements.in
 ordered-set==4.1.0
     # via notifications-utils
@@ -107,9 +109,7 @@ s3transfer==0.6.1
 segno==1.5.2
     # via notifications-utils
 sentry-sdk[flask]==1.32.0
-    # via
-    #   -r requirements.in
-    #   sentry-sdk
+    # via -r requirements.in
 six==1.16.0
     # via
     #   eventlet
