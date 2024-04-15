@@ -9,6 +9,6 @@ whitenoise==6.2.0  #manages static assets
 
 notifications-python-client==8.0.1
 
-notifications-utils @ git+https://github.com/alphagov/notifications-utils.git@75.1.1
+notifications-utils @ git+https://github.com/alphagov/notifications-utils.git@76.0.0
 govuk-frontend-jinja==2.8.0
 sentry_sdk[flask]>=1.0.0,<2.0.0
