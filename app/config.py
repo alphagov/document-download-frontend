@@ -8,7 +8,6 @@ class Config(object):
     SECRET_KEY = os.environ.get("SECRET_KEY")
 
     API_HOST_NAME = os.environ.get("API_HOST_NAME")
-    NOTIFY_RUNTIME_PLATFORM = os.environ.get("NOTIFY_RUNTIME_PLATFORM", "ecs")
 
     CHECK_PROXY_HEADER = False
 
@@ -25,9 +24,6 @@ class Config(object):
 
     ROUTE_SECRET_KEY_1 = os.environ.get("ROUTE_SECRET_KEY_1", "")
 
-    # needs to refer to notify for utils
-    NOTIFY_LOG_PATH = os.getenv("NOTIFY_LOG_PATH")
-
 
 class Development(Config):
     SERVER_NAME = os.getenv("SERVER_NAME")
@@ -41,9 +37,6 @@ class Development(Config):
     SECRET_KEY = "dev-notify-secret-key"
 
     DEBUG = True
-    NOTIFY_LOG_PATH = "application.log"
-
-    NOTIFY_RUNTIME_PLATFORM = "local"
 
 
 class Test(Development):
@@ -56,8 +49,6 @@ class Test(Development):
     API_HOST_NAME = "http://test-notify-api"
     DOCUMENT_DOWNLOAD_API_HOST_NAME = "https://download.test-doc-download-api.gov.uk"
     DOCUMENT_DOWNLOAD_API_HOST_NAME_INTERNAL = "https://download.test-doc-download-api-internal.gov.uk"
-
-    NOTIFY_RUNTIME_PLATFORM = "test"
 
 
 class Preview(Config):
