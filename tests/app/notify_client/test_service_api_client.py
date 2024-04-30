@@ -13,27 +13,6 @@ def test_client_gets_service(mocker):
     mock_api_client.get.assert_called_once_with("/service/foo")
 
 
-def test_client_uses_route_secret(app_, rmock, service_id, sample_service):
-    app_.config["ROUTE_SECRET_KEY_1"] = "hello"
-
-    client = ServiceApiClient()
-    client.init_app(app_)
-
-    rmock.get(
-        "{}/service/{}".format(
-            app_.config["API_HOST_NAME"],
-            service_id,
-        ),
-        status_code=200,
-        json={"data": sample_service},
-    )
-
-    client.get_service(service_id)
-
-    assert len(rmock.request_history) == 1
-    assert rmock.request_history[0].headers == AnySupersetOf({"X-Custom-Forwarder": "hello"})
-
-
 def test_client_onward_headers(app_, rmock, service_id, sample_service):
     client = ServiceApiClient()
     client.init_app(app_)
@@ -58,9 +37,7 @@ def test_client_onward_headers(app_, rmock, service_id, sample_service):
             client.get_service(service_id)
 
     assert len(rmock.request_history) == 1
-    assert rmock.request_history[0].headers == AnySupersetOf(
-        {"some-onwards": "request-headers", "fooed": "barred", "X-Custom-Forwarder": ""}
-    )
+    assert rmock.request_history[0].headers == AnySupersetOf({"some-onwards": "request-headers", "fooed": "barred"})
 
 
 def test_client_no_onward_headers(app_, rmock, service_id, sample_service):
