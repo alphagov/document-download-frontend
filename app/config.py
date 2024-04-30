@@ -9,8 +9,6 @@ class Config(object):
 
     API_HOST_NAME = os.environ.get("API_HOST_NAME")
 
-    CHECK_PROXY_HEADER = False
-
     # Logging
     DEBUG = False
 
@@ -21,8 +19,6 @@ class Config(object):
 
     HEADER_COLOUR = "#FFBF47"  # $yellow
     HTTP_PROTOCOL = "http"
-
-    ROUTE_SECRET_KEY_1 = os.environ.get("ROUTE_SECRET_KEY_1", "")
 
 
 class Development(Config):
