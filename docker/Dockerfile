@@ -56,13 +56,16 @@ COPY --from=python_build --chown=root:root /opt/venv /opt/venv
 ENV PATH="/opt/venv/bin:${PATH}"
 
 COPY --chown=notify:notify app app
-COPY --chown=notify:notify application.py gunicorn_config.py ./
+COPY --chown=notify:notify application.py entrypoint.sh gunicorn_config.py ./
 COPY --from=frontend-build /usr/frontend/app/static app/static
 COPY --from=frontend-build /usr/frontend/app/templates app/templates
 COPY --from=python_build --chown=notify:notify /home/vcap/app/app/version.py app/version.py
 USER root
-RUN chown -R notify:notify /home/vcap/app
+RUN chown -R notify:notify /home/vcap/app && \
+    chmod +x /home/vcap/app/entrypoint.sh
 USER notify
+
+ENTRYPOINT [ "/home/vcap/app/entrypoint.sh" ]
 
 ##### Test Image ##############################################################
 FROM production as test
