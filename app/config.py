@@ -2,7 +2,6 @@ import os
 
 
 class Config(object):
-    # if we're not on cloudfoundry, we can get to this app from localhost. but on cloudfoundry its different
     ADMIN_CLIENT_SECRET = os.environ.get("ADMIN_CLIENT_SECRET")
     ADMIN_CLIENT_USER_NAME = "notify-admin"
     SECRET_KEY = os.environ.get("SECRET_KEY")
