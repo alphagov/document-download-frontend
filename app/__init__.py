@@ -9,7 +9,7 @@ from notifications_utils.clients.statsd.statsd_client import StatsdClient
 from werkzeug.routing import BaseConverter, ValidationError
 
 from app.asset_fingerprinter import AssetFingerprinter
-from app.config import configs
+from app.config import Config, configs
 from app.notify_client.service_api_client import ServiceApiClient
 
 statsd_client = StatsdClient()
@@ -32,7 +32,11 @@ class Base64UUIDConverter(BaseConverter):
 
 
 def create_app(application):
-    application.config.from_object(configs[os.environ["NOTIFY_ENVIRONMENT"]])
+    notify_environment = os.environ["NOTIFY_ENVIRONMENT"]
+    if notify_environment in configs:
+        application.config.from_object(configs[notify_environment])
+    else:
+        application.config.from_object(Config)
 
     application.url_map.converters["base64_uuid"] = Base64UUIDConverter
 

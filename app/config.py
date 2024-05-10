@@ -16,8 +16,8 @@ class Config(object):
     DOCUMENT_DOWNLOAD_API_HOST_NAME = os.environ.get("DOCUMENT_DOWNLOAD_API_HOST_NAME")
     DOCUMENT_DOWNLOAD_API_HOST_NAME_INTERNAL = os.environ.get("DOCUMENT_DOWNLOAD_API_HOST_NAME_INTERNAL")
 
-    HEADER_COLOUR = "#FFBF47"  # $yellow
-    HTTP_PROTOCOL = "http"
+    HEADER_COLOUR = os.environ.get("HEADER_COLOUR", "#FFBF47")  # $yellow
+    HTTP_PROTOCOL = os.environ.get("HTTP_PROTOCOL", "http")
 
 
 class Development(Config):
@@ -46,25 +46,7 @@ class Test(Development):
     DOCUMENT_DOWNLOAD_API_HOST_NAME_INTERNAL = "https://download.test-doc-download-api-internal.gov.uk"
 
 
-class Preview(Config):
-    HTTP_PROTOCOL = "https"
-    HEADER_COLOUR = "#F499BE"  # $baby-pink
-
-
-class Staging(Config):
-    HTTP_PROTOCOL = "https"
-    HEADER_COLOUR = "#6F72AF"  # $mauve
-
-
-class Production(Config):
-    HEADER_COLOUR = "#005EA5"  # $govuk-blue
-    HTTP_PROTOCOL = "https"
-
-
 configs = {
     "development": Development,
     "test": Test,
-    "preview": Preview,
-    "staging": Staging,
-    "production": Production,
 }
