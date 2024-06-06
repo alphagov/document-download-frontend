@@ -39,6 +39,7 @@ bump-utils:  # Bump notifications-utils package to latest version
 .PHONY: bootstrap
 bootstrap: generate-version-file
 	pip3 install -r requirements_for_test.txt
+	python -c "from notifications_utils.version_tools import copy_pyproject_toml; copy_pyproject_toml()"
 	source $(HOME)/.nvm/nvm.sh && nvm install && npm ci --no-audit && npm rebuild node-sass && npm run build
 
 
