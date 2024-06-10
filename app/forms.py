@@ -2,7 +2,8 @@ from flask import render_template
 from flask_wtf import FlaskForm as Form
 from markupsafe import Markup
 from notifications_utils.formatters import strip_all_whitespace
-from notifications_utils.recipients import InvalidEmailError, validate_email_address
+from notifications_utils.recipient_validation.email_address import validate_email_address
+from notifications_utils.recipient_validation.errors import InvalidEmailError
 from wtforms import StringField, ValidationError
 from wtforms.validators import DataRequired
 
