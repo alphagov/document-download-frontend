@@ -2,7 +2,7 @@ import re
 from datetime import date
 
 from dateutil import parser
-from notifications_utils.recipients import EMAIL_REGEX_PATTERN
+from notifications_utils.recipient_validation.email_address import EMAIL_REGEX_PATTERN
 
 
 def assess_contact_type(service_contact_info):
