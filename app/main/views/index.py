@@ -1,5 +1,4 @@
 from datetime import date, timedelta
-from typing import Optional
 from urllib import parse
 
 import requests
@@ -255,7 +254,7 @@ def _get_document_metadata(service_id, document_id, key):
     return response.json().get("document")
 
 
-def _authenticate_access_to_document(service_id, document_id, key, email_address) -> Optional[dict]:
+def _authenticate_access_to_document(service_id, document_id, key, email_address) -> dict | None:
     auth_file_url = "{}/services/{}/documents/{}/authenticate".format(
         current_app.config["DOCUMENT_DOWNLOAD_API_HOST_NAME_INTERNAL"],
         service_id,
