@@ -83,7 +83,7 @@ def landing(service_id, document_id):
     if "confirm_email" not in metadata:
         current_app.logger.info(
             "Metadata for %(service_id)s/%(document_id)s does not contain `confirm_email` key: %(metadata)s",
-            dict(service_id=service_id, document_id=document_id, metadata=metadata),
+            {"service_id": service_id, "document_id": document_id, "metadata": metadata},
         )
 
     if metadata.get("confirm_email", False) is True:
@@ -271,7 +271,7 @@ def _authenticate_access_to_document(service_id, document_id, key, email_address
     )
 
     if response.status_code == 429:
-        raise TooManyRequests()
+        raise TooManyRequests
 
     elif response.status_code in {400, 403}:
         return None
