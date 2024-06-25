@@ -1,4 +1,3 @@
-
 from flask import request
 from flask.ctx import has_request_context
 from notifications_python_client.notifications import NotificationsAPIClient

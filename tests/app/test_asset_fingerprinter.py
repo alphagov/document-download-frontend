@@ -1,4 +1,3 @@
-
 from app.asset_fingerprinter import AssetFingerprinter
 
 
