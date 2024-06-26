@@ -32,7 +32,6 @@ eventlet==0.35.2
     # via gunicorn
 flask==3.0.0
     # via
-    #   -r requirements.in
     #   flask-redis
     #   flask-wtf
     #   notifications-utils
