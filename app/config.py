@@ -1,7 +1,7 @@
 import os
 
 
-class Config(object):
+class Config:
     ADMIN_CLIENT_SECRET = os.environ.get("ADMIN_CLIENT_SECRET")
     ADMIN_CLIENT_USER_NAME = "notify-admin"
     SECRET_KEY = os.environ.get("SECRET_KEY")

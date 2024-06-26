@@ -1,5 +1,3 @@
-from __future__ import unicode_literals
-
 from flask import request
 from flask.ctx import has_request_context
 from notifications_python_client.notifications import NotificationsAPIClient
@@ -34,4 +32,4 @@ class ServiceApiClient:
         """
         Retrieve a service.
         """
-        return self.api_client.get("/service/{0}".format(service_id))
+        return self.api_client.get(f"/service/{service_id}")
