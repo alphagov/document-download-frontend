@@ -1,7 +1,6 @@
 # Run `make freeze-requirements` to update requirements.txt
 # with package version changes made in requirements-app.txt
 
-Flask==3.0.0
 Flask-WTF==1.2.1
 
 gunicorn[eventlet]>=21.2.0
