@@ -24,6 +24,8 @@ wheels/
 *.egg
 MANIFEST
 pyproject.toml
+.pre-commit-config.yaml
+requirements_for_test_common.txt
 
 # PyCharm
 .idea
