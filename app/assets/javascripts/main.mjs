@@ -1,7 +1,5 @@
-import { Frontend } from './govuk-frontend-local';
+import { Button, createAll, ErrorSummary, SkipLink } from 'govuk-frontend'
 
-Frontend.initAll();
-
-export {
-  Frontend
-}
+createAll(Button)
+createAll(ErrorSummary)
+createAll(SkipLink)
