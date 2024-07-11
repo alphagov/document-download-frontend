@@ -33,7 +33,7 @@ const paths = {
     dist: 'app/static/',
     templates: 'app/templates/',
     npm: 'node_modules/',
-    govuk_frontend: 'node_modules/govuk-frontend/govuk/'
+    govuk_frontend: 'node_modules/govuk-frontend/dist/govuk/'
 };
 
 // 3. TASKS
@@ -46,7 +46,11 @@ const copy = {
     fonts: () => {
       return src(paths.govuk_frontend + 'assets/fonts/**/*')
         .pipe(dest(paths.dist + 'fonts/'));
-    }
+    },
+    header_icon_manifest: () => {
+      return src(paths.govuk_frontend + 'assets/manifest.json')
+        .pipe(dest(paths.dist));
+    },
   }
 };
 
@@ -81,7 +85,6 @@ const javascripts = () => {
       dir: paths.dist + 'javascripts/',
       entryFileNames: '[name].js',
       format: 'iife',
-      name: 'GOVUK',
       sourcemap: true
     });
   });
@@ -133,10 +136,7 @@ const lint = {
       .pipe(plugins.sassLint.failOnError());
   },
   'js': (cb) => {
-    return src([
-        paths.src + 'javascripts/**/*.js',
-        '!' + paths.src + 'javascripts/**/html5shiv.min.js'
-      ])
+    return src(paths.src + 'javascripts/**/*.js')
       .pipe(plugins.jshint())
       .pipe(plugins.jshint.reporter(stylish))
       .pipe(plugins.jshint.reporter('fail'))
@@ -148,6 +148,7 @@ const defaultTask = parallel(
   series(
     parallel(
       copy.govuk_frontend.fonts,
+      copy.govuk_frontend.header_icon_manifest,
       images
     ),
     sass
