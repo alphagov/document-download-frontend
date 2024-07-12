@@ -10,8 +10,8 @@ $govuk-assets-path: "/static/";
 
 @import "base";
 
-@import "core/all";
-@import "objects/all";
+@import "core";
+@import "objects";
 
 @import 'components/button/button';
 @import 'components/error-message/error-message';
@@ -21,5 +21,5 @@ $govuk-assets-path: "/static/";
 @import 'components/input/input';
 @import 'components/skip-link/skip-link';
 
-@import "utilities/all";
+@import "utilities";
 @import "overrides/spacing";
