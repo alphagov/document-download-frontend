@@ -258,7 +258,7 @@ def test_landing_page_creates_link_to_confirm_email_address(
     )
 
 
-def test_confirm_email_address_page_show_email_address_form(
+def test_confirm_email_address_page_shows_email_address_form_and_contact_details(
     service_id,
     document_id,
     key,
@@ -284,6 +284,10 @@ def test_confirm_email_address_page_show_email_address_form(
     assert normalize_spaces(page.h1.text) == "Confirm your email address"
     assert page.select_one("form")
     assert not page.select(".govuk-error-summary")
+
+    contact_link = page.select("main a")[0]
+    assert contact_link.text.strip() == "contact Sample Service"
+    assert contact_link["href"] == "https://sample-service.gov.uk"
 
 
 def test_confirm_email_address_page_redirects_to_download_page_if_confirmation_not_required(
