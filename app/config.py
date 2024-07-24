@@ -11,6 +11,10 @@ class Config:
     # Logging
     DEBUG = False
 
+    # The config option NOTIFY_ENVIRONMENT is purely used for logging.
+    # It should not be used for any logical conditionals in the code.
+    NOTIFY_ENVIRONMENT = os.environ["NOTIFY_ENVIRONMENT"]
+
     NOTIFY_REQUEST_LOG_LEVEL = os.getenv("NOTIFY_REQUEST_LOG_LEVEL", "INFO")
 
     DOCUMENT_DOWNLOAD_API_HOST_NAME = os.environ.get("DOCUMENT_DOWNLOAD_API_HOST_NAME")
