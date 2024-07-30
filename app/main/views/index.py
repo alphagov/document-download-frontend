@@ -173,7 +173,10 @@ def confirm_email_address(service_id, document_id):
         render_template(
             "views/confirm_email_address.html",
             form=form,
+            service_name=service_name,
             service_id=service_id,
+            service_contact_info=service_contact_info,
+            contact_info_type=contact_info_type,
             document_id=document_id,
             key=key,
         ),
