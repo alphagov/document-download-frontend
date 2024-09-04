@@ -17,7 +17,7 @@ docker run -it --rm \
   -e DOCUMENT_DOWNLOAD_API_HOST_NAME_INTERNAL=$DOCUMENT_DOWNLOAD_API_HOST_NAME_INTERNAL \
   -e WERKZEUG_DEBUG_PIN=${WERKZEUG_DEBUG_PIN:-"off"} \
   -e PORT=${PORT} \
-  -p ${PORT}:${PORT} \
+  -p 127.0.0.1:${PORT}:${PORT} \
   -v $(pwd):/home/vcap/app \
   ${DOCKER_IMAGE_NAME} \
   ${@}
