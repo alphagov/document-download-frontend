@@ -17,16 +17,15 @@ class OnwardsRequestNotificationsAPIClient(NotificationsAPIClient):
 
 
 class ServiceApiClient:
-    def __init__(self):
-        self.api_client = None
-
-    def init_app(self, application):
+    def __init__(self, app):
         self.api_client = OnwardsRequestNotificationsAPIClient(
-            base_url=application.config["API_HOST_NAME"],
-            api_key="a" * 75,
+            "x" * 100,
+            base_url=app.config["API_HOST_NAME"],
         )
-        self.api_client.service_id = application.config["ADMIN_CLIENT_USER_NAME"]
-        self.api_client.api_key = application.config["ADMIN_CLIENT_SECRET"]
+        # our credential lengths aren't what NotificationsAPIClient's __init__ will expect
+        # given it's designed for destructuring end-user api keys
+        self.api_client.service_id = app.config["ADMIN_CLIENT_USER_NAME"]
+        self.api_client.api_key = app.config["ADMIN_CLIENT_SECRET"]
 
     def get_service(self, service_id):
         """

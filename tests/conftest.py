@@ -5,7 +5,7 @@ import pytest
 import requests_mock
 from flask import Flask, current_app
 
-from app import create_app
+from app import create_app, reset_memos
 
 
 @pytest.fixture
@@ -13,12 +13,14 @@ def app_(request):
     app = Flask("app")
     create_app(app)
 
+    reset_memos()
     ctx = app.app_context()
     ctx.push()
 
     yield app
 
     ctx.pop()
+    reset_memos()
 
 
 @pytest.fixture(scope="function")
