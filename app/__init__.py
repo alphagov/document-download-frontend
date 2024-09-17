@@ -3,6 +3,7 @@ import os
 import jinja2
 from flask import current_app, make_response, render_template
 from flask_wtf.csrf import CSRFError
+from gds_metrics import GDSMetrics
 from notifications_utils import logging, request_helper
 from notifications_utils.base64_uuid import base64_to_uuid, uuid_to_base64
 from notifications_utils.clients.statsd.statsd_client import StatsdClient
@@ -12,6 +13,7 @@ from app.asset_fingerprinter import AssetFingerprinter
 from app.config import Config, configs
 from app.notify_client.service_api_client import ServiceApiClient
 
+metrics = GDSMetrics()
 statsd_client = StatsdClient()
 asset_fingerprinter = AssetFingerprinter()
 service_api_client = ServiceApiClient()
@@ -41,6 +43,8 @@ def create_app(application):
     application.url_map.converters["base64_uuid"] = Base64UUIDConverter
 
     init_app(application)
+    # Metrics intentionally high up to give the most accurate timing and reliability that the metric is recorded
+    metrics.init_app(application)
     init_jinja(application)
     statsd_client.init_app(application)
     logging.init_app(application, statsd_client)
