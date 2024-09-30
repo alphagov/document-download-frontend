@@ -6,7 +6,7 @@ from app.notify_client.service_api_client import ServiceApiClient
 
 
 def test_client_gets_service(mocker):
-    client = ServiceApiClient()
+    client = ServiceApiClient(mocker.MagicMock())
     mock_api_client = mocker.patch.object(client, "api_client")
 
     client.get_service("foo")
@@ -14,8 +14,7 @@ def test_client_gets_service(mocker):
 
 
 def test_client_onward_headers(app_, rmock, service_id, sample_service):
-    client = ServiceApiClient()
-    client.init_app(app_)
+    client = ServiceApiClient(app_)
 
     rmock.get(
         "{}/service/{}".format(
@@ -41,8 +40,7 @@ def test_client_onward_headers(app_, rmock, service_id, sample_service):
 
 
 def test_client_no_onward_headers(app_, rmock, service_id, sample_service):
-    client = ServiceApiClient()
-    client.init_app(app_)
+    client = ServiceApiClient(app_)
 
     rmock.get(
         "{}/service/{}".format(

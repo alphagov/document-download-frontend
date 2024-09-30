@@ -5,10 +5,10 @@ Flask-WTF==1.2.1
 
 whitenoise==6.2.0  #manages static assets
 
-notifications-python-client==8.0.1
+notifications-python-client==10.0.0
 
 # Run `make bump-utils` to update to the latest version
-notifications-utils @ git+https://github.com/alphagov/notifications-utils.git@82.1.1
+notifications-utils @ git+https://github.com/alphagov/notifications-utils.git@82.6.1
 
 # gds-metrics requires prometheseus 0.2.0, override that requirement as later versions bring significant performance gains
 prometheus-client==0.15.0
