@@ -80,13 +80,13 @@ mistune==0.8.4
     # via notifications-utils
 notifications-python-client==8.0.1
     # via -r requirements.in
-notifications-utils @ git+https://github.com/alphagov/notifications-utils.git@82.1.1
+notifications-utils @ git+https://github.com/alphagov/notifications-utils.git@86.2.0
     # via -r requirements.in
 ordered-set==4.1.0
     # via notifications-utils
 packaging==23.1
     # via gunicorn
-phonenumbers==8.13.26
+phonenumbers==8.13.47
     # via notifications-utils
 prometheus-client==0.15.0
     # via
@@ -116,9 +116,7 @@ s3transfer==0.10.1
 segno==1.5.2
     # via notifications-utils
 sentry-sdk[flask]==1.32.0
-    # via
-    #   -r requirements.in
-    #   sentry-sdk
+    # via -r requirements.in
 six==1.16.0
     # via python-dateutil
 smartypants==2.0.1
