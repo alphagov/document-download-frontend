@@ -5,17 +5,16 @@ from flask import current_app, make_response, render_template
 from flask_wtf.csrf import CSRFError
 from gds_metrics import GDSMetrics
 from notifications_utils import logging, request_helper
+from notifications_utils.asset_fingerprinter import asset_fingerprinter
 from notifications_utils.base64_uuid import base64_to_uuid, uuid_to_base64
 from notifications_utils.clients.statsd.statsd_client import StatsdClient
 from werkzeug.routing import BaseConverter, ValidationError
 
-from app.asset_fingerprinter import AssetFingerprinter
 from app.config import Config, configs
 from app.notify_client.service_api_client import ServiceApiClient
 
 metrics = GDSMetrics()
 statsd_client = StatsdClient()
-asset_fingerprinter = AssetFingerprinter()
 service_api_client = ServiceApiClient()
 
 
