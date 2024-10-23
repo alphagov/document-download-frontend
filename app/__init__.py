@@ -1,4 +1,6 @@
 import os
+from collections.abc import Callable
+from contextvars import ContextVar
 
 import jinja2
 from flask import current_app, make_response, render_template
@@ -8,6 +10,8 @@ from notifications_utils import logging, request_helper
 from notifications_utils.asset_fingerprinter import asset_fingerprinter
 from notifications_utils.base64_uuid import base64_to_uuid, uuid_to_base64
 from notifications_utils.clients.statsd.statsd_client import StatsdClient
+from notifications_utils.local_vars import LazyLocalGetter
+from werkzeug.local import LocalProxy
 from werkzeug.routing import BaseConverter, ValidationError
 
 from app.config import Config, configs
@@ -15,7 +19,20 @@ from app.notify_client.service_api_client import ServiceApiClient
 
 metrics = GDSMetrics()
 statsd_client = StatsdClient()
-service_api_client = ServiceApiClient()
+
+memo_resetters: list[Callable] = []
+
+#
+# "clients" that need thread-local copies
+#
+
+_service_api_client_context_var: ContextVar[ServiceApiClient] = ContextVar("service_api_client")
+get_service_api_client: LazyLocalGetter[ServiceApiClient] = LazyLocalGetter(
+    _service_api_client_context_var,
+    lambda: ServiceApiClient(app=current_app),
+)
+memo_resetters.append(lambda: get_service_api_client.clear())
+service_api_client = LocalProxy(get_service_api_client)
 
 
 class Base64UUIDConverter(BaseConverter):
@@ -60,8 +77,6 @@ def create_app(application):
 
     register_errorhandlers(application)
 
-    service_api_client.init_app(application)
-
 
 def init_app(application):
     application.after_request(useful_headers_after_request)
@@ -73,6 +88,14 @@ def init_app(application):
             "header_colour": application.config["HEADER_COLOUR"],
             "asset_url": asset_fingerprinter.get_url,
         }
+
+
+def reset_memos():
+    """
+    Reset all memos registered in memo_resetters
+    """
+    for resetter in memo_resetters:
+        resetter()
 
 
 #  https://www.owasp.org/index.php/List_of_useful_HTTP_headers
