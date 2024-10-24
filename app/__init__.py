@@ -10,6 +10,7 @@ from notifications_utils import logging, request_helper
 from notifications_utils.asset_fingerprinter import asset_fingerprinter
 from notifications_utils.base64_uuid import base64_to_uuid, uuid_to_base64
 from notifications_utils.clients.statsd.statsd_client import StatsdClient
+from notifications_utils.eventlet import EventletTimeout
 from notifications_utils.local_vars import LazyLocalGetter
 from werkzeug.local import LocalProxy
 from werkzeug.routing import BaseConverter, ValidationError
@@ -152,6 +153,11 @@ def register_errorhandlers(application):  # noqa (C901 too complex)
         application.logger.warning("CSRF error message: %s", reason)
 
         return _error_response(400, error_page_template=500)
+
+    @application.errorhandler(EventletTimeout)
+    def eventlet_timeout(error):
+        application.logger.exception(error)
+        return _error_response(504, error_page_template=500)
 
 
 def init_jinja(application):
