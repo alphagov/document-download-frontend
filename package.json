@@ -3,10 +3,12 @@
   "version": "0.0.1",
   "description": "Front end for GOV.UK Document Download",
   "scripts": {
-    "test": "gulp lint",
-    "build": "gulp",
-    "watch": "gulp watch",
-    "audit": "better-npm-audit audit --production --level high"
+    "test": "npm run lint:scs",
+    "build": "rollup -c",
+    "watch": "rollup -c -w",
+    "audit": "better-npm-audit audit --production --level high",
+    "lint:scss": "stylelint \"**/*.scss\"",
+    "lint:js": "eslint"
   },
   "author": "Government Digital Service",
   "license": "MIT",
@@ -14,11 +16,17 @@
     "govuk-frontend": "5.4.0"
   },
   "devDependencies": {
-    "@rollup/plugin-commonjs": "21.0.1",
-    "@rollup/plugin-node-resolve": "13.1.3",
+    "@eslint/js": "9.13.0",
+    "@rollup/plugin-node-resolve": "15.3.0",
+    "@rollup/plugin-terser": "0.4.4",
     "better-npm-audit": "^3.7.3",
-    "rollup": "2.67.2",
-    "rollup-plugin-terser": "7.0.2",
-    "sass": "1.32.7"
+    "eslint": "9.13.0",
+    "rollup": "4.24.3",
+    "rollup-plugin-copy": "3.5.0",
+    "rollup-plugin-styler": "1.8.0",
+    "sass": "1.32.7",
+    "stylelint": "16.10.0",
+    "stylelint-config-gds": "2.0.0",
+    "stylelint-config-standard-scss": "13.1.0"
   }
 }

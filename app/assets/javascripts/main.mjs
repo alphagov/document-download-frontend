@@ -1,5 +1,5 @@
-import { Button, createAll, ErrorSummary, SkipLink } from 'govuk-frontend'
+import { Button, createAll, ErrorSummary, SkipLink } from 'govuk-frontend';
 
-createAll(Button)
-createAll(ErrorSummary)
-createAll(SkipLink)
+createAll(Button);
+createAll(ErrorSummary);
+createAll(SkipLink);
