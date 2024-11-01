@@ -16,7 +16,7 @@ FROM ghcr.io/alphagov/notify/unit-tests-image:python311-node20 as frontend-build
 
 WORKDIR /usr/frontend
 COPY app app
-COPY package-lock.json package.json gulpfile.js ./
+COPY package-lock.json package.json rollup.config.mjs ./
 
 RUN source ~/.nvm/nvm.sh \
     && npm ci --no-audit \
@@ -110,7 +110,7 @@ RUN echo "Installing nvm and NodeJS v${NODE_VERSION}" && \
 RUN mkdir -p app
 
 # Install dev/test requirements
-COPY --chown=notify:notify Makefile requirements.txt requirements_for_test.txt requirements_for_test_common.txt package-lock.json package.json gulpfile.js ./
+COPY --chown=notify:notify Makefile requirements.txt requirements_for_test.txt requirements_for_test_common.txt package-lock.json package.json rollup.config.mjs ./
 RUN make bootstrap
 
 # Copy from the real world, one dir up (project root) into the environment's current working directory
