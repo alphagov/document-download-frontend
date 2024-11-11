@@ -1,0 +1,2 @@
+-r requirements.in
+-r requirements_for_test_common.txt
