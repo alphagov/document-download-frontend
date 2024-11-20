@@ -526,10 +526,17 @@ def test_download_document_creates_link_to_actual_doc_from_api(
 @pytest.mark.parametrize(
     "file_extension,expected_pretty_file_type",
     [
-        ("pdf", "PDF"),
-        ("txt", "text file"),
+        ("csv", "CSV file"),
+        ("doc", "Microsoft Word document"),
         ("docx", "Microsoft Word document"),
+        ("odt", "text file"),
+        ("pdf", "PDF"),
+        ("png", "PNG file"),
+        ("rtf", "text file"),
+        ("txt", "text file"),
+        ("jpeg", "JPEG file"),
         ("json", "JSON file"),
+        ("xlsx", "Microsoft Excel spreadsheet"),
     ],
 )
 def test_download_document_shows_pretty_file_type(
