@@ -24,8 +24,10 @@ FILE_EXTENSION_TO_PRETTY_FILE_TYPE = {
     "docx": "Microsoft Word document",
     "odt": "text file",
     "pdf": "PDF",
+    "png": "PNG file",
     "rtf": "text file",
     "txt": "text file",
+    "jpeg": "JPEG file",
     "json": "JSON file",
     "xlsx": "Microsoft Excel spreadsheet",
 }
