@@ -55,6 +55,7 @@ freeze-requirements: ## create static requirements.txt
 	pip install --upgrade pip-tools
 	pip-compile requirements.in
 	python -c "from notifications_utils.version_tools import copy_config; copy_config()"
+	pip-compile requirements_for_test.in
 
 .PHONY: generate-version-file
 generate-version-file: ## Generates the app version file
