@@ -35,9 +35,12 @@ RUN echo "Install OS dependencies for python app requirements" &&  \
 
 COPY requirements.txt .
 
+RUN pip install uv
+
+ENV UV_CACHE_DIR='/tmp/uv-cache/'
 RUN echo "Installing python dependencies" && \
     python3 -m venv /opt/venv && \
-    /opt/venv/bin/pip install -r requirements.txt
+    uv pip sync --python /opt/venv/bin/python requirements.txt
 
 COPY . .
 
@@ -110,7 +113,9 @@ RUN echo "Installing nvm and NodeJS v${NODE_VERSION}" && \
 RUN mkdir -p app
 
 # Install dev/test requirements
+RUN pip install uv
 COPY --chown=notify:notify Makefile requirements_for_test.txt package-lock.json package.json rollup.config.mjs ./
+ENV UV_CACHE_DIR='/tmp/uv-cache/'
 RUN make bootstrap
 
 # Copy from the real world, one dir up (project root) into the environment's current working directory
