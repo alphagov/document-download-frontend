@@ -6,7 +6,6 @@ APP_VERSION_FILE = app/version.py
 GIT_BRANCH ?= $(shell git symbolic-ref --short HEAD 2> /dev/null || echo "detached")
 GIT_COMMIT ?= $(shell git rev-parse HEAD)
 
-PYTHON_EXECUTABLE_PREFIX := $(shell test -d "$${VIRTUALENV_ROOT}" && echo "$${VIRTUALENV_ROOT}/bin/" || echo "")
 
 ## DEVELOPMENT
 
@@ -34,7 +33,7 @@ test-with-docker: ## Run tests in Docker container
 
 .PHONY: bump-utils
 bump-utils:  # Bump notifications-utils package to latest version
-	${PYTHON_EXECUTABLE_PREFIX}python -c "from notifications_utils.version_tools import upgrade_version; upgrade_version()"
+	python -c "from notifications_utils.version_tools import upgrade_version; upgrade_version()"
 
 .PHONY: bootstrap
 bootstrap: generate-version-file
