@@ -6,7 +6,6 @@ APP_VERSION_FILE = app/version.py
 GIT_BRANCH ?= $(shell git symbolic-ref --short HEAD 2> /dev/null || echo "detached")
 GIT_COMMIT ?= $(shell git rev-parse HEAD)
 
-PYTHON_EXECUTABLE_PREFIX := $(shell test -d "$${VIRTUALENV_ROOT}" && echo "$${VIRTUALENV_ROOT}/bin/" || echo "")
 
 ## DEVELOPMENT
 
@@ -34,11 +33,11 @@ test-with-docker: ## Run tests in Docker container
 
 .PHONY: bump-utils
 bump-utils:  # Bump notifications-utils package to latest version
-	${PYTHON_EXECUTABLE_PREFIX}python -c "from notifications_utils.version_tools import upgrade_version; upgrade_version()"
+	python -c "from notifications_utils.version_tools import upgrade_version; upgrade_version()"
 
 .PHONY: bootstrap
 bootstrap: generate-version-file
-	pip3 install -r requirements_for_test.txt
+	uv pip install -r requirements_for_test.txt
 	source $(HOME)/.nvm/nvm.sh && nvm install && npm ci --no-audit && npm rebuild node-sass && npm run build
 
 
@@ -52,10 +51,9 @@ bootstrap-with-docker: generate-version-file
 
 .PHONY: freeze-requirements
 freeze-requirements: ## create static requirements.txt
-	pip install --upgrade pip-tools
-	pip-compile requirements.in
+	uv pip compile requirements.in -o requirements.txt
 	python -c "from notifications_utils.version_tools import copy_config; copy_config()"
-	pip-compile requirements_for_test.in
+	uv pip compile requirements_for_test.in -o requirements_for_test.txt
 
 .PHONY: generate-version-file
 generate-version-file: ## Generates the app version file
