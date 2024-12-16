@@ -52,8 +52,10 @@ bootstrap-with-docker: generate-version-file
 .PHONY: freeze-requirements
 freeze-requirements: ## create static requirements.txt
 	uv pip compile requirements.in -o requirements.txt
+	uv pip sync requirements.txt
 	python -c "from notifications_utils.version_tools import copy_config; copy_config()"
 	uv pip compile requirements_for_test.in -o requirements_for_test.txt
+	uv pip sync requirements_for_test.txt
 
 .PHONY: generate-version-file
 generate-version-file: ## Generates the app version file
