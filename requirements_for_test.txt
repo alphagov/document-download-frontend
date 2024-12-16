@@ -3,32 +3,43 @@
 attrs==24.2.0
     # via pytest
 awscrt==0.20.11
-    # via botocore
+    # via
+    #   -r requirements.txt
+    #   botocore
 beautifulsoup4==4.11.1
     # via -r requirements_for_test_common.in
 black==24.4.0
     # via -r requirements_for_test_common.in
 blinker==1.6.2
     # via
+    #   -r requirements.txt
     #   flask
     #   gds-metrics
-    #   sentry-sdk
 boto3==1.34.129
-    # via notifications-utils
+    # via
+    #   -r requirements.txt
+    #   notifications-utils
 botocore==1.34.129
     # via
+    #   -r requirements.txt
     #   boto3
     #   s3transfer
 cachetools==5.3.3
-    # via notifications-utils
+    # via
+    #   -r requirements.txt
+    #   notifications-utils
 certifi==2024.7.4
     # via
+    #   -r requirements.txt
     #   requests
     #   sentry-sdk
 charset-normalizer==2.0.7
-    # via requests
+    # via
+    #   -r requirements.txt
+    #   requests
 click==8.1.7
     # via
+    #   -r requirements.txt
     #   black
     #   flask
 colorama==0.4.6
@@ -36,93 +47,122 @@ colorama==0.4.6
 coverage==7.6.4
     # via pytest-testmon
 dnspython==2.6.1
-    # via eventlet
+    # via
+    #   -r requirements.txt
+    #   eventlet
 docopt==0.6.2
     # via
+    #   -r requirements.txt
     #   notifications-python-client
     #   pytest-watch
 eventlet==0.35.2
-    # via gunicorn
+    # via
+    #   -r requirements.txt
+    #   gunicorn
 execnet==2.1.1
     # via pytest-xdist
 flask==3.0.0
     # via
+    #   -r requirements.txt
     #   flask-redis
     #   flask-wtf
     #   gds-metrics
     #   notifications-utils
-    #   sentry-sdk
 flask-redis==0.4.0
-    # via notifications-utils
+    # via
+    #   -r requirements.txt
+    #   notifications-utils
 flask-wtf==1.2.1
-    # via -r requirements.in
+    # via -r requirements.txt
 freezegun==1.2.2
     # via -r requirements_for_test_common.in
 gds-metrics @ git+https://github.com/alphagov/gds_metrics_python.git@6f1840a57b6fb1ee40b7e84f2f18ec229de8aa72
-    # via -r requirements.in
+    # via -r requirements.txt
 govuk-bank-holidays==0.14
-    # via notifications-utils
+    # via
+    #   -r requirements.txt
+    #   notifications-utils
 govuk-frontend-jinja==3.4.0
-    # via -r requirements.in
+    # via -r requirements.txt
 greenlet==3.0.3
-    # via eventlet
+    # via
+    #   -r requirements.txt
+    #   eventlet
 gunicorn==21.2.0
-    # via notifications-utils
+    # via
+    #   -r requirements.txt
+    #   notifications-utils
 idna==3.7
-    # via requests
+    # via
+    #   -r requirements.txt
+    #   requests
 iniconfig==2.0.0
     # via pytest
 itsdangerous==2.1.2
     # via
+    #   -r requirements.txt
     #   flask
     #   flask-wtf
     #   notifications-utils
 jinja2==3.1.4
     # via
+    #   -r requirements.txt
     #   flask
     #   govuk-frontend-jinja
     #   notifications-utils
 jmespath==0.10.0
     # via
+    #   -r requirements.txt
     #   boto3
     #   botocore
 markupsafe==2.1.1
     # via
+    #   -r requirements.txt
     #   jinja2
-    #   sentry-sdk
     #   werkzeug
     #   wtforms
 mistune==0.8.4
-    # via notifications-utils
+    # via
+    #   -r requirements.txt
+    #   notifications-utils
 mypy-extensions==1.0.0
     # via black
 notifications-python-client==10.0.0
-    # via -r requirements.in
+    # via -r requirements.txt
 notifications-utils @ git+https://github.com/alphagov/notifications-utils.git@4741402d194bb0dfc87d15b2dae16dd193cb5591
-    # via -r requirements.in
+    # via -r requirements.txt
 ordered-set==4.1.0
-    # via notifications-utils
+    # via
+    #   -r requirements.txt
+    #   notifications-utils
 packaging==23.1
     # via
+    #   -r requirements.txt
     #   black
     #   gunicorn
     #   pytest
 pathspec==0.12.1
     # via black
 phonenumbers==8.13.49
-    # via notifications-utils
+    # via
+    #   -r requirements.txt
+    #   notifications-utils
 platformdirs==4.3.6
     # via black
 pluggy==1.5.0
     # via pytest
 prometheus-client==0.15.0
     # via
-    #   -r requirements.in
+    #   -r requirements.txt
     #   gds-metrics
 pyjwt==2.4.0
-    # via notifications-python-client
+    # via
+    #   -r requirements.txt
+    #   notifications-python-client
 pypdf==3.17.0
-    # via notifications-utils
+    # via
+    #   -r requirements.txt
+    #   notifications-utils
 pytest==7.2.0
     # via
     #   -r requirements_for_test_common.in
@@ -143,18 +183,28 @@ pytest-xdist==3.0.2
     # via -r requirements_for_test_common.in
 python-dateutil==2.8.2
     # via
+    #   -r requirements.txt
     #   botocore
     #   freezegun
 python-json-logger==2.0.7
-    # via notifications-utils
+    # via
+    #   -r requirements.txt
+    #   notifications-utils
 pytz==2024.1
-    # via notifications-utils
+    # via
+    #   -r requirements.txt
+    #   notifications-utils
 pyyaml==6.0.1
-    # via notifications-utils
+    # via
+    #   -r requirements.txt
+    #   notifications-utils
 redis==3.5.3
-    # via flask-redis
+    # via
+    #   -r requirements.txt
+    #   flask-redis
 requests==2.32.0
     # via
+    #   -r requirements.txt
     #   govuk-bank-holidays
     #   notifications-python-client
     #   notifications-utils
@@ -164,31 +214,45 @@ requests-mock==1.10.0
 ruff==0.3.7
     # via -r requirements_for_test_common.in
 s3transfer==0.10.1
-    # via boto3
+    # via
+    #   -r requirements.txt
+    #   boto3
 segno==1.5.2
-    # via notifications-utils
+    # via
+    #   -r requirements.txt
+    #   notifications-utils
 sentry-sdk==1.32.0
-    # via -r requirements.in
+    # via -r requirements.txt
 six==1.16.0
     # via
+    #   -r requirements.txt
     #   python-dateutil
     #   requests-mock
 smartypants==2.0.1
-    # via notifications-utils
+    # via
+    #   -r requirements.txt
+    #   notifications-utils
 soupsieve==2.6
     # via beautifulsoup4
 statsd==4.0.1
-    # via notifications-utils
+    # via
+    #   -r requirements.txt
+    #   notifications-utils
 urllib3==1.26.19
     # via
+    #   -r requirements.txt
     #   botocore
     #   requests
     #   sentry-sdk
 watchdog==6.0.0
     # via pytest-watch
 werkzeug==3.0.6
-    # via flask
+    # via
+    #   -r requirements.txt
+    #   flask
 whitenoise==6.2.0
-    # via -r requirements.in
+    # via -r requirements.txt
 wtforms==3.0.1
-    # via flask-wtf
+    # via
+    #   -r requirements.txt
+    #   flask-wtf

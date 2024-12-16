@@ -1,2 +1,2 @@
--r requirements.in
+-r requirements.txt
 -r requirements_for_test_common.in
