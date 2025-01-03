@@ -13,14 +13,15 @@ RUN apt-get update \
 WORKDIR /home/vcap/app
 
 ##### Frontend Build Image ###################################################
-FROM ghcr.io/alphagov/notify/unit-tests-image:python311-node20 as frontend-build
+ARG NODE_VERSION=20
+
+FROM ghcr.io/alphagov/notify/unit-tests-image:python311-node20 as frontend_build
 
 WORKDIR /usr/frontend
 COPY app app
 COPY package-lock.json package.json rollup.config.mjs ./
 
-RUN source ~/.nvm/nvm.sh \
-    && npm ci --no-audit \
+RUN npm ci --no-audit \
     && npm run build
 
 ###### Python Build Image #####################################################
@@ -61,8 +62,10 @@ ENV PATH="/opt/venv/bin:${PATH}"
 
 COPY --chown=notify:notify app app
 COPY --chown=notify:notify application.py entrypoint.sh gunicorn_config.py ./
-COPY --from=frontend-build /usr/frontend/app/static app/static
-COPY --from=frontend-build /usr/frontend/app/templates app/templates
+COPY --from=frontend_build /usr/frontend/app/static app/static
+COPY --from=frontend_build /usr/frontend/app/templates app/templates
+COPY --from=frontend_build --chown=notify:notify /usr/local/lib /usr/local/lib
+COPY --from=frontend_build --chown=notify:notify /usr/local/bin /usr/local/bin
 COPY --from=python_build --chown=notify:notify /home/vcap/app/app/version.py app/version.py
 USER root
 RUN python -m compileall . && \
@@ -74,13 +77,6 @@ ENTRYPOINT [ "/home/vcap/app/entrypoint.sh" ]
 
 ##### Test Image ##############################################################
 FROM production as test
-
-# If bumping this node version, also bump:
-#   `.nvmrc` in document-download-frontend
-#   `concourse/docker/unit-tests-image.Dockerfile` in notifications-aws
-# Keep NVM_VERSION in sync as well.
-ARG NVM_VERSION=0.39.5
-ARG NODE_VERSION=20.10.0
 
 USER root
 
@@ -97,18 +93,9 @@ RUN echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 USER notify
 
 ENV HOME=/home/vcap
-ENV NVM_DIR /home/vcap/.nvm
-ENV NODE_PATH $NVM_DIR/v$NODE_VERSION/lib/node_modules
-ENV PATH $NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH
 
 # Copying to overwrite is faster than RUN chown notify:notify ...
 COPY --from=python_build --chown=notify:notify /opt/venv /opt/venv
-
-COPY .nvmrc .nvmrc
-RUN echo "Installing nvm and NodeJS v${NODE_VERSION}" && \
-    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v${NVM_VERSION}/install.sh | bash && \
-    . ${NVM_DIR}/nvm.sh && \
-    nvm install
 
 # Make sure the app/ directory is there so that "make bootstrap" can create app/version.py
 RUN mkdir -p app
