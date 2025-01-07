@@ -13,11 +13,12 @@ blinker==1.9.0
     #   -r requirements.txt
     #   flask
     #   gds-metrics
-boto3==1.34.129
+    #   sentry-sdk
+boto3[crt]==1.34.129
     # via
     #   -r requirements.txt
     #   notifications-utils
-botocore==1.34.129
+botocore[crt]==1.34.129
     # via
     #   -r requirements.txt
     #   boto3
@@ -63,6 +64,7 @@ flask==3.1.0
     #   flask-wtf
     #   gds-metrics
     #   notifications-utils
+    #   sentry-sdk
 flask-redis==0.4.0
     # via
     #   -r requirements.txt
@@ -83,7 +85,7 @@ greenlet==3.0.3
     # via
     #   -r requirements.txt
     #   eventlet
-gunicorn==21.2.0
+gunicorn[eventlet]==21.2.0
     # via
     #   -r requirements.txt
     #   notifications-utils
@@ -99,7 +101,7 @@ itsdangerous==2.2.0
     #   flask
     #   flask-wtf
     #   notifications-utils
-jinja2==3.1.4
+jinja2==3.1.5
     # via
     #   -r requirements.txt
     #   flask
@@ -114,6 +116,7 @@ markupsafe==2.1.1
     # via
     #   -r requirements.txt
     #   jinja2
+    #   sentry-sdk
     #   werkzeug
     #   wtforms
 mistune==0.8.4
@@ -124,7 +127,7 @@ mypy-extensions==1.0.0
     # via black
 notifications-python-client==10.0.0
     # via -r requirements.txt
-notifications-utils @ git+https://github.com/alphagov/notifications-utils.git@9d8b26f172643484612c4572c9ae72a41e262916
+notifications-utils @ git+https://github.com/alphagov/notifications-utils.git@92.0.1
     # via -r requirements.txt
 ordered-set==4.1.0
     # via
@@ -213,7 +216,7 @@ segno==1.6.1
     # via
     #   -r requirements.txt
     #   notifications-utils
-sentry-sdk==1.32.0
+sentry-sdk[flask]==1.32.0
     # via -r requirements.txt
 six==1.16.0
     # via
