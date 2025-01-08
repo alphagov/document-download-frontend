@@ -38,12 +38,12 @@ bump-utils:  # Bump notifications-utils package to latest version
 .PHONY: bootstrap
 bootstrap: generate-version-file
 	uv pip install -r requirements_for_test.txt
-	source $(HOME)/.nvm/nvm.sh && nvm install && npm ci --no-audit && npm rebuild node-sass && npm run build
+	npm ci --no-audit && npm rebuild node-sass && npm run build
 
 
 .PHONY: npm-audit
 npm-audit:
-	source $(HOME)/.nvm/nvm.sh && npm run audit
+	npm run audit
 
 .PHONY: bootstrap-with-docker
 bootstrap-with-docker: generate-version-file
