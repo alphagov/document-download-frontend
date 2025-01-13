@@ -1,9 +1,10 @@
 import os
+import secrets
 from collections.abc import Callable
 from contextvars import ContextVar
 
 import jinja2
-from flask import current_app, make_response, render_template
+from flask import current_app, make_response, render_template, request
 from flask_wtf.csrf import CSRFError
 from gds_metrics import GDSMetrics
 from notifications_utils import logging, request_helper
@@ -82,6 +83,8 @@ def create_app(application):
 def init_app(application):
     application.after_request(useful_headers_after_request)
 
+    application.before_request(make_nonce_before_request)
+
     @application.context_processor
     def inject_global_template_variables():
         return {
@@ -99,6 +102,12 @@ def reset_memos():
         resetter()
 
 
+def make_nonce_before_request():
+    # `govuk_frontend_jinja/template.html` can be extended and inline `<script>` can be added without CSP complaining
+    if not getattr(request, "csp_nonce", None):
+        request.csp_nonce = secrets.token_urlsafe(16)
+
+
 #  https://www.owasp.org/index.php/List_of_useful_HTTP_headers
 def useful_headers_after_request(response):
     response.headers.add("X-Robots-Tag", "noindex, nofollow")
@@ -109,18 +118,32 @@ def useful_headers_after_request(response):
     response.headers.add(
         "Content-Security-Policy",
         (
-            "default-src 'self' 'unsafe-inline';"
-            "script-src 'self' 'unsafe-inline' 'unsafe-eval' data:;"
+            "default-src 'self';"
+            "script-src 'self' 'nonce-{csp_nonce}';"
             "connect-src 'self';"
             "object-src 'self';"
             "font-src 'self' data:;"
             "img-src 'self' data:;"
-            "frame-src 'none'"
+            "style-src 'self' 'nonce-{csp_nonce}';"
+            "frame-ancestors 'self';"
+            "frame-src 'self';".format(
+                csp_nonce=getattr(request, "csp_nonce", ""),
+            )
         ),
     )
     if "Cache-Control" in response.headers:
         del response.headers["Cache-Control"]
     response.headers.add("Cache-Control", "no-store, no-cache, private, must-revalidate")
+
+    response.headers.add("Strict-Transport-Security", "max-age=31536000; preload")
+    response.headers.add("Cross-Origin-Embedder-Policy", "require-corp;")
+    response.headers.add("Cross-Origin-Opener-Policy", "same-origin;"),
+    response.headers.add("Cross-Origin-Resource-Policy", "same-origin;"),
+    response.headers.add(
+        "Permissions-Policy",
+        "geolocation=(), microphone=(), camera=(), autoplay=(), payment=(), sync-xhr=()",
+    )
+    response.headers.add("Server", "Cloudfront")
     return response
 
 
