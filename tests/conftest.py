@@ -93,3 +93,8 @@ def document_has_metadata_requires_confirmation(service_id, document_id, key, rm
         ),
         json=json_response,
     )
+
+
+@pytest.fixture(scope="function")
+def fake_nonce():
+    return "TESTs5Vr8v3jgRYLoQuVwA"

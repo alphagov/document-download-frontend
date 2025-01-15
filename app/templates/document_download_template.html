@@ -1,6 +1,8 @@
 {% extends "govuk_frontend_jinja/template.html" %}
 {% from "components/footer/macro.html" import govukFooterWithoutExternalLinks -%}
 
+{% set cspNonce = request.csp_nonce %}
+
 {% block headIcons %}
   <link rel="icon" sizes="48x48" href="{{ asset_url('images/favicon.ico') }}">
   <link rel="icon" sizes="any" href="{{ asset_url('images/favicon.svg') }}" type="image/svg+xml">
@@ -11,7 +13,7 @@
 
 {% block head %}
   <link rel="stylesheet" media="screen" href="{{ asset_url('stylesheets/main.css') }}" />
-  <style>
+  <style nonce="{{ cspNonce }}"> 
       .govuk-header__container { border-bottom-color: {{header_colour}} }
   </style>
   {% block meta %}
