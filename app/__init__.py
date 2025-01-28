@@ -7,12 +7,13 @@ import jinja2
 from flask import current_app, make_response, render_template, request
 from flask_wtf.csrf import CSRFError
 from gds_metrics import GDSMetrics
-from notifications_utils import logging, request_helper
+from notifications_utils import request_helper
 from notifications_utils.asset_fingerprinter import asset_fingerprinter
 from notifications_utils.base64_uuid import base64_to_uuid, uuid_to_base64
 from notifications_utils.clients.statsd.statsd_client import StatsdClient
 from notifications_utils.eventlet import EventletTimeout
 from notifications_utils.local_vars import LazyLocalGetter
+from notifications_utils.logging import flask as utils_logging
 from werkzeug.local import LocalProxy
 from werkzeug.routing import BaseConverter, ValidationError
 
@@ -65,7 +66,7 @@ def create_app(application):
     metrics.init_app(application)
     init_jinja(application)
     statsd_client.init_app(application)
-    logging.init_app(application, statsd_client)
+    utils_logging.init_app(application, statsd_client)
     request_helper.init_app(application)
 
     from app.main import main as main_blueprint
@@ -137,8 +138,8 @@ def useful_headers_after_request(response):
 
     response.headers.add("Strict-Transport-Security", "max-age=31536000; preload")
     response.headers.add("Cross-Origin-Embedder-Policy", "require-corp;")
-    response.headers.add("Cross-Origin-Opener-Policy", "same-origin;"),
-    response.headers.add("Cross-Origin-Resource-Policy", "same-origin;"),
+    response.headers.add("Cross-Origin-Opener-Policy", "same-origin;")
+    response.headers.add("Cross-Origin-Resource-Policy", "same-origin;")
     response.headers.add(
         "Permissions-Policy",
         "geolocation=(), microphone=(), camera=(), autoplay=(), payment=(), sync-xhr=()",

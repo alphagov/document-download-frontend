@@ -6,8 +6,6 @@ awscrt==0.20.11
     #   botocore
 beautifulsoup4==4.12.3
     # via -r requirements_for_test_common.in
-black==24.10.0
-    # via -r requirements_for_test_common.in
 blinker==1.9.0
     # via
     #   -r requirements.txt
@@ -38,7 +36,6 @@ charset-normalizer==2.0.7
 click==8.1.7
     # via
     #   -r requirements.txt
-    #   black
     #   flask
 coverage==7.6.4
     # via pytest-testmon
@@ -120,11 +117,9 @@ mistune==0.8.4
     # via
     #   -r requirements.txt
     #   notifications-utils
-mypy-extensions==1.0.0
-    # via black
 notifications-python-client==10.0.0
     # via -r requirements.txt
-notifications-utils @ git+https://github.com/alphagov/notifications-utils.git@b9ef1b45b655324d6341995afffc3ebc25a3ed72
+notifications-utils @ git+https://github.com/alphagov/notifications-utils.git@d6311c3ab83b8225265277f781157c48f9318ae9
     # via -r requirements.txt
 ordered-set==4.1.0
     # via
@@ -133,17 +128,12 @@ ordered-set==4.1.0
 packaging==23.1
     # via
     #   -r requirements.txt
-    #   black
     #   gunicorn
     #   pytest
-pathspec==0.12.1
-    # via black
 phonenumbers==8.13.52
     # via
     #   -r requirements.txt
     #   notifications-utils
-platformdirs==4.3.6
-    # via black
 pluggy==1.5.0
     # via pytest
 prometheus-client==0.15.0
@@ -203,7 +193,7 @@ requests==2.32.3
     #   requests-mock
 requests-mock==1.12.1
     # via -r requirements_for_test_common.in
-ruff==0.8.2
+ruff==0.9.2
     # via -r requirements_for_test_common.in
 s3transfer==0.10.1
     # via
