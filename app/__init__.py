@@ -148,7 +148,7 @@ def useful_headers_after_request(response):
     return response
 
 
-def register_errorhandlers(application):  # noqa (C901 too complex)
+def register_errorhandlers(application):
     def _error_response(error_code, error_page_template=None):
         if not error_page_template:
             error_page_template = error_code
