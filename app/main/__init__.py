@@ -1,5 +1,5 @@
 from flask import Blueprint
 
-main = Blueprint("main", __name__)  # noqa isort:skip
+main = Blueprint("main", __name__)
 
 from app.main.views import index  # noqa isort:skip
