@@ -221,11 +221,14 @@ def download_document(service_id, document_id):
 def _format_file_expiry_date(available_until: str) -> str:
     file_expiry_date = parser.parse(available_until).date()
 
+    formatted_date = file_expiry_date.strftime("%d %B %Y").lstrip("0")
+    day_of_week = file_expiry_date.strftime("%A")
+
     # only show day of the week if file expiry date within a month from today
     if file_expiry_date - date.today() <= timedelta(days=30):
-        return file_expiry_date.strftime("%A %d %B %Y")
-    else:
-        return file_expiry_date.strftime("%d %B %Y")
+        return f"{day_of_week} {formatted_date}"
+
+    return formatted_date
 
 
 def _get_service_or_raise_error(service_id):
