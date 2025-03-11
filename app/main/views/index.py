@@ -227,8 +227,8 @@ def _format_file_expiry_date(available_until: str) -> str:
     # only show day of the week if file expiry date within a month from today
     if file_expiry_date - date.today() <= timedelta(days=30):
         return f"{day_of_week} {formatted_date}"
-    else:
-        return formatted_date
+
+    return formatted_date
 
 
 def _get_service_or_raise_error(service_id):
