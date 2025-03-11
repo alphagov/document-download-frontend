@@ -576,7 +576,13 @@ def test_download_document_shows_contact_information(
 
 @freeze_time("2022-10-12 13:30")
 @pytest.mark.parametrize(
-    "days_till_expiry,expected_content", [(30, "Friday 11 November 2022"), (31, "12 November 2022")]
+    "days_till_expiry,expected_content",
+    [
+        (28, "Wednesday 9 November 2022"),
+        (30, "Friday 11 November 2022"),
+        (31, "12 November 2022"),
+        (50, "1 December 2022"),
+    ],
 )
 def test_download_document_shows_expiry_date(
     service_id, document_id, key, client, mocker, sample_service, days_till_expiry, expected_content
