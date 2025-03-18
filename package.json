@@ -13,20 +13,20 @@
   "author": "Government Digital Service",
   "license": "MIT",
   "dependencies": {
-    "govuk-frontend": "5.7.1"
+    "govuk-frontend": "5.9.0"
   },
   "devDependencies": {
-    "@eslint/js": "9.15.0",
-    "@rollup/plugin-node-resolve": "15.3.0",
+    "@eslint/js": "9.22.0",
+    "@rollup/plugin-node-resolve": "16.0.1",
     "@rollup/plugin-terser": "0.4.4",
     "better-npm-audit": "^3.11.0",
-    "eslint": "9.15.0",
-    "rollup": "4.27.4",
+    "eslint": "9.22.0",
+    "rollup": "4.36.0",
     "rollup-plugin-copy": "3.5.0",
     "rollup-plugin-styler": "2.0.0",
-    "sass": "1.84.0",
-    "stylelint": "16.10.0",
+    "sass": "1.86.0",
+    "stylelint": "16.16.0",
     "stylelint-config-gds": "2.0.0",
-    "stylelint-config-standard-scss": "13.1.0"
+    "stylelint-config-standard-scss": "14.0.0"
   }
 }
