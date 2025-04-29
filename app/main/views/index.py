@@ -7,7 +7,7 @@ from flask import abort, current_app, redirect, render_template, request, url_fo
 from flask.ctx import has_request_context
 from markupsafe import Markup
 from notifications_python_client.errors import HTTPError
-from werkzeug.exceptions import Gone, TooManyRequests
+from werkzeug.exceptions import Gone, NotFound, TooManyRequests
 
 from app import service_api_client
 from app.forms import EmailAddressForm
@@ -76,14 +76,15 @@ def landing(service_id, document_id):
 
     try:
         metadata = _get_document_metadata(service_id, document_id, key)
-    except Gone:
-        # pretty-up this particular error with more context
+    except (Gone, NotFound) as e:
+        # pretty-up these particular errors with more context
         return render_template(
             "views/file_unavailable.html",
+            status_code=e.code,
             service_name=service_name,
             service_contact_info=service_contact_info,
             contact_info_type=contact_info_type,
-        ), 410
+        ), e.code
 
     if "confirm_email" not in metadata:
         current_app.logger.info(
@@ -123,14 +124,15 @@ def confirm_email_address(service_id, document_id):
 
     try:
         metadata = _get_document_metadata(service_id, document_id, key)
-    except Gone:
-        # pretty-up this particular error with more context
+    except (Gone, NotFound) as e:
+        # pretty-up these particular errors with more context
         return render_template(
             "views/file_unavailable.html",
+            status_code=e.code,
             service_name=service_name,
             service_contact_info=service_contact_info,
             contact_info_type=contact_info_type,
-        ), 410
+        ), e.code
 
     if metadata["confirm_email"] is False:
         return redirect(url_for(".download_document", service_id=service_id, document_id=document_id, key=key))
@@ -205,14 +207,15 @@ def download_document(service_id, document_id):
 
     try:
         metadata = _get_document_metadata(service_id, document_id, key)
-    except Gone:
-        # pretty-up this particular error with more context
+    except (Gone, NotFound) as e:
+        # pretty-up these particular errors with more context
         return render_template(
             "views/file_unavailable.html",
+            status_code=e.code,
             service_name=service_name,
             service_contact_info=service_contact_info,
             contact_info_type=contact_info_type,
-        ), 410
+        ), e.code
 
     return render_template(
         "views/download.html",

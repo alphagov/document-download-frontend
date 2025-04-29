@@ -135,6 +135,8 @@ def test_when_document_is_unavailable(
     assert response.status_code == 404
     page = BeautifulSoup(response.data.decode("utf-8"), "html.parser")
     assert normalize_spaces(page.h1.text) == "Page not found"
+    # ensure this is our contextualized 404 page
+    assert any((sample_service["name"] in elem.text) for elem in page.select("main p"))
 
     assert len(rmock.request_history) == 1
     assert rmock.request_history[0].method == "GET"
@@ -386,6 +388,10 @@ def test_404_hides_incorrect_credentials(
         method=method,
     )
     assert response.status_code == 404
+    page = BeautifulSoup(response.data.decode("utf-8"), "html.parser")
+    assert normalize_spaces(page.h1.text) == "Page not found"
+    # ensure this is our contextualized 404 page
+    assert any((sample_service["name"] in elem.text) for elem in page.select("main p"))
 
     assert len(rmock.request_history) == 1
     assert rmock.request_history[0].method == "GET"
