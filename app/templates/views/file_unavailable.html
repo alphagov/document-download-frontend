@@ -1,13 +1,29 @@
 {% extends "document_download_template.html" %}
 
 {% block per_page_title %}
-  No longer available
+  {% if status_code == 410 %}
+    No longer available
+  {% elif status_code == 404 %}
+    Page not found
+  {% endif %}
 {% endblock %}
 
 {% block main_content %}
+  {% if status_code == 410 %}
   <p class="govuk-body">
     The file {{ service_name }} sent you has expired or been deleted.
   </p>
+  {% elif status_code == 404 %}
+  <p class="govuk-body">
+    If you selected a link in an email, the file may have expired or been deleted.
+  </p>
+  <p class="govuk-body">
+    If you typed the web address, check it is correct.
+  </p>
+  <p class="govuk-body">
+    If you pasted the web address, check you copied the entire address.
+  </p>
+  {% endif %}
 
   <p class="govuk-body">
     If you have any questions,

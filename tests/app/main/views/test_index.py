@@ -105,9 +105,23 @@ def test_notifications_api_error(view, method, service_id, document_id, client, 
         ("main.confirm_email_address", "post"),
     ],
 )
-def test_when_document_is_unavailable(view, method, service_id, document_id, key, client, mocker, sample_service):
+def test_when_document_is_unavailable(
+    view, method, service_id, document_id, key, client, sample_service, rmock, mocker
+):
+    mocker.patch(
+        "notifications_utils.request_helper.NotifyRequest.get_onwards_request_headers",
+        return_value={"some-onwards": "request-header"},
+    )
     mocker.patch("app.service_api_client.get_service", return_value={"data": sample_service})
-    mocker.patch("app.main.views.index._get_document_metadata", return_value=None)
+
+    rmock.get(
+        "{}/services/{}/documents/{}/check?key={}".format(
+            current_app.config["DOCUMENT_DOWNLOAD_API_HOST_NAME_INTERNAL"], service_id, document_id, key
+        ),
+        status_code=404,
+        json={"Error": "Nope"},
+    )
+
     response = client.open(
         url_for(
             view,
@@ -118,39 +132,204 @@ def test_when_document_is_unavailable(view, method, service_id, document_id, key
         method=method,
     )
 
-    assert response.status_code == 200
+    assert response.status_code == 404
+    page = BeautifulSoup(response.data.decode("utf-8"), "html.parser")
+    assert normalize_spaces(page.h1.text) == "Page not found"
+    # ensure this is our contextualized 404 page
+    assert any((sample_service["name"] in elem.text) for elem in page.select("main p"))
+
+    assert len(rmock.request_history) == 1
+    assert rmock.request_history[0].method == "GET"
+    assert rmock.request_history[0].url == "{}/services/{}/documents/{}/check?key={}".format(
+        current_app.config["DOCUMENT_DOWNLOAD_API_HOST_NAME_INTERNAL"],
+        service_id,
+        document_id,
+        key,
+    )
+    assert rmock.request_history[0].headers == AnySupersetOf({"some-onwards": "request-header"})
+
+
+@pytest.mark.parametrize(
+    "view, method",
+    [
+        ("main.landing", "get"),
+        ("main.download_document", "get"),
+        ("main.confirm_email_address", "get"),
+        ("main.confirm_email_address", "post"),
+    ],
+)
+def test_when_document_is_unavailable_old_api(
+    view, method, service_id, document_id, key, client, sample_service, rmock, mocker
+):
+    mocker.patch(
+        "notifications_utils.request_helper.NotifyRequest.get_onwards_request_headers",
+        return_value={"some-onwards": "request-header"},
+    )
+    mocker.patch("app.service_api_client.get_service", return_value={"data": sample_service})
+
+    rmock.get(
+        "{}/services/{}/documents/{}/check?key={}".format(
+            current_app.config["DOCUMENT_DOWNLOAD_API_HOST_NAME_INTERNAL"], service_id, document_id, key
+        ),
+        status_code=200,
+        json={"document": None},
+    )
+
+    response = client.open(
+        url_for(
+            view,
+            service_id=service_id,
+            document_id=document_id,
+            key=key,
+        ),
+        method=method,
+    )
+
+    # old-style api can't differentiate between missing and gone - all treated as gone
+    assert response.status_code == 410
     page = BeautifulSoup(response.data.decode("utf-8"), "html.parser")
     assert normalize_spaces(page.h1.text) == "No longer available"
 
     contact_link = page.select("main a")[0]
     assert normalize_spaces(contact_link.text) == "contact Sample Service"
     assert contact_link["href"] == "https://sample-service.gov.uk"
+
+    assert len(rmock.request_history) == 1
+    assert rmock.request_history[0].method == "GET"
+    assert rmock.request_history[0].url == "{}/services/{}/documents/{}/check?key={}".format(
+        current_app.config["DOCUMENT_DOWNLOAD_API_HOST_NAME_INTERNAL"],
+        service_id,
+        document_id,
+        key,
+    )
+    assert rmock.request_history[0].headers == AnySupersetOf({"some-onwards": "request-header"})
 
 
 @pytest.mark.parametrize("view", ("main.landing", "main.confirm_email_address", "main.download_document"))
 def test_download_document_returns_file_unavailable_if_file_past_expiry_date(
-    service_id, document_id, key, client, mocker, sample_service, view
+    service_id, document_id, key, client, sample_service, view, rmock, mocker
 ):
+    mocker.patch(
+        "notifications_utils.request_helper.NotifyRequest.get_onwards_request_headers",
+        return_value={"some-onwards": "request-header"},
+    )
     mocker.patch("app.service_api_client.get_service", return_value={"data": sample_service})
 
-    mocked_metadata = {
-        "direct_file_url": "url",
-        "confirm_email": False,
-        "size_in_bytes": 712099,
-        "file_extension": "pdf",
-        "available_until": str(date.today() - timedelta(days=1)),
-    }
-    mocker.patch("app.main.views.index._get_document_metadata", return_value=mocked_metadata)
+    rmock.get(
+        "{}/services/{}/documents/{}/check?key={}".format(
+            current_app.config["DOCUMENT_DOWNLOAD_API_HOST_NAME_INTERNAL"], service_id, document_id, key
+        ),
+        status_code=410,
+        json={"Error": "Gone"},
+    )
 
     response = client.get(url_for(view, service_id=service_id, document_id=document_id, key=key))
 
-    assert response.status_code == 200
+    assert response.status_code == 410
     page = BeautifulSoup(response.data.decode("utf-8"), "html.parser")
     assert normalize_spaces(page.h1.text) == "No longer available"
 
     contact_link = page.select("main a")[0]
     assert normalize_spaces(contact_link.text) == "contact Sample Service"
     assert contact_link["href"] == "https://sample-service.gov.uk"
+
+    assert len(rmock.request_history) == 1
+    assert rmock.request_history[0].method == "GET"
+    assert rmock.request_history[0].url == "{}/services/{}/documents/{}/check?key={}".format(
+        current_app.config["DOCUMENT_DOWNLOAD_API_HOST_NAME_INTERNAL"],
+        service_id,
+        document_id,
+        key,
+    )
+    assert rmock.request_history[0].headers == AnySupersetOf({"some-onwards": "request-header"})
+
+
+@pytest.mark.parametrize("view", ("main.landing", "main.confirm_email_address", "main.download_document"))
+def test_download_document_returns_file_unavailable_if_file_past_expiry_date_old_api(
+    service_id, document_id, key, client, sample_service, view, rmock, mocker
+):
+    mocker.patch(
+        "notifications_utils.request_helper.NotifyRequest.get_onwards_request_headers",
+        return_value={"some-onwards": "request-header"},
+    )
+    mocker.patch("app.service_api_client.get_service", return_value={"data": sample_service})
+
+    rmock.get(
+        "{}/services/{}/documents/{}/check?key={}".format(
+            current_app.config["DOCUMENT_DOWNLOAD_API_HOST_NAME_INTERNAL"], service_id, document_id, key
+        ),
+        status_code=200,
+        json={
+            "document": {
+                "direct_file_url": "url",
+                "confirm_email": False,
+                "size_in_bytes": 712099,
+                "file_extension": "pdf",
+                "available_until": str(date.today() - timedelta(days=1)),
+            }
+        },
+    )
+
+    response = client.get(url_for(view, service_id=service_id, document_id=document_id, key=key))
+
+    assert response.status_code == 410
+    page = BeautifulSoup(response.data.decode("utf-8"), "html.parser")
+    assert normalize_spaces(page.h1.text) == "No longer available"
+
+    contact_link = page.select("main a")[0]
+    assert normalize_spaces(contact_link.text) == "contact Sample Service"
+    assert contact_link["href"] == "https://sample-service.gov.uk"
+
+    assert len(rmock.request_history) == 1
+    assert rmock.request_history[0].method == "GET"
+    assert rmock.request_history[0].url == "{}/services/{}/documents/{}/check?key={}".format(
+        current_app.config["DOCUMENT_DOWNLOAD_API_HOST_NAME_INTERNAL"],
+        service_id,
+        document_id,
+        key,
+    )
+    assert rmock.request_history[0].headers == AnySupersetOf({"some-onwards": "request-header"})
+
+
+@pytest.mark.parametrize("view", ("main.landing", "main.confirm_email_address", "main.download_document"))
+def test_download_document_succeeds_if_missing_available_until(
+    service_id, document_id, key, client, sample_service, view, rmock, mocker
+):
+    mocker.patch(
+        "notifications_utils.request_helper.NotifyRequest.get_onwards_request_headers",
+        return_value={"some-onwards": "request-header"},
+    )
+    mocker.patch("app.service_api_client.get_service", return_value={"data": sample_service})
+
+    rmock.get(
+        "{}/services/{}/documents/{}/check?key={}".format(
+            current_app.config["DOCUMENT_DOWNLOAD_API_HOST_NAME_INTERNAL"], service_id, document_id, key
+        ),
+        status_code=200,
+        json={
+            "document": {
+                "direct_file_url": "url",
+                "confirm_email": False,
+                "size_in_bytes": 712099,
+                "file_extension": "pdf",
+                "available_until": None,
+            }
+        },
+    )
+
+    response = client.get(url_for(view, service_id=service_id, document_id=document_id, key=key))
+
+    assert response.status_code < 400
+
+    assert len(rmock.request_history) == 1
+    assert rmock.request_history[0].method == "GET"
+    assert rmock.request_history[0].url == "{}/services/{}/documents/{}/check?key={}".format(
+        current_app.config["DOCUMENT_DOWNLOAD_API_HOST_NAME_INTERNAL"],
+        service_id,
+        document_id,
+        key,
+    )
+    assert rmock.request_history[0].headers == AnySupersetOf({"some-onwards": "request-header"})
 
 
 @pytest.mark.parametrize(
@@ -170,9 +349,18 @@ def test_download_document_returns_file_unavailable_if_file_past_expiry_date(
         {"error": "Forbidden"},
     ],
 )
+@pytest.mark.parametrize(
+    "api_status_code",
+    [
+        400,
+        404,
+        403,
+    ],
+)
 def test_404_hides_incorrect_credentials(
     view,
     method,
+    api_status_code,
     client,
     service_id,
     document_id,
@@ -192,7 +380,7 @@ def test_404_hides_incorrect_credentials(
         "{}/services/{}/documents/{}/check?key={}".format(
             current_app.config["DOCUMENT_DOWNLOAD_API_HOST_NAME_INTERNAL"], service_id, document_id, key
         ),
-        status_code=400,
+        status_code=api_status_code,
         json=json_response,
     )
     response = client.open(
@@ -200,6 +388,10 @@ def test_404_hides_incorrect_credentials(
         method=method,
     )
     assert response.status_code == 404
+    page = BeautifulSoup(response.data.decode("utf-8"), "html.parser")
+    assert normalize_spaces(page.h1.text) == "Page not found"
+    # ensure this is our contextualized 404 page
+    assert any((sample_service["name"] in elem.text) for elem in page.select("main p"))
 
     assert len(rmock.request_history) == 1
     assert rmock.request_history[0].method == "GET"
@@ -557,6 +749,24 @@ def test_download_document_shows_pretty_file_type(
     assert response.status_code == 200
     page = BeautifulSoup(response.data.decode("utf-8"), "html.parser")
     assert page.select("main a")[0].text == f"Download this {expected_pretty_file_type} (0.7MB) to your device"
+
+
+def test_download_document_handles_missing_expiry(service_id, document_id, key, client, mocker, sample_service):
+    mocker.patch("app.service_api_client.get_service", return_value={"data": sample_service})
+    mocked_metadata = {
+        "direct_file_url": "url",
+        "confirm_email": False,
+        "size_in_bytes": 712099,
+        "file_extension": "csv",
+        "available_until": None,
+    }
+    mocker.patch("app.main.views.index._get_document_metadata", return_value=mocked_metadata)
+
+    response = client.get(url_for("main.download_document", service_id=service_id, document_id=document_id, key=key))
+
+    assert response.status_code == 200
+    page = BeautifulSoup(response.data.decode("utf-8"), "html.parser")
+    assert any(("File expiry information is temporarily unavailable" in elem.text) for elem in page.select("main p"))
 
 
 def test_download_document_shows_contact_information(

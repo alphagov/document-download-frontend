@@ -14,7 +14,11 @@
   </p>
 
   <p class="govuk-body">
-    This file is available until {{file_expiry_date}}.
+  {% if file_expiry_date %}
+    This file is available until {{ file_expiry_date }}.
+  {% else %}
+    File expiry information is temporarily unavailable.
+  {% endif %}
   </p>
 
   <p class="govuk-body">

@@ -7,7 +7,7 @@ from flask import abort, current_app, redirect, render_template, request, url_fo
 from flask.ctx import has_request_context
 from markupsafe import Markup
 from notifications_python_client.errors import HTTPError
-from werkzeug.exceptions import TooManyRequests
+from werkzeug.exceptions import Gone, NotFound, TooManyRequests
 
 from app import service_api_client
 from app.forms import EmailAddressForm
@@ -70,17 +70,21 @@ def landing(service_id, document_id):
 
     service = _get_service_or_raise_error(service_id)
 
+    service_name = service["data"]["name"]
     service_contact_info = service["data"]["contact_link"]
     contact_info_type = assess_contact_type(service_contact_info)
-    metadata = _get_document_metadata(service_id, document_id, key)
 
-    if not metadata or document_has_expired(metadata["available_until"]):
+    try:
+        metadata = _get_document_metadata(service_id, document_id, key)
+    except (Gone, NotFound) as e:
+        # pretty-up these particular errors with more context
         return render_template(
             "views/file_unavailable.html",
-            service_name=service["data"]["name"],
+            status_code=e.code,
+            service_name=service_name,
             service_contact_info=service_contact_info,
             contact_info_type=contact_info_type,
-        )
+        ), e.code
 
     if "confirm_email" not in metadata:
         current_app.logger.info(
@@ -97,7 +101,7 @@ def landing(service_id, document_id):
     return render_template(
         "views/index.html",
         service_id=service_id,
-        service_name=service["data"]["name"],
+        service_name=service_name,
         service_contact_info=service_contact_info,
         contact_info_type=contact_info_type,
         document_id=document_id,
@@ -114,18 +118,21 @@ def confirm_email_address(service_id, document_id):
 
     service = _get_service_or_raise_error(service_id)
 
-    metadata = _get_document_metadata(service_id, document_id, key)
-    service_contact_info = service["data"]["contact_link"]
     service_name = service["data"]["name"]
+    service_contact_info = service["data"]["contact_link"]
     contact_info_type = assess_contact_type(service_contact_info)
 
-    if not metadata or document_has_expired(metadata["available_until"]):
+    try:
+        metadata = _get_document_metadata(service_id, document_id, key)
+    except (Gone, NotFound) as e:
+        # pretty-up these particular errors with more context
         return render_template(
             "views/file_unavailable.html",
+            status_code=e.code,
             service_name=service_name,
             service_contact_info=service_contact_info,
             contact_info_type=contact_info_type,
-        )
+        ), e.code
 
     if metadata["confirm_email"] is False:
         return redirect(url_for(".download_document", service_id=service_id, document_id=document_id, key=key))
@@ -194,27 +201,31 @@ def download_document(service_id, document_id):
 
     service = _get_service_or_raise_error(service_id)
 
-    metadata = _get_document_metadata(service_id, document_id, key)
+    service_name = service["data"]["name"]
     service_contact_info = service["data"]["contact_link"]
     contact_info_type = assess_contact_type(service_contact_info)
 
-    if not metadata or document_has_expired(metadata["available_until"]):
+    try:
+        metadata = _get_document_metadata(service_id, document_id, key)
+    except (Gone, NotFound) as e:
+        # pretty-up these particular errors with more context
         return render_template(
             "views/file_unavailable.html",
-            service_name=service["data"]["name"],
+            status_code=e.code,
+            service_name=service_name,
             service_contact_info=service_contact_info,
             contact_info_type=contact_info_type,
-        )
+        ), e.code
 
     return render_template(
         "views/download.html",
         download_link=metadata["direct_file_url"],
         file_size=bytes_to_pretty_file_size(metadata["size_in_bytes"]),
         file_type=FILE_EXTENSION_TO_PRETTY_FILE_TYPE[metadata["file_extension"]],
-        service_name=service["data"]["name"],
+        service_name=service_name,
         service_contact_info=service_contact_info,
         contact_info_type=contact_info_type,
-        file_expiry_date=_format_file_expiry_date(metadata["available_until"]),
+        file_expiry_date=_format_file_expiry_date(metadata["available_until"]) if metadata["available_until"] else None,
     )
 
 
@@ -248,18 +259,29 @@ def _get_document_metadata(service_id, document_id, key):
 
     response = requests.get(check_file_url, headers=headers)
 
-    if response.status_code == 400:
-        error_msg = response.json().get("error", "")
-        # If the decryption key is missing or can't be decoded using `urlsafe_b64decode`,
-        # the error message will contain 'decryption key'.
-        # If the decryption key is wrong, the error message is 'Forbidden'
-        if "decryption key" in error_msg or "Forbidden" in error_msg:
+    match response.status_code:
+        case 400:
+            # old-style document-download-api response handling
+            error_msg = response.json().get("error", "")
+            # If the decryption key is missing or can't be decoded using `urlsafe_b64decode`,
+            # the error message will contain 'decryption key'.
+            # If the decryption key is wrong, the error message is 'Forbidden'
+            if "decryption key" in error_msg or "Forbidden" in error_msg:
+                abort(404)
+        case 404 | 403:
             abort(404)
+        case 410:
+            abort(410)
 
     # Let the `500` error handler handle unexpected errors from doc-download-api
     response.raise_for_status()
 
-    return response.json().get("document")
+    metadata = response.json().get("document")
+    # old-style document-download-api response handling with leniency for missing available_until
+    if metadata is None or (metadata["available_until"] and document_has_expired(metadata["available_until"])):
+        abort(410)
+
+    return metadata
 
 
 def _authenticate_access_to_document(service_id, document_id, key, email_address) -> dict | None:
