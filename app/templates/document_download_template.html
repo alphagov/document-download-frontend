@@ -2,20 +2,27 @@
 {% from "components/footer/macro.html" import govukFooterWithoutExternalLinks -%}
 
 {% set cspNonce = request.csp_nonce %}
+{# toggle to enable new styles for rebrand #}
+{% set govukRebrand = False %}
 
 {% block headIcons %}
   <link rel="icon" sizes="48x48" href="{{ asset_url('images/favicon.ico') }}">
   <link rel="icon" sizes="any" href="{{ asset_url('images/favicon.svg') }}" type="image/svg+xml">
-  <link rel="mask-icon" href="{{ asset_url('images/govuk-icon-mask.svg') }}" color="#0b0c0c">
+  <link rel="mask-icon" href="{{ asset_url('images/govuk-icon-mask.svg') }}" color="{{'#1d70b8' if govukRebrand else '#0b0c0c'}}">
   <link rel="apple-touch-icon" href="{{ asset_url('images/govuk-icon-180.png') }}">
   <link rel="manifest" href="{{ asset_url('manifest.json') }}">
 {% endblock %}
 
 {% block head %}
   <link rel="stylesheet" media="screen" href="{{ asset_url('stylesheets/main.css') }}" />
+  {# rebranded header no longer uses bottom border #}
+  {# so not rendering until we have a different solution #}
+  {# for indicating different envs #}
+  {% if not govukRebrand %}
   <style nonce="{{ cspNonce }}"> 
       .govuk-header__container { border-bottom-color: {{header_colour}} }
   </style>
+  {% endif %}
   {% block meta %}
   <meta name="referrer" content="never">
   {% endblock %}
@@ -33,6 +40,7 @@
   {{ govukHeader({
     "assetsPath": "/static/images/",
     "homepageUrl": "https://www.gov.uk",
+    "rebrand": govukRebrand
   }) }}
 {% endblock %}
 
@@ -46,7 +54,9 @@
 {% endblock %}
 
 {% block footer %}
-  {{ govukFooterWithoutExternalLinks({}) }}
+  {{ govukFooterWithoutExternalLinks({
+    "rebrand": govukRebrand
+  }) }}
 {% endblock %}
 
 {% block bodyEnd %}
