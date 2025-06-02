@@ -46,7 +46,7 @@ govuk-bank-holidays==0.15
     # via notifications-utils
 govuk-frontend-jinja==3.6.0
     # via -r requirements.in
-greenlet==3.0.3
+greenlet==3.2.2
     # via eventlet
 gunicorn==23.0.0
     # via notifications-utils
