@@ -4,7 +4,7 @@ import copy from 'rollup-plugin-copy';
 import styles from "rollup-plugin-styler";
 
 // toggle to enable rebrand styles
-const enableRebrand = false;
+const enableRebrand = true;
 const paths = {
   src: 'app/assets/',
   dist: 'app/static/',
