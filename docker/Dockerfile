@@ -17,7 +17,7 @@ RUN apt-get update \
 WORKDIR /home/vcap/app
 
 ##### Frontend Build Image ###################################################
-FROM --platform=linux/amd64 node:20-slim AS node
+FROM --platform=linux/amd64 node:22-slim AS node
 FROM --platform=linux/amd64 python:3.11-slim AS frontend_build
 
 SHELL ["/bin/bash", "-c"]
