@@ -1,7 +1,9 @@
 import os
 
+from notifications_utils.config import BaseConfig
 
-class Config:
+
+class Config(BaseConfig):
     ADMIN_CLIENT_SECRET = os.environ.get("ADMIN_CLIENT_SECRET")
     ADMIN_CLIENT_USER_NAME = "notify-admin"
     SECRET_KEY = os.environ.get("SECRET_KEY")
@@ -14,6 +16,8 @@ class Config:
     # The config option NOTIFY_ENVIRONMENT is purely used for logging.
     # It should not be used for any logical conditionals in the code.
     NOTIFY_ENVIRONMENT = os.environ["NOTIFY_ENVIRONMENT"]
+
+    OTEL_EXPORT_TYPE = os.environ.get("OTEL_EXPORT_TYPE", "otlp").lower().strip()
 
     NOTIFY_REQUEST_LOG_LEVEL = os.getenv("NOTIFY_REQUEST_LOG_LEVEL", "INFO")
 

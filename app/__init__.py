@@ -10,6 +10,7 @@ from gds_metrics import GDSMetrics
 from notifications_utils import request_helper
 from notifications_utils.asset_fingerprinter import asset_fingerprinter
 from notifications_utils.base64_uuid import base64_to_uuid, uuid_to_base64
+from notifications_utils.clients.otel.otel_client import init_otel_app
 from notifications_utils.clients.statsd.statsd_client import StatsdClient
 from notifications_utils.eventlet import EventletTimeout
 from notifications_utils.local_vars import LazyLocalGetter
@@ -62,6 +63,7 @@ def create_app(application):
     application.url_map.converters["base64_uuid"] = Base64UUIDConverter
 
     init_app(application)
+    init_otel_app(application)
     # Metrics intentionally high up to give the most accurate timing and reliability that the metric is recorded
     metrics.init_app(application)
     init_jinja(application)
