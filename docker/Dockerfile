@@ -11,7 +11,6 @@ ENV DEBIAN_FRONTEND=noninteractive \
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
     curl \
-    && apt-get -y clean \
     && rm -rf /var/lib/apt/lists/* /tmp/*
 
 WORKDIR /home/vcap/app
@@ -36,7 +35,6 @@ RUN echo "Install OS dependencies for python app requirements" &&  \
     && apt-get install -y --no-install-recommends \
     build-essential \
     git \
-    && apt-get -y clean \
     && rm -rf /var/lib/apt/lists/* /tmp/*
 
 COPY requirements.txt .
@@ -87,7 +85,6 @@ RUN echo "Install OS dependencies for test build" \
       curl \
       git \
       make \
-    && apt-get -y clean \
     && rm -rf /var/lib/apt/lists/* /tmp/*
 RUN usermod -aG sudo notify
 RUN echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
