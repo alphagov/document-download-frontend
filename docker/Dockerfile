@@ -17,8 +17,7 @@ RUN apt-get update \
 WORKDIR /home/vcap/app
 
 ##### Frontend Build Image ###################################################
-FROM --platform=linux/amd64 node:22-slim AS node
-FROM --platform=linux/amd64 python:3.11-slim-bookworm AS frontend_build
+FROM --platform=linux/amd64 node:22-bookworm-slim AS frontend_build
 
 SHELL ["/bin/bash", "-c"]
 
@@ -39,9 +38,6 @@ RUN apt-get update && \
         zip \
         openssh-client \
     && rm -rf /var/lib/apt/lists/*
-
-COPY --from=node /usr/local/lib /usr/local/lib
-COPY --from=node /usr/local/bin /usr/local/bin
 
 WORKDIR /usr/frontend
 COPY app app
