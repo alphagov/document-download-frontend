@@ -11,37 +11,14 @@ ENV DEBIAN_FRONTEND=noninteractive \
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
     curl \
-    && apt-get -y clean \
     && rm -rf /var/lib/apt/lists/* /tmp/*
 
 WORKDIR /home/vcap/app
 
 ##### Frontend Build Image ###################################################
-FROM --platform=linux/amd64 node:22-slim AS node
-FROM --platform=linux/amd64 python:3.11-slim-bookworm AS frontend_build
+FROM --platform=linux/amd64 node:22-bookworm-slim AS frontend_build
 
 SHELL ["/bin/bash", "-c"]
-
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
-        # TODO: this entire block was inlined from unit-tests-image's Dockerfile.
-        # Which of these are actually dependencies of document-download-frontend,
-        # which are dependencies of admin (and can be removed)?
-        make \
-        curl \
-        rlwrap \
-        git \
-        build-essential \
-        libmagic-dev \
-        libcurl4-openssl-dev \
-        libssl-dev \
-        libpng-dev \
-        zip \
-        openssh-client \
-    && rm -rf /var/lib/apt/lists/*
-
-COPY --from=node /usr/local/lib /usr/local/lib
-COPY --from=node /usr/local/bin /usr/local/bin
 
 WORKDIR /usr/frontend
 COPY app app
@@ -58,7 +35,6 @@ RUN echo "Install OS dependencies for python app requirements" &&  \
     && apt-get install -y --no-install-recommends \
     build-essential \
     git \
-    && apt-get -y clean \
     && rm -rf /var/lib/apt/lists/* /tmp/*
 
 COPY requirements.txt .
@@ -109,7 +85,6 @@ RUN echo "Install OS dependencies for test build" \
       curl \
       git \
       make \
-    && apt-get -y clean \
     && rm -rf /var/lib/apt/lists/* /tmp/*
 RUN usermod -aG sudo notify
 RUN echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
