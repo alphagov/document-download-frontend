@@ -42,7 +42,7 @@ flask-wtf==1.2.1
     # via -r requirements.in
 gds-metrics @ git+https://github.com/alphagov/gds_metrics_python.git@6f1840a57b6fb1ee40b7e84f2f18ec229de8aa72
     # via -r requirements.in
-govuk-bank-holidays==0.15
+govuk-bank-holidays==0.17
     # via notifications-utils
 govuk-frontend-jinja==3.6.0
     # via -r requirements.in
@@ -77,7 +77,7 @@ mistune==0.8.4
     # via notifications-utils
 notifications-python-client==10.0.0
     # via -r requirements.in
-notifications-utils @ git+https://github.com/alphagov/notifications-utils.git@bb31f41dd194802ced5ea814f84cc25855467234
+notifications-utils @ git+https://github.com/alphagov/notifications-utils.git@5c030d51f30cebf7800787fb68d8789b5f9757ef
     # via -r requirements.in
 ordered-set==4.1.0
     # via notifications-utils
@@ -98,8 +98,6 @@ python-dateutil==2.9.0.post0
     #   botocore
     #   notifications-utils
 python-json-logger==3.3.0
-    # via notifications-utils
-pytz==2024.2
     # via notifications-utils
 pyyaml==6.0.2
     # via notifications-utils

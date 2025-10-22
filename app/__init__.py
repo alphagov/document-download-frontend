@@ -194,3 +194,4 @@ def init_jinja(application):
         ]
     )
     application.jinja_loader = jinja_loader
+    application.jinja_env.undefined = jinja2.Undefined
