@@ -87,9 +87,11 @@ def landing(service_id, document_id):
         ), e.code
 
     if "confirm_email" not in metadata:
+        extra = {"service_id": service_id, "document_id": document_id, "metadata": metadata}
         current_app.logger.info(
-            "Metadata for %(service_id)s/%(document_id)s does not contain `confirm_email` key: %(metadata)s",
-            {"service_id": service_id, "document_id": document_id, "metadata": metadata},
+            "Metadata for %(service_id)s/%(document_id)s does not contain `confirm_email` key: %(metadata)r",
+            extra,
+            extra=extra,
         )
 
     if metadata.get("confirm_email", False) is True:
