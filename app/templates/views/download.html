@@ -6,19 +6,19 @@
 
 {% block main_content %}
   <p class="govuk-body">
-    Save your file somewhere you can find it. You may need to print it or show it to someone later.
+  {% if file_expiry_date %}
+    This file is available to download until {{ file_expiry_date }}.
+  {% else %}
+    File expiry information is temporarily unavailable.
+  {% endif %}
+  </p>
+
+  <p class="govuk-body">
+    Make sure you save your file somewhere you can find it.
   </p>
 
   <p class="govuk-body">
     <a href="{{download_link}}" download class="govuk-link" rel="noreferrer">Download this {{ file_type }} ({{ file_size }}) to your device</a>
-  </p>
-
-  <p class="govuk-body">
-  {% if file_expiry_date %}
-    This file is available until {{ file_expiry_date }}.
-  {% else %}
-    File expiry information is temporarily unavailable.
-  {% endif %}
   </p>
 
   <p class="govuk-body">
