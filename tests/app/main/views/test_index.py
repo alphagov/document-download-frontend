@@ -813,9 +813,9 @@ def test_download_document_shows_expiry_date(
     assert response.status_code == 200
 
     page = BeautifulSoup(response.data.decode("utf-8"), "html.parser")
-    content_about_expiry_date = page.select("main p")[2]
+    content_about_expiry_date = page.select("main p")[0]
 
-    assert f"This file is available for download until {expected_content}." in content_about_expiry_date.text
+    assert f"This file is available to download until {expected_content}." in content_about_expiry_date.text
 
 
 @pytest.mark.parametrize("view", ["main.landing", "main.download_document", "main.confirm_email_address"])
