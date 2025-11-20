@@ -28,7 +28,7 @@ lint: ## Run static analysis
 
 .PHONY: test
 test: lint ## Run tests
-	py.test -n auto --maxfail=10 tests/
+	pytest -n auto --maxfail=10 tests/
 
 .PHONY: test-with-docker
 test-with-docker: ## Run tests in Docker container
