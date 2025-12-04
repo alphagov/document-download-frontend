@@ -217,7 +217,7 @@ statsd==4.0.1
     # via
     #   -r requirements.txt
     #   notifications-utils
-urllib3==1.26.19
+urllib3==2.5.0
     # via
     #   -r requirements.txt
     #   botocore
