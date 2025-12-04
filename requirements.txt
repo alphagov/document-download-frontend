@@ -86,9 +86,7 @@ packaging==23.1
 phonenumbers==9.0.10
     # via notifications-utils
 prometheus-client==0.15.0
-    # via
-    #   -r requirements.in
-    #   gds-metrics
+    # via gds-metrics
 pyjwt==2.4.0
     # via notifications-python-client
 pypdf==3.17.0
