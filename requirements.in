@@ -1,18 +1,18 @@
 # Run `make freeze-requirements` to update requirements.txt
 # with package version changes made in requirements-app.txt
 
-Flask-WTF==1.2.1
+Flask-WTF
 
-whitenoise==6.2.0  #manages static assets
+whitenoise  #manages static assets
 
-notifications-python-client==10.0.0
+notifications-python-client
 
 # Run `make bump-utils` to update to the latest version
 notifications-utils @ git+https://github.com/alphagov/notifications-utils.git@103.0.0
 
 # gds-metrics requires prometheseus 0.2.0, override that requirement as later versions bring significant performance gains
-prometheus-client==0.15.0
+prometheus-client>=0.15.0
 git+https://github.com/alphagov/gds_metrics_python.git@6f1840a57b6fb1ee40b7e84f2f18ec229de8aa72
 
-govuk-frontend-jinja==3.6.0
-sentry-sdk[flask]==1.45.1
+govuk-frontend-jinja
+sentry-sdk[flask]
