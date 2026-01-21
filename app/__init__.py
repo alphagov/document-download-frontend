@@ -112,9 +112,9 @@ def make_nonce_before_request():
 #  https://www.owasp.org/index.php/List_of_useful_HTTP_headers
 def useful_headers_after_request(response):
     response.headers.add("X-Robots-Tag", "noindex, nofollow")
-    response.headers.add("X-Frame-Options", "deny")
+    response.headers.add("X-Frame-Options", "DENY")
     response.headers.add("X-Content-Type-Options", "nosniff")
-    response.headers.add("X-XSS-Protection", "1; mode=block")
+    response.headers.add("X-Permitted-Cross-Domain-Policies", "none")
     response.headers.add("Referrer-Policy", "no-referrer")
     response.headers.add(
         "Content-Security-Policy",
@@ -135,8 +135,9 @@ def useful_headers_after_request(response):
     if "Cache-Control" in response.headers:
         del response.headers["Cache-Control"]
     response.headers.add("Cache-Control", "no-store, no-cache, private, must-revalidate")
+    response.headers.add("Pragma", "no-cache")
 
-    response.headers.add("Strict-Transport-Security", "max-age=31536000; preload")
+    response.headers.add("Strict-Transport-Security", "max-age=31536000; includeSubDomains")
     response.headers.add("Cross-Origin-Embedder-Policy", "require-corp;")
     response.headers.add("Cross-Origin-Opener-Policy", "same-origin;")
     response.headers.add("Cross-Origin-Resource-Policy", "same-origin;")
