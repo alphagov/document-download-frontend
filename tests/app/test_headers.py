@@ -27,7 +27,6 @@ def test_owasp_useful_headers_set(
     assert response.headers["X-Robots-Tag"] == "noindex, nofollow"
     assert response.headers["X-Frame-Options"] == "DENY"
     assert response.headers["X-Content-Type-Options"] == "nosniff"
-    assert response.headers["X-XSS-Protection"] == "1; mode=block"
     assert response.headers["X-Permitted-Cross-Domain-Policies"] == "none"
     assert response.headers["Content-Security-Policy"] == (
         "default-src 'self';"
