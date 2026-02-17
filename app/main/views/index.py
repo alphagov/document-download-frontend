@@ -7,6 +7,7 @@ from flask import abort, current_app, redirect, render_template, request, url_fo
 from flask.ctx import has_request_context
 from markupsafe import Markup
 from notifications_python_client.errors import HTTPError
+from notifications_utils.formatters import format_file_size
 from werkzeug.exceptions import Gone, NotFound, TooManyRequests
 
 from app import service_api_client
@@ -14,7 +15,6 @@ from app.forms import EmailAddressForm
 from app.main import main
 from app.utils import (
     assess_contact_type,
-    bytes_to_pretty_file_size,
     document_has_expired,
 )
 
@@ -222,7 +222,7 @@ def download_document(service_id, document_id):
     return render_template(
         "views/download.html",
         download_link=metadata["direct_file_url"],
-        file_size=bytes_to_pretty_file_size(metadata["size_in_bytes"]),
+        file_size=format_file_size(metadata["size_in_bytes"]),
         file_type=FILE_EXTENSION_TO_PRETTY_FILE_TYPE[metadata["file_extension"]],
         service_name=service_name,
         service_contact_info=service_contact_info,
