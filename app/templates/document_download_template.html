@@ -26,7 +26,7 @@
   {{ _per_page_title }} – GOV.UK
 {% endblock %}
 
-{% block header %}
+{% block govukHeader %}
   {{ govukHeader({
     "assetsPath": "/static/images/",
     "homepageUrl": "https://www.gov.uk"
@@ -42,8 +42,8 @@
   </div>
 {% endblock %}
 
-{% block footer %}
-  {{ govukFooterWithoutExternalLinks() }}
+{% block govukFooter %}
+  {{ govukFooterWithoutExternalLinks({}) }}
 {% endblock %}
 
 {% block bodyEnd %}
