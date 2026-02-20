@@ -66,7 +66,7 @@ def landing(service_id, document_id):
     except (Gone, NotFound) as e:
         # pretty-up these particular errors with more context
         return render_template(
-            "views/file_unavailable.html",
+            "views/file-unavailable.html",
             status_code=e.code,
             service_name=service_name,
             service_contact_info=service_contact_info,
@@ -88,7 +88,7 @@ def landing(service_id, document_id):
         continue_url = url_for("main.download_document", service_id=service_id, document_id=document_id, key=key)
 
     return render_template(
-        "views/index.html",
+        "views/landing.html",
         service_id=service_id,
         service_name=service_name,
         service_contact_info=service_contact_info,
@@ -116,7 +116,7 @@ def confirm_email_address(service_id, document_id):
     except (Gone, NotFound) as e:
         # pretty-up these particular errors with more context
         return render_template(
-            "views/file_unavailable.html",
+            "views/file-unavailable.html",
             status_code=e.code,
             service_name=service_name,
             service_contact_info=service_contact_info,
@@ -169,7 +169,7 @@ def confirm_email_address(service_id, document_id):
 
     return (
         render_template(
-            "views/confirm_email_address.html",
+            "views/confirm-email-address.html",
             form=form,
             service_name=service_name,
             service_id=service_id,
@@ -199,7 +199,7 @@ def download_document(service_id, document_id):
     except (Gone, NotFound) as e:
         # pretty-up these particular errors with more context
         return render_template(
-            "views/file_unavailable.html",
+            "views/file-unavailable.html",
             status_code=e.code,
             service_name=service_name,
             service_contact_info=service_contact_info,
