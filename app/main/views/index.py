@@ -101,7 +101,7 @@ def landing(service_id, document_id):
         continue_url = url_for("main.download_document", service_id=service_id, document_id=document_id, key=key)
 
     return render_template(
-        "views/index.html",
+        "views/landing.html",
         service_id=service_id,
         service_name=service_name,
         service_contact_info=service_contact_info,
