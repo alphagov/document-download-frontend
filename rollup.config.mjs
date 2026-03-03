@@ -3,19 +3,17 @@ import terser from '@rollup/plugin-terser';
 import copy from 'rollup-plugin-copy';
 import styles from "rollup-plugin-styler";
 
-// toggle to enable rebrand styles
-const enableRebrand = true;
 const paths = {
   src: 'app/assets/',
   dist: 'app/static/',
   npm: 'node_modules/',
   govuk_frontend: 'node_modules/govuk-frontend/dist/govuk/',
 };
-// separate path config for govuk-frontend assets, so we can manage rebrand paths easily
+
 const govukFrontendAssetPaths = {
-  images: `${paths.govuk_frontend}assets/${enableRebrand ? 'rebrand/': ''}images/**/*`,
+  images: `${paths.govuk_frontend}assets/images/**/*`,
   fonts: `${paths.govuk_frontend}assets/fonts/**/*`,
-  manifest: `${paths.govuk_frontend}assets/${enableRebrand ? 'rebrand/': ''}manifest.json`,
+  manifest: `${paths.govuk_frontend}assets/manifest.json`,
 };
 
 export default [
