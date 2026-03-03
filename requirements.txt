@@ -85,10 +85,8 @@ packaging==26.0
     # via gunicorn
 phonenumbers==9.0.24
     # via notifications-utils
-prometheus-client==0.15.0
-    # via
-    #   -r requirements.in
-    #   gds-metrics
+prometheus-client==0.24.1
+    # via gds-metrics
 pyjwt==2.11.0
     # via notifications-python-client
 pypdf==6.7.3
