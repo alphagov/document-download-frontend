@@ -21,7 +21,7 @@
     "@rollup/plugin-terser": "0.4.4",
     "better-npm-audit": "^3.11.0",
     "eslint": "9.30.1",
-    "rollup": "4.44.1",
+    "rollup": "4.59.0",
     "rollup-plugin-copy": "3.5.0",
     "rollup-plugin-styler": "2.0.0",
     "sass": "1.89.2",
