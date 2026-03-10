@@ -13,13 +13,13 @@ $govuk-assets-path: "/static/";
 @import "core";
 @import "objects";
 
-@import 'components/button/button';
-@import 'components/error-message/error-message';
-@import 'components/error-summary/error-summary';
-@import 'components/footer/footer';
-@import 'components/header/header';
-@import 'components/input/input';
-@import 'components/skip-link/skip-link';
+@import 'components/button';
+@import 'components/error-message';
+@import 'components/error-summary';
+@import 'components/footer';
+@import 'components/header';
+@import 'components/input';
+@import 'components/skip-link';
 
 @import "utilities";
 @import "overrides/spacing";
