@@ -22,7 +22,7 @@ SHELL ["/bin/bash", "-c"]
 
 WORKDIR /usr/frontend
 COPY app app
-COPY package-lock.json package.json rollup.config.mjs ./
+COPY package-lock.json package.json rollup.config.mjs .npmrc ./
 
 RUN npm ci --no-audit \
     && npm run build
@@ -99,7 +99,7 @@ COPY --from=python_build --chown=notify:notify /opt/venv /opt/venv
 RUN mkdir -p app
 
 # Install dev/test requirements
-COPY --chown=notify:notify Makefile requirements_for_test.txt package-lock.json package.json rollup.config.mjs ./
+COPY --chown=notify:notify Makefile requirements_for_test.txt package-lock.json package.json rollup.config.mjs .npmrc ./
 RUN make bootstrap
 
 # Copy from the real world, one dir up (project root) into the environment's current working directory
