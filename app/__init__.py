@@ -10,7 +10,6 @@ from gds_metrics import GDSMetrics
 from notifications_utils import request_helper
 from notifications_utils.asset_fingerprinter import asset_fingerprinter
 from notifications_utils.base64_uuid import base64_to_uuid, uuid_to_base64
-from notifications_utils.clients.statsd.statsd_client import StatsdClient
 from notifications_utils.eventlet import EventletTimeout
 from notifications_utils.local_vars import LazyLocalGetter
 from notifications_utils.logging import flask as utils_logging
@@ -21,7 +20,6 @@ from app.config import Config, configs
 from app.notify_client.service_api_client import ServiceApiClient
 
 metrics = GDSMetrics()
-statsd_client = StatsdClient()
 
 memo_resetters: list[Callable] = []
 
@@ -65,8 +63,7 @@ def create_app(application):
     # Metrics intentionally high up to give the most accurate timing and reliability that the metric is recorded
     metrics.init_app(application)
     init_jinja(application)
-    statsd_client.init_app(application)
-    utils_logging.init_app(application, statsd_client)
+    utils_logging.init_app(application)
     request_helper.init_app(application)
 
     from app.main import main as main_blueprint
