@@ -1,25 +1,21 @@
-// Version of node_modules/govuk-frontend/components/all.scss specific to Document Download
-// Included to allow us to only include the components we need
 // All imports come from node_modules/govuk-frontend
-
-// set asset URL root to match that of application
-$govuk-assets-path: "/static/";
+@use "base" as * with (
+  $govuk-assets-path: "/static/" // set asset URL root to match that of application
+);
 
 // Dependencies from GOV.UK Frontend
 // https://github.com/alphagov/govuk-frontend
 
-@import "base";
+@use "core";
+@use "objects";
 
-@import "core";
-@import "objects";
+@use "components/button";
+@use "components/error-message";
+@use "components/error-summary";
+@use "components/footer";
+@use "components/header";
+@use "components/input";
+@use "components/skip-link";
 
-@import 'components/button';
-@import 'components/error-message';
-@import 'components/error-summary';
-@import 'components/footer';
-@import 'components/header';
-@import 'components/input';
-@import 'components/skip-link';
-
-@import "utilities";
-@import "overrides/spacing";
+@use "utilities";
+@use "overrides/spacing";
