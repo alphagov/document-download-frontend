@@ -110,3 +110,9 @@ version of govuk-frontend-jinja. See the comment in that file for more details.
 ## Further documentation
 
 - [Updating dependencies](https://github.com/alphagov/notifications-manuals/wiki/Dependencies)
+
+## Licence
+
+Unless stated otherwise, the codebase is released under [the MIT License][mit]. This covers both the codebase and any sample code in the documentation.
+
+[mit]: LICENCE
