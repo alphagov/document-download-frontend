@@ -28,5 +28,11 @@
     "stylelint": "17.14.0",
     "stylelint-config-gds": "3.0.0",
     "stylelint-config-standard-scss": "17.0.0"
+  },
+  "overrides": {
+    "brace-expansion": "5.0.8",
+    "better-npm-audit": {
+      "fast-uri": "3.1.4"
+    }
   }
 }
