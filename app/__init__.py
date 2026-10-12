@@ -6,7 +6,6 @@ from contextvars import ContextVar
 import jinja2
 from flask import current_app, make_response, render_template, request
 from flask_wtf.csrf import CSRFError
-from gds_metrics import GDSMetrics
 from notifications_utils import request_helper
 from notifications_utils.asset_fingerprinter import asset_fingerprinter
 from notifications_utils.base64_uuid import base64_to_uuid, uuid_to_base64
@@ -18,8 +17,6 @@ from werkzeug.routing import BaseConverter, ValidationError
 
 from app.config import Config, configs
 from app.notify_client.service_api_client import ServiceApiClient
-
-metrics = GDSMetrics()
 
 memo_resetters: list[Callable] = []
 
@@ -60,8 +57,6 @@ def create_app(application):
     application.url_map.converters["base64_uuid"] = Base64UUIDConverter
 
     init_app(application)
-    # Metrics intentionally high up to give the most accurate timing and reliability that the metric is recorded
-    metrics.init_app(application)
     init_jinja(application)
     utils_logging.init_app(application)
     request_helper.init_app(application)
