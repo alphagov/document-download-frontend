@@ -9,7 +9,7 @@ from flask_wtf.csrf import CSRFError
 from notifications_utils import request_helper
 from notifications_utils.asset_fingerprinter import asset_fingerprinter
 from notifications_utils.base64_uuid import base64_to_uuid, uuid_to_base64
-from notifications_utils.eventlet import EventletTimeout
+from notifications_utils.greenlet import RequestHandlingTimeout
 from notifications_utils.local_vars import LazyLocalGetter
 from notifications_utils.logging import flask as utils_logging
 from werkzeug.local import LocalProxy
@@ -165,8 +165,8 @@ def register_errorhandlers(application):
 
         return _error_response(400, error_page_template=500)
 
-    @application.errorhandler(EventletTimeout)
-    def eventlet_timeout(error):
+    @application.errorhandler(RequestHandlingTimeout)
+    def request_handling_timeout(error):
         application.logger.exception(error)
         return _error_response(504, error_page_template=500)
 
