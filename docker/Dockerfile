@@ -1,6 +1,6 @@
 FROM --platform=linux/amd64 python:3.13-slim-bookworm AS base
 
-COPY --from=ghcr.io/astral-sh/uv:0.11.8 /uv /uvx /bin/
+COPY --from=ghcr.io/astral-sh/uv:0.13.5 /uv /uvx /bin/
 
 ENV DEBIAN_FRONTEND=noninteractive \
     PYTHONUNBUFFERED=1 \
@@ -11,6 +11,7 @@ ENV DEBIAN_FRONTEND=noninteractive \
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
     curl \
+    ca-certificates \
     && rm -rf /var/lib/apt/lists/* /tmp/*
 
 WORKDIR /home/vcap/app
@@ -41,7 +42,11 @@ COPY requirements.txt .
 
 RUN echo "Installing python dependencies" && \
     python3 -m venv /opt/venv && \
-    uv pip sync --python /opt/venv/bin/python requirements.txt
+    uv pip sync --python /opt/venv/bin/python requirements.txt && \
+    curl -fsSL -o /tmp/pip-26.2.2-py3-none-any.whl https://files.pythonhosted.org/packages/3f/06/3e4420302363fbb71be3c7f35ce042f54bfca330e3e66b3a2e3c4cca579f/pip-26.2.2-py3-none-any.whl && \
+    echo "fd7f4dfa8190e014013b9f08f3e973f4e4c26ffd179a204895533a7254813a70  /tmp/pip-26.2.2-py3-none-any.whl" | sha256sum -c - && \
+    /opt/venv/bin/python -m pip install --no-index --upgrade /tmp/pip-26.2.2-py3-none-any.whl && \
+    rm -f /tmp/pip-26.2.2-py3-none-any.whl
 
 COPY . .
 

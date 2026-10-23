@@ -1,6 +1,8 @@
 # This file was automatically copied from notifications-utils@134.0.0
 
 exclude-newer = "7 days"
+# Lets certifi 2026.10.19 through the cooldown. Safe to remove after 27 October 2026.
+exclude-newer-package = { certifi = "2026-10-21T00:00:00Z" }
 
 [pip]
 generate-hashes = true
