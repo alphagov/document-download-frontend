@@ -3,7 +3,7 @@ from gunicorn_config import keepalive, timeout, worker_class, worker_connections
 
 def test_gunicorn_config():
     assert workers == 10
-    assert worker_class == "notifications_utils.gunicorn.eventlet.OtelAwareEventletWorker"
+    assert worker_class == "notifications_utils.gunicorn.gevent.OtelAwareGeventWorker"
     assert worker_connections == 1000
     assert keepalive == 90
     assert timeout == 30
